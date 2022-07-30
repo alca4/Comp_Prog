@@ -18,6 +18,7 @@ Rowlet is orz
 #include <unordered_map>
 #include <bitset>
 #include <cstring>
+#include <cassert>
 using namespace std;
 
 #define F first
@@ -45,6 +46,22 @@ const int MAXN = 100010;
 void solve()
 {
     // cout << "===========" << endl;
+    ll x, y;
+    cin >> x >> y;
+    ll ans;
+    ll p = max(x, y) - 1;
+    ans = p * p + p + 1;
+    if ((max(x, y)) % 2 == 0)
+    {
+        if (x < y) ans -= (y - x);
+        else ans += (x - y);
+    }
+    else
+    {
+        if (x < y) ans += (y - x);
+        else ans -= (x - y);
+    }
+    cout << ans << endl;
 }
 
 int main()

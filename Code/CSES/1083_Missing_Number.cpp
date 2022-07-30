@@ -18,6 +18,7 @@ Rowlet is orz
 #include <unordered_map>
 #include <bitset>
 #include <cstring>
+#include <cassert>
 using namespace std;
 
 #define F first
@@ -47,4 +48,16 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    ll N;
+    cin >> N;
+    ll ans = N * (N + 1) / 2;
+    for (int i = 1; i < N; i++) 
+    {
+        int a;
+        cin >> a;
+        ans -= a;
+    }
+    cout << ans << endl;
+    return 0;
 }
