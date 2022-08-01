@@ -9,6 +9,7 @@
         "__locale": "cpp",
         "bitset": "cpp",
         "locale": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "ostream": "cpp"
     }
 }
