@@ -14,6 +14,23 @@
         "__split_buffer": "cpp",
         "deque": "cpp",
         "list": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "type_traits": "cpp",
+        "__hash_table": "cpp",
+        "__tree": "cpp",
+        "array": "cpp",
+        "initializer_list": "cpp",
+        "map": "cpp",
+        "queue": "cpp",
+        "regex": "cpp",
+        "set": "cpp",
+        "span": "cpp",
+        "stack": "cpp",
+        "string_view": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp",
+        "valarray": "cpp",
+        "ranges": "cpp",
+        "utility": "cpp"
     }
 }
