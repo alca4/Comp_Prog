@@ -1,4 +1,9 @@
 /*
+Idea: Trie & Boruvka
+Trie -> go left = 0, go right = 1, each leaf is number
+walk down trie to find best partner
+find the best edges
+
   ___
  (o,o)
 <  .  >
