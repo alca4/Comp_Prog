@@ -1,6 +1,10 @@
-#include<iostream>
-#include<map>
-#include<algorithm>
+/*
+Idea: MST
+Just find the number of existing components and find how many ways there are to connect them
+*/
+#include <iostream>
+#include <map>
+#include <algorithm>
 using namespace std;
 
 int N, M, K;

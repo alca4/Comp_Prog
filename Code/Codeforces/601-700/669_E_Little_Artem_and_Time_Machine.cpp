@@ -1,3 +1,9 @@
+/*
+Idea: CDQ
+Straightforward application
+solve for the queries entirely for the left and right, 
+then solve for ones which go to both sidees
+*/
 #include <iostream>
 #include <algorithm>
 #include <vector>

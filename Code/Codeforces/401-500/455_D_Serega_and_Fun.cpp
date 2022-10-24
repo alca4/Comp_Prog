@@ -1,3 +1,13 @@
+/*
+Idea: sqrt
+Store blocks of size sqrt(N)
+for first query
+if within a block, just insert and delete, o(sqrt)
+if across blocks, insert/delete at endpoint blocks, 
+blocks in the middle use o(1) push_front and pop_back
+use deque
+also keep count of the numbers
+*/
 #include <iostream>
 #include <algorithm>
 #include <vector>

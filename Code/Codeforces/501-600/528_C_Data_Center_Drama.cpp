@@ -1,9 +1,13 @@
-#include<iostream>
-#include<algorithm>
-#include<stack>
-#include<set>
-#include<vector>
-#include<map>
+/*
+Idea: Euler tour
+First complete the tour, and add self edges if necessary
+*/
+#include <iostream>
+#include <algorithm>
+#include <stack>
+#include <set>
+#include <vector>
+#include <map>
 using namespace std;
 
 #define v vector

@@ -1,4 +1,11 @@
 /*
+Idea: MST, Tarjan
+Sort edges in increasing
+Never: connects 2 already connected nodes
+Some: the rest
+Any: bridge
+add edge after considering it
+
 LEARNINGS:
 If you don't know where a bug is reduce the amount of code that is written
 */

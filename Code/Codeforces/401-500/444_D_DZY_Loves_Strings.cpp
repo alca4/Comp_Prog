@@ -1,8 +1,12 @@
-#include<iostream>
-#include<cmath>
-#include<algorithm>
-#include<vector>
-#include<map>
+/*
+Idea: string (hash)
+Do some hashing to find locations of string
+*/
+#include <iostream>
+#include <cmath>
+#include <algorithm>
+#include <vector>
+#include <map>
 using namespace std;
 
 #define f first

@@ -1,7 +1,12 @@
-#include<iostream>
-#include<algorithm>
-#include<vector>
-#include<map>
+/*
+Idea: supposed to be graph but not really
+Sort by number of votes against a coder, update all of the double counts, and then bsearch
+Updating/reverting is only o(n) bc you only have n updates to update
+*/
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <map>
 using namespace std;
 
 typedef pair<int, int> pii;

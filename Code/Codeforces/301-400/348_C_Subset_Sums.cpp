@@ -1,3 +1,12 @@
+/*
+Idea: sqrt
+Split subsets into two types: "heavy" with |S| > sqrt(N), "light" with |S| < sqrt(N)
+Note: at max sqrt(N) heavy sets, since size of sets < 1e5
+Calculate the intersection between heavy and light sets
+Keep lazy tags for all sets
+For small queries, manually update array values and intersections
+For large queries, update the lazy tags of the small sets using intersections
+*/
 #include <iostream>
 #include <algorithm>
 #include <vector>

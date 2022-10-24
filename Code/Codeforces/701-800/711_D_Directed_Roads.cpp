@@ -1,8 +1,8 @@
-#include<iostream>
-#include<algorithm>
-#include<vector>
-#include<stack>
-#include<map>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <map>
 using namespace std;
 
 #define v vector

@@ -1,3 +1,13 @@
+/*
+Idea: Somewhere between Kruskal's and Segtree
+Coordinate compress
+For each segment
+if partial overlap with other segment, merge with other segment
+if fully contain other segment, have other segment point to it
+Maintain with segtree
+store an intervals' left and right points in the segtree
+to find overlapping segments, find all values which show up once in the range
+*/
 #include <iostream>
 #include <algorithm>
 #include <vector>

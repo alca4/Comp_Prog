@@ -1,6 +1,11 @@
-#include<iostream>
-#include<vector>
-#include<algorithm>
+/*
+Idea: MST
+Clearly, you're somewhere between optmizing for lowest silver or lowest gold
+Iterate the possibilities
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
 using namespace std;
 
 #define ll long long

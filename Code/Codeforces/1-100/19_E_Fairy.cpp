@@ -1,4 +1,12 @@
 /*
+Idea: DFS
+Build DFS tree, alternate depth with alternate colors
+Denote edges good if connect opposite colors/bad if same
+4 cases:
+Remove bad back edge: if only bad edge, can remove
+Remove good back edge: if there are no bad edges
+Remove bad tree edge: that doesn't exist
+Remove good tree edge: no good edges pass through that edge-use tree dp
   ___
  (o,o)
 <  .  >

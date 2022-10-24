@@ -1,4 +1,10 @@
 /*
+Idea: dp and segtree
+dp[i] = max score with first i roads and ith road is fixed
+dp[i] = max(dp[j] + {races contained in [j, i]} - c_j - c_j+1 - c_j+2...)
+use RURQ segtree for races: when at i, loop races
+for race that starts at j increase 1 to j - 1 by profit from that race
+use psums for cost of roads
   ___
  (o,o)
 <  .  >

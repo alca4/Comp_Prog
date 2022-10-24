@@ -1,10 +1,15 @@
-#include<iostream>
-#include<vector>
-#include<bitset>
-#include<stack>
-#include<cmath>
-#include<set>
-#include<algorithm>
+/*
+Idea: Observation
+Key observation: any cycle can be reduced to one of length 3
+then just actually reduce
+*/
+#include <iostream>
+#include <vector>
+#include <bitset>
+#include <stack>
+#include <cmath>
+#include <set>
+#include <algorithm>
 using namespace std;
 
 int N;

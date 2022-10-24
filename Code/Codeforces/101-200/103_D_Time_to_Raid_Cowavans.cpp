@@ -1,7 +1,12 @@
-#include<iostream>
-#include<cmath>
-#include<algorithm>
-#include<vector>
+/*
+Idea: Sqrt
+Divide problem by size of b
+Precompute b < sqrt(N), brute force b > sqrt(N)
+*/
+#include <iostream>
+#include <cmath>
+#include <algorithm>
+#include <vector>
 using namespace std;
 
 #define v vector
