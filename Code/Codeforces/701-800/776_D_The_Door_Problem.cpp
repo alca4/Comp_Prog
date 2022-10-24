@@ -1,3 +1,7 @@
+/*
+Idea: 2-sat
+Standard implmentation
+*/
 #include <iostream>
 #include <algorithm>
 #include <vector>

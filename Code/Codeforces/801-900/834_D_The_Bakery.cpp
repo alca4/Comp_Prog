@@ -1,3 +1,7 @@
+/*
+Idea: dp with segtree
+dp[i][j] = max(dp[i - n][j - 1] + mex(n to i))
+*/
 #include <iostream>
 #include <algorithm>
 #include <vector>

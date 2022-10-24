@@ -1,3 +1,8 @@
+/*
+Idea: sqrt
+if k < sqrt, then calculate it & save answer
+if k > sqrt, just calculate
+*/
 #include <iostream>
 #include <algorithm>
 #include <vector>
