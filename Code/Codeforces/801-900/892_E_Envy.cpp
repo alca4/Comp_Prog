@@ -1,4 +1,7 @@
 /*
+Idea: MST
+basically 160D but easier
+
 Learnings:
 DSU Undo
 Be careful of loop variables and skipping over ppl!
@@ -6,11 +9,11 @@ Multiple structs are fine copium
 Test code 1 part at a time -> DO NOT DELETE DEBUG CODE
 */
 
-#include<iostream>
-#include<algorithm>
-#include<vector>
-#include<map>
-#include<unordered_map>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <map>
+#include <unordered_map>
 using namespace std;
  
 typedef pair<int, int> pii;

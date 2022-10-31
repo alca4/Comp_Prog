@@ -1,3 +1,8 @@
+/*
+Idea: Segtree
+Coordinate compress, then you have O(N + Q) points to segtree on
+Be careful after compression though!
+*/
 #include <iostream>
 #include <algorithm>
 #include <vector>

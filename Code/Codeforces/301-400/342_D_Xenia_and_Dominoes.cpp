@@ -1,9 +1,14 @@
-#include<iostream>
-#include<vector>
-#include<bitset>
-#include<map>
-#include<cmath>
-#include<algorithm>
+/*
+Idea: bitmask dp
+bitmask stores the tiling state of 2 rows
+just be careful in your implementation
+*/
+#include <iostream>
+#include <vector>
+#include <bitset>
+#include <map>
+#include <cmath>
+#include <algorithm>
 using namespace std;
 
 #define ll long long

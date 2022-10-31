@@ -1,3 +1,7 @@
+/*
+Idea: small to large
+Pretty straightforward implementation
+*/
 #include <iostream>
 #include <algorithm>
 #include <vector>

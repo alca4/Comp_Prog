@@ -1,3 +1,8 @@
+/*
+Idea: persistent segtree + euler tour
+Keep a version for each depth
+RMQ on the ranges
+*/
 #include <iostream>
 #include <algorithm>
 #include <vector>

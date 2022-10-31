@@ -1,9 +1,13 @@
-#include<iostream>
-#include<iomanip>
-#include<algorithm>
-#include<math.h>
-#include<bitset>
-#include<vector>
+/*
+Idea: Greedy
+Just find the three points with the greatest distance. 
+*/
+#include <iostream>
+#include <iomanip>
+#include <algorithm>
+#include <math.h>
+#include <bitset>
+#include <vector>
 using namespace std;
 
 struct Seg

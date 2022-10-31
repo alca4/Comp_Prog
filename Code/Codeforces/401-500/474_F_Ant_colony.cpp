@@ -1,3 +1,7 @@
+/*
+Idea: Math, segtree
+An ant is freed on an interval if it is the lcm, so just use segtree to maintain
+*/
 #include <iostream>
 #include <algorithm>
 #include <vector>

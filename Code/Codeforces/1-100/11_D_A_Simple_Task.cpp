@@ -1,8 +1,15 @@
-#include<iostream>
-#include<cmath>
-#include<vector>
-#include<bitset>
-#include<algorithm>
+/*
+Idea: DP with Bitmask
+dp[mask][i] = # of cycles in mask w
+transition: iterate the edge from j to k
+for unvisited node, dp[mask | k][k] += dp[mask][j]
+for visited node, ans += dp[mask][k]
+*/
+#include <iostream>
+#include <cmath>
+#include <vector>
+#include <bitset>
+#include <algorithm>
 using namespace std;
 
 #define ll long long

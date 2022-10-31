@@ -1,3 +1,8 @@
+/*
+Idea: segtree
+Segtree stores occurences of a number
+Walk on segtree to find answer (amortizes o nklogn)
+*/
 #include <iostream>
 #include <algorithm>
 #include <vector>

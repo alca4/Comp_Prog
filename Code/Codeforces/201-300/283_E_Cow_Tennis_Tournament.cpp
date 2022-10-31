@@ -1,3 +1,8 @@
+/*
+Idea: Sweepline Segtree
+Pretty straightforward application
+Compress one of two dimensions into time
+*/
 #include <iostream>
 #include <algorithm>
 #include <vector>

@@ -1,5 +1,11 @@
-#include<iostream>
-#include<algorithm>
+/*
+Idea: Math
+Can reword problem as: how many ways to sum to an excellent number with n digits
+Rather small amount of final answers (from n to 9n at max) so iterate the good numbers
+Then find out how many ways to arrange the digits to form the sum
+*/
+#include <iostream>
+#include <algorithm>
 using namespace std;
 
 #define MOD 1000000007

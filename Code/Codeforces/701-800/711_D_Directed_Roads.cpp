@@ -1,8 +1,12 @@
-#include<iostream>
-#include<algorithm>
-#include<vector>
-#include<stack>
-#include<map>
+/*
+Idea: graph
+Resolve cycles by turning any subset of their edges
+*/
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <map>
 using namespace std;
 
 #define v vector

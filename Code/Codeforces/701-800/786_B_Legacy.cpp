@@ -1,3 +1,7 @@
+/*
+Idea: graph + segtree
+use segments as nodes so you can efficient connect planets using 2 & 3rd type guns
+*/
 #include <iostream>
 #include <algorithm>
 #include <vector>

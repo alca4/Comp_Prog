@@ -1,7 +1,11 @@
-#include<iostream>
-#include<algorithm>
-#include<cmath>
-#include<vector>
+/*
+Idea: Mo's algorithm
+On prefix xor, find two indices where a ^ b = k, then process queries using Mo
+*/
+#include <iostream>
+#include <algorithm>
+#include <cmath>
+#include <vector>
 using namespace std;
 
 struct Query
