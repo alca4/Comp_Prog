@@ -18,7 +18,6 @@ using namespace std;
 #define reset(x) memset(x, 0, sizeof(x))
 #define all(x) (x).begin(), (x).end()
 #define range(x, y, z) (x) + (y), (x) + (y) + (z)
-#define int ll
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
