@@ -18,7 +18,7 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define INF 1000000000ll
-#define MOD 998244353
+#define MOD 1000000007ll
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -45,16 +45,27 @@ ll modInverse(ll a)
     return ans;
 }
 
-const int MAXN = 200010;
-int N;
-vector<int> nbs[MAXN];
-int depth[MAXN];
-ll dp[MAXN][2];
+const int MAXN = 300010;
+int N, Q;
 
-void DFS(int a, int d)
+struct Query
 {
-    depth[d]++;
-    for (int i = 0; i < nbs[a].size(); i++) DFS(nbs[a][i], d + 1);
+    int l, r, id;
+};
+int ans[MAXN];
+
+pii arr[MAXN];
+map<int, int> pts;
+
+struct Itv
+{
+    ll l, r, w;
+};
+set<Itv> ranges;
+
+ll calc(int a, int b, int wa, int wb)
+{
+    return abs(a - b) * (wa + wb);
 }
 
 int main()
@@ -62,31 +73,18 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+    
+    cin >> N >> Q;
+    for (int i = 1; i <= N; i++) cin >> arr[i].FF >> arr[i].SS;
+    sort(arr + 1, arr + 1 + N);
 
-    cin >> N;
-    for (int i = 2; i <= N; i++)
-    {
-        int a;
-        cin >> a;
-        nbs[a].pb(i);
-    }
-
-    DFS(1, 1);
-
-    dp[0][0] = 0;
-    dp[0][1] = 1;
     for (int i = 1; i <= N; i++)
     {
-        dp[i][0] = add(mult(dp[i][1], modInverse(i + 1)),
-                       mult(dp[i - 1][0], mult(i, modInverse(i + 1))));
-        dp[i][1] = add(modInverse(i),
-                       mult(dp[i - 1][1], mult(i, modInverse(i + 1))));
+        auto it = pts.upper_bound(arr[i].SS);
+        if (it != pts.begin()) 
+        {
+            --it;
+            ranges.insert({it->SS, arr[i].FF, calc(it->SS, arr[i].SS)});
+        }
     }
-
-    // for (int i = 0; i < N; i++) cout << depth[i] << endl;
-
-    ll ans = 0;
-    for (int i = 1; i <= N; i++) ans = add(ans, mult(depth[i], add(dp[i][0], dp[i][1])));
-    cout << ans << endl;
-    return 0;
 } 

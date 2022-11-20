@@ -106,6 +106,9 @@
         "source_location": "cpp",
         "stop_token": "cpp",
         "syncstream": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "expected": "cpp",
+        "spanstream": "cpp",
+        "stacktrace": "cpp"
     }
 }

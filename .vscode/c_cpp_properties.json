@@ -3,14 +3,15 @@
         {
             "name": "Mac",
             "includePath": [
-                "${workspaceFolder}/**"
+                "/opt/homebrew/Cellar/gcc/12.2.0/include/c++/12/aarch64-apple-darwin21",
+                "/opt/homebrew/Cellar/gcc/12.2.0/include/c++/12/"
             ],
             "defines": [],
             "macFrameworkPath": [],
-            "compilerPath": "/usr/local/bin/gcc-12",
             "cStandard": "gnu17",
             "cppStandard": "gnu++17",
-            "intelliSenseMode": "macos-gcc-x64"
+            "intelliSenseMode": "macos-gcc-x64",
+            "compilerPath": "/usr/bin/g++"
         }
     ],
     "version": 4
