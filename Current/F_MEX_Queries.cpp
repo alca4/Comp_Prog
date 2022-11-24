@@ -46,69 +46,59 @@ ll modInverse(ll a)
 }
 
 const int MAXN = 100010;
-int Q;
+int N, Q;
 
-map<int, int> compress;
-map<int, int> unravel;
+map<ll, ll> compress;
+map<ll, ll> unravel;
 
 struct ST
 {
-    ll seg[8 * MAXN], l1[8 * MAXN], l2[8 * MAXN];
-
-    void apply1(int v, int cid, int ss, int se)
-    {
-        l1[cid] = v;
-        if (v == 1) seg[cid] = se - ss + 1;
-        if (v == -1) seg[cid] = 0;
-    }
-
-    void apply2(int v, int cid, int ss, int se)
-    {
-        if (v)
-        {
-            l2[cid] = 1;
-            seg[cid] = se - ss + 1 - seg[cid];
-        }
-    }
+    int seg[8 * MAXN], lazy[8 * MAXN];
 
     void push(int cid, int ss, int se)
     {
+        if (lazy[cid] == 1) seg[cid] = se - ss + 1;
+        if (lazy[cid] == 2) seg[cid] = 0;
+        if (lazy[cid] == 3) seg[cid] = se - ss + 1 - seg[cid];
+
         if (ss != se)
         {
-            int mid = (ss + se) / 2;
-            apply1(l1[cid], cid * 2, ss, mid);
-            apply1(l1[cid], cid * 2 + 1, mid + 1, se);
-
-            apply2(l2[cid], cid * 2, ss, mid);
-            apply2(l2[cid], cid * 2 + 1, mid + 1, se);
+            if (lazy[cid] == 1 || lazy[cid] == 2) lazy[cid * 2] = lazy[cid * 2 + 1] = lazy[cid];
+            else 
+            {
+                lazy[cid * 2] = 3 - lazy[cid * 2];
+                lazy[cid * 2 + 1] = 3 - lazy[cid * 2 + 1];
+            }
         }
-        l1[cid] = 0;
+        lazy[cid] = 0;
     }
 
-    void update1(int a, int b, int v, int cid, int ss, int se)
+    void update(int a, int b, int v, int cid, int ss, int se)
     {
+        push(cid, ss, se);
         if (a <= ss && se <= b)
         {
-            apply1(v, cid, ss, se);
+            lazy[cid] = v;
+            push(cid, ss, se);
             return;
         }
 
-        push(cid, ss, se);
         int mid = (ss + se) / 2;
-        if (a <= mid) update1(a, b, v, cid * 2, ss, mid);
-        if (b > mid) update1(a, b, v, cid * 2 + 1, mid + 1, se);
+        if (a <= mid) update(a, b, v, cid * 2, ss, mid);
+        if (b > mid) update(a, b, v, cid * 2 + 1, mid + 1, se);
         seg[cid] = seg[cid * 2] + seg[cid * 2 + 1];
     }
 
-    ll query(int a, int b, int cid, int ss, int se)
+    ll query(int cid, int ss, int se)
     {
-        if (a <= ss && se <= b) return seg[cid];
-
         push(cid, ss, se);
+        if (seg[cid] == se - ss + 1) return unravel[se + 1];
+        if (ss == se) return unravel[ss];
+
         int mid = (ss + se) / 2;
-        ll ans = 0;
-        if (a <= mid) ans = query(a, b, cid * 2, ss, mid);
-        if (b > mid) ans = query(a, b, cid * 2 + 1, mid + 1, se);
+        ll ans;
+        if (seg[cid * 2] == mid - ss + 1) ans = query(cid * 2 + 1, mid + 1, se);
+        else ans = query(cid * 2, ss, mid);
         seg[cid] = seg[cid * 2] + seg[cid * 2 + 1];
         return ans;
     }
@@ -116,7 +106,8 @@ struct ST
 
 struct Query
 {
-    int t, l, r;
+    int t;
+    ll l, r;
 } queries[MAXN];
 
 ST st;
@@ -132,26 +123,28 @@ int main()
     compress[1] = 1;
     for (int i = 1; i <= Q; i++)
     {
-        int t, l, r;
+        int t;
+        ll l, r;
         cin >> t >> l >> r;
         queries[i] = {t, l, r};
         compress[l] = 1;
-        compress[r] = 1;
+        compress[r + 1] = 1;
     }
 
     int cnt = 0;
     for (auto n : compress) compress[n.FF] = ++cnt;
     for (auto n : compress) unravel[n.SS] = n.FF;
-    int N = compress.size();
-
-    unravel[0] = 0;
+    N = compress.size() - 1;
 
     for (int i = 1; i <= Q; i++)
     {
-        if (queries[i].t == 1) st.update(compress[queries[i].l], compress[queries[i].r], 1, 1, 1, N);
-        if (queries[i].t == 2) st.update(compress[queries[i].l], compress[queries[i].r], -1, 1, 1, N);
-        if (queries[i].t == 3) st.update(compress[queries[i].l], compress[queries[i].r], -1, 1, 1, N);
-        cout << st.query(1, N, 1, 1, N) << endl;
+        st.update(compress[queries[i].l], compress[queries[i].r + 1] - 1, queries[i].t, 1, 1, N);
+
+        for (int i = 1; i <= 4 * N; i++) cout << st.seg[i] << " ";
+        cout << endl;
+
+        if (unravel[1] != 1) cout << 1 << endl;
+        else cout << st.query(1, 1, N) << endl;
     }
     return 0;
 } 
