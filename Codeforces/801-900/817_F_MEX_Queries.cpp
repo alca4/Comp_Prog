@@ -55,34 +55,35 @@ struct ST
 {
     int seg[8 * MAXN], lazy[8 * MAXN];
 
+    void apply(int a, int cid, int ss, int se)
+    {
+        if (a == 3) lazy[cid] = 3 - lazy[cid];
+        else lazy[cid] = a;
+        if (a == 1) seg[cid] = se - ss + 1;
+        if (a == 2) seg[cid] = 0;
+        if (a == 3) seg[cid] = se - ss + 1 - seg[cid];
+    }
+
     void push(int cid, int ss, int se)
     {
-        if (lazy[cid] == 1) seg[cid] = se - ss + 1;
-        if (lazy[cid] == 2) seg[cid] = 0;
-        if (lazy[cid] == 3) seg[cid] = se - ss + 1 - seg[cid];
-
-        if (ss != se)
+        if (ss != se && lazy[cid] != 0)
         {
-            if (lazy[cid] == 1 || lazy[cid] == 2) lazy[cid * 2] = lazy[cid * 2 + 1] = lazy[cid];
-            else 
-            {
-                lazy[cid * 2] = 3 - lazy[cid * 2];
-                lazy[cid * 2 + 1] = 3 - lazy[cid * 2 + 1];
-            }
+            int mid = (ss + se) / 2;
+            apply(lazy[cid], cid * 2, ss, mid);
+            apply(lazy[cid], cid * 2 + 1, mid + 1, se);
         }
         lazy[cid] = 0;
     }
 
     void update(int a, int b, int v, int cid, int ss, int se)
     {
-        push(cid, ss, se);
         if (a <= ss && se <= b)
         {
-            lazy[cid] = v;
-            push(cid, ss, se);
+            apply(v, cid, ss, se);
             return;
         }
 
+        push(cid, ss, se);
         int mid = (ss + se) / 2;
         if (a <= mid) update(a, b, v, cid * 2, ss, mid);
         if (b > mid) update(a, b, v, cid * 2 + 1, mid + 1, se);
@@ -91,10 +92,10 @@ struct ST
 
     ll query(int cid, int ss, int se)
     {
-        push(cid, ss, se);
         if (seg[cid] == se - ss + 1) return unravel[se + 1];
         if (ss == se) return unravel[ss];
 
+        push(cid, ss, se);
         int mid = (ss + se) / 2;
         ll ans;
         if (seg[cid * 2] == mid - ss + 1) ans = query(cid * 2 + 1, mid + 1, se);
@@ -120,7 +121,6 @@ int main()
     cout.tie(0);
 
     cin >> Q;
-    compress[1] = 1;
     for (int i = 1; i <= Q; i++)
     {
         int t;
@@ -130,6 +130,7 @@ int main()
         compress[l] = 1;
         compress[r + 1] = 1;
     }
+    compress[1] = 1;
 
     int cnt = 0;
     for (auto n : compress) compress[n.FF] = ++cnt;
@@ -139,12 +140,7 @@ int main()
     for (int i = 1; i <= Q; i++)
     {
         st.update(compress[queries[i].l], compress[queries[i].r + 1] - 1, queries[i].t, 1, 1, N);
-
-        for (int i = 1; i <= 4 * N; i++) cout << st.seg[i] << " ";
-        cout << endl;
-
-        if (unravel[1] != 1) cout << 1 << endl;
-        else cout << st.query(1, 1, N) << endl;
+        cout << st.query(1, 1, N) << endl;
     }
     return 0;
 } 
