@@ -46,10 +46,15 @@ ll power(ll a, ll b)
 }
 ll div(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
 
+int N;
+vector<int> bits;
+
 int main()
 {
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    cin >> N;
 } 

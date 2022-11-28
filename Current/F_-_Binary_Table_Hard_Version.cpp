@@ -46,10 +46,29 @@ ll power(ll a, ll b)
 }
 ll div(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
 
+const int MAXN = 110;
+
+int table[MAXN][MAXN];
+vector<pii> ops;
+
 int main()
 {
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    int T;
+    cin >> T;
+    while (T--)
+    {
+        int N, M;
+        cin >> N >> M;
+        for (int i = 1; i <= N; i++) for (int j = 1; j <= M; j++)
+        {
+            char c;
+            cin >> c;
+            table[i][j] = c - '0';
+        }
+    }
 } 

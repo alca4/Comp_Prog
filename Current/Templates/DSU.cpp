@@ -6,7 +6,6 @@ int combine(int a, int b)
     if (a == b) return 0;
 
     if (sz[a] < sz[b]) swap(a, b);
-    nbs2[a].pb(b);
     p[b] = a;
     sz[a] += sz[b];
     return 1;

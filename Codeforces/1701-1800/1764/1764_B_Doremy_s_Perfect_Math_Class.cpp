@@ -17,18 +17,18 @@ using namespace std;
 #define pb push_back
 #define ll long long
 #define ld long double
-ll INF = 1000000000;
-ll MOD = 1000000007;
+#define INF 1000000000ll
+#define MOD 1000000007ll
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
 ll add(const ll& a, const ll& b) {return (a + b) % MOD;}
-ll sub(const ll& a, const ll& b) {return (a + MOD - b) % MOD;}
 ll mult(const ll& a, const ll& b) {return (a * b) % MOD;}
-ll power(ll a, ll b)
+
+ll modInverse(ll a)
 {
-    ll n = b;
+    ll n = MOD - 2;
     ll ans = 1;
 
     ll binexp[64];
@@ -44,7 +44,6 @@ ll power(ll a, ll b)
 
     return ans;
 }
-ll div(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
 
 int main()
 {
@@ -52,4 +51,26 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    int T;
+    cin >> T;
+    while (T--)
+    {
+        int N;
+        cin >> N;
+        int d = -1;
+        int last;
+        for (int i = 1; i <= N; i++)
+        {
+            int x;
+            cin >> x;
+            if (d == -1) d = x;
+            else d = gcd(x, d);
+            if (i == N) last = x;
+        }
+
+        cout << last / d << endl;
+    }
+
+    return 0;
 } 

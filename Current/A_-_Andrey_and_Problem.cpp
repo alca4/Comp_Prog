@@ -46,10 +46,34 @@ ll power(ll a, ll b)
 }
 ll div(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
 
+const int MAXN = 110;
+int N;
+ld arr[MAXN];
+
 int main()
 {
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+
+    ld ans = 0.0;
+    sort(arr + 1, arr + 1 + N);
+    for (int k = N; k >= 1; k--)
+    {
+        ld curans = 0;
+        for (int i = k; i <= N; i++) 
+        {
+            ld inv = 1;
+            for (int j = k; j <= N; j++) if (i != j) inv *= (1.0 - arr[j]);
+            curans += inv * arr[i];
+        }
+        ans = max(ans, curans);
+    }
+
+    cout << fixed << setprecision(12) << ans << endl;
+    return 0;
 } 
