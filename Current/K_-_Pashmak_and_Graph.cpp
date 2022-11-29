@@ -46,10 +46,11 @@ ll power(ll a, ll b)
 }
 ll div(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
 
-const int MAXN = 110;
-
-int table[MAXN][MAXN];
-vector<pii> ops;
+const int MAXN = 300010;
+int N, M;
+int w[MAXN];
+vector<int> pos[64];
+int use[MAXN];
 
 int main()
 {
@@ -58,17 +59,9 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
-    int T;
-    cin >> T;
-    while (T--)
+    cin >> N >> M;
+    for (int i = 1; i <= M; i++)
     {
-        int N, M;
-        cin >> N >> M;
-        for (int i = 1; i <= N; i++) for (int j = 1; j <= M; j++)
-        {
-            char c;
-            cin >> c;
-            table[i][j] = c - '0';
-        }
+
     }
 } 

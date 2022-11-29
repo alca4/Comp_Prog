@@ -60,10 +60,30 @@ ll rand64()
     return (a << 32) | b;
 }
 
+const int MAXN = 300010;
+ll arr[MAXN];
+ll N, K;
+
 int main()
 {
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    cin >> N >> K;
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+    for (int i = 2; i <= N; i++) arr[i] += arr[i - 1];
+
+    multiset<ll> stuff;
+    for (int i = 1; i < N; i++) stuff.insert(arr[i]);
+
+    ll ans = K * arr[N];
+    for (int i = 1; i < K; i++) 
+    {
+        ans -= *stuff.begin();
+        stuff.erase(stuff.begin());
+    }
+    cout << ans << endl;
+    return 0;
 } 

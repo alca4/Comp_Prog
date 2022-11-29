@@ -18,7 +18,7 @@ using namespace std;
 #define ll long long
 #define ld long double
 ll INF = 1000000000;
-ll MOD = 1000000007;
+ll MOD = 998244353;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -60,10 +60,31 @@ ll rand64()
     return (a << 32) | b;
 }
 
+const int MAXN = 300010;
+int N;
+int arr[MAXN];
+ll fact[MAXN];
+ll factinv[MAXN];
+
 int main()
 {
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    cin >> N;
+    for (int i = 1; i <= 2 * N; i++) cin >> arr[i];
+
+    fact[0] = factinv[0] = 1;
+    for (int i = 1; i <= 2 * N; i++) fact[i] = mult(fact[i - 1], i);
+    for (int i = 1; i <= 2 * N; i++) factinv[i] = divide(factinv[i - 1], i);
+
+    sort(arr + 1, arr + 2 * N + 1);
+    ll ans = 0;
+    for (int i = 1; i <= N; i++) ans = sub(ans, arr[i]);
+    for (int i = N + 1; i <= 2 * N; i++) ans = add(ans, arr[i]);
+
+    cout << mult(ans, mult(fact[2 * N], mult(factinv[N], factinv[N]))) << endl;
+    return 0;
 } 
