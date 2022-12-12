@@ -17,8 +17,12 @@ using namespace std;
 #define pb push_back
 #define ll long long
 #define ld long double
+#define ull unsigned ll
 ll INF = 1000000000;
 ll MOD = 1000000007;
+
+ifstream fin(FILENAME + ".in");
+ofstream fout(FILENAME + ".out");
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;

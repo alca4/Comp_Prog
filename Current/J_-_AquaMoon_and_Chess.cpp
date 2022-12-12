@@ -18,7 +18,7 @@ using namespace std;
 #define ll long long
 #define ld long double
 ll INF = 1000000000;
-ll MOD = 1000000007;
+ll MOD = 998244353;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -60,19 +60,7 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 300010;
-int N, M;
-struct Edge
-{
-    int s, d, w;
-} edgelist[MAXN];
-int dist[MAXN];
-int tmp[MAXN];
-
-bool operator<(const Edge& e1, const Edge& e2)
-{
-    return e1.w < e2.w;
-}
+// ans = (N - #1s) groups-ate
 
 int main()
 {
@@ -81,30 +69,39 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
-    cin >> N >> M;
-    for (int i = 1; i <= M; i++)
-        cin >> edgelist[i].s >> edgelist[i].d >> edgelist[i].w;
+    ll factinv[100010];
+    factinv[0] = 1;
+    for (int i = 1; i <= 100000; i++) factinv[i] = divide(factinv[i - 1], i);
 
-    sort(edgelist + 1, edgelist + 1 + M);
-
-    for (int i = 1; i <= M; i++)
+    int T;
+    cin >> T;
+    while (T--)
     {
-        int n = i;
-        int w = edgelist[i].w;
-        for (; i <= M; i++) if (edgelist[i].w > w) break;
-        i--;
-
-        for (int j = n; j <= i; j++) 
-            tmp[edgelist[j].d] = max(tmp[edgelist[j].d], dist[edgelist[j].s] + 1);
-        for (int j = n; j <= i; j++) 
+        int N;
+        string str;
+        cin >> N;
+        cin >> str;
+        
+        ll num_ones = 0;
+        ll num_groups = 0;
+        for (int i = 0; i < str.length(); i++)
         {
-            dist[edgelist[j].d] = max(dist[edgelist[j].d], tmp[edgelist[j].d]);
-            tmp[edgelist[j].d] = 0;
+            if (str[i] == '1') 
+            {
+                num_ones++;
+                if (i < str.length() - 1 && str[i + 1] == '1')
+                {
+                    num_ones++;
+                    num_groups++;
+                    i++;
+                }
+            }
         }
-    }
 
-    int best = 0;
-    for (int i = 1; i <= N; i++) best = max(best, dist[i]);
-    cout << best << endl;
+        ll ate = N - num_ones + 1;
+        ll ans = factinv[num_groups];
+        for (int i = ate; i <= ate + num_groups - 1; i++) ans = mult(ans, i);
+        cout << ans << endl;
+    }
     return 0;
 } 

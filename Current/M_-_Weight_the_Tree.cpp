@@ -60,19 +60,11 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 300010;
-int N, M;
-struct Edge
-{
-    int s, d, w;
-} edgelist[MAXN];
-int dist[MAXN];
-int tmp[MAXN];
-
-bool operator<(const Edge& e1, const Edge& e2)
-{
-    return e1.w < e2.w;
-}
+const int MAXN = 200010;
+int N;
+vector<int> nbs[MAXN];
+pii dp[MAXN][2];
+vector<pii> next[MAXN][2];
 
 int main()
 {
@@ -81,30 +73,15 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
-    cin >> N >> M;
-    for (int i = 1; i <= M; i++)
-        cin >> edgelist[i].s >> edgelist[i].d >> edgelist[i].w;
-
-    sort(edgelist + 1, edgelist + 1 + M);
-
-    for (int i = 1; i <= M; i++)
+    cin >> N;
+    for (int i = 1; i < N; i++)
     {
-        int n = i;
-        int w = edgelist[i].w;
-        for (; i <= M; i++) if (edgelist[i].w > w) break;
-        i--;
-
-        for (int j = n; j <= i; j++) 
-            tmp[edgelist[j].d] = max(tmp[edgelist[j].d], dist[edgelist[j].s] + 1);
-        for (int j = n; j <= i; j++) 
-        {
-            dist[edgelist[j].d] = max(dist[edgelist[j].d], tmp[edgelist[j].d]);
-            tmp[edgelist[j].d] = 0;
-        }
+        int a, b;
+        cin >> a >> b;
+        nbs[a].pb(b);
+        nbs[b].pb(a);
     }
 
-    int best = 0;
-    for (int i = 1; i <= N; i++) best = max(best, dist[i]);
-    cout << best << endl;
+    DFS(1, 0);
     return 0;
 } 

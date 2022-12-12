@@ -17,8 +17,13 @@ using namespace std;
 #define pb push_back
 #define ll long long
 #define ld long double
+#define ull unsigned ll
+#define FILENAME 
 ll INF = 1000000000;
 ll MOD = 1000000007;
+
+ifstream fin(FILENAME + ".in");
+ofstream fout(FILENAME + ".out");
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -60,19 +65,9 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 300010;
-int N, M;
-struct Edge
-{
-    int s, d, w;
-} edgelist[MAXN];
-int dist[MAXN];
-int tmp[MAXN];
-
-bool operator<(const Edge& e1, const Edge& e2)
-{
-    return e1.w < e2.w;
-}
+const int MAXN = (1 << 18);
+int arr[MAXN];
+int N;
 
 int main()
 {
@@ -81,30 +76,19 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
-    cin >> N >> M;
-    for (int i = 1; i <= M; i++)
-        cin >> edgelist[i].s >> edgelist[i].d >> edgelist[i].w;
+    cin >> N;
+    for (int i = 0; i < (1 << N); i++) cin >> arr[i];
+    for (int i = 1; i < (1 << N); i++) arr[i] = arr[i] ^ arr[i - 1];
 
-    sort(edgelist + 1, edgelist + 1 + M);
+    for (int i = 0; i < (1 << N); i++) for (int j = N - 1; j >= 0; j--)
+        if (arr[i] & (1 << j)) arr[i] = (1 << j);
+    
+    int v = 0;
+    for (int i = 0; i < (1 << N); i++) v = v | arr[i];
 
-    for (int i = 1; i <= M; i++)
-    {
-        int n = i;
-        int w = edgelist[i].w;
-        for (; i <= M; i++) if (edgelist[i].w > w) break;
-        i--;
+    int ans = 0;
+    for (int i = 0; i < N; i++) if (!(v & (1 << i))) ans++;
 
-        for (int j = n; j <= i; j++) 
-            tmp[edgelist[j].d] = max(tmp[edgelist[j].d], dist[edgelist[j].s] + 1);
-        for (int j = n; j <= i; j++) 
-        {
-            dist[edgelist[j].d] = max(dist[edgelist[j].d], tmp[edgelist[j].d]);
-            tmp[edgelist[j].d] = 0;
-        }
-    }
-
-    int best = 0;
-    for (int i = 1; i <= N; i++) best = max(best, dist[i]);
-    cout << best << endl;
+    cout << (1 << ans) << endl;
     return 0;
 } 

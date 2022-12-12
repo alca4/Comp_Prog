@@ -60,18 +60,18 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 300010;
-int N, M;
-struct Edge
-{
-    int s, d, w;
-} edgelist[MAXN];
-int dist[MAXN];
-int tmp[MAXN];
+const int MAXN = 50010;
+int N;
 
-bool operator<(const Edge& e1, const Edge& e2)
+struct Point
 {
-    return e1.w < e2.w;
+    int x, y, z, id;
+} pts[MAXN];
+
+bool operator<(const Point& p1, const Point& p2)
+{
+    return pair<pii, int>(pii(p1.x, p1.y), p1.z) <
+           pair<pii, int>(pii(p2.x, p2.y), p2.z);
 }
 
 int main()
@@ -81,30 +81,14 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
-    cin >> N >> M;
-    for (int i = 1; i <= M; i++)
-        cin >> edgelist[i].s >> edgelist[i].d >> edgelist[i].w;
-
-    sort(edgelist + 1, edgelist + 1 + M);
-
-    for (int i = 1; i <= M; i++)
+    cin >> N;
+    for (int i = 1; i <= N; i++) 
     {
-        int n = i;
-        int w = edgelist[i].w;
-        for (; i <= M; i++) if (edgelist[i].w > w) break;
-        i--;
-
-        for (int j = n; j <= i; j++) 
-            tmp[edgelist[j].d] = max(tmp[edgelist[j].d], dist[edgelist[j].s] + 1);
-        for (int j = n; j <= i; j++) 
-        {
-            dist[edgelist[j].d] = max(dist[edgelist[j].d], tmp[edgelist[j].d]);
-            tmp[edgelist[j].d] = 0;
-        }
+        cin >> pts[i].x >> pts[i].y >> pts[i].z;
+        pts[i].id = i;
     }
 
-    int best = 0;
-    for (int i = 1; i <= N; i++) best = max(best, dist[i]);
-    cout << best << endl;
+    sort(pts + 1, pts + 1 + N);
+    for (int i = 1; i <= N; i += 2) cout << pts[i].id << " " << pts[i + 1].id << endl;
     return 0;
 } 
