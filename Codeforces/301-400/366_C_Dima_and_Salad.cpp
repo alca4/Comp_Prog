@@ -64,10 +64,33 @@ ll rand64()
     return (a << 32) | b;
 }
 
+const int MAXN = 110;
+int N, K;
+int a[MAXN], b[MAXN];
+int dp[MAXN][MAXN * MAXN * 10 * 2];
+
 int main()
 {
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    cin >> N >> K;
+    for (int i = 1; i <= N; i++) cin >> a[i];
+    for (int i = 1; i <= N; i++) cin >> b[i];
+
+    for (int i = 0; i <= N; i++) for (int j = 0; j <= 200000; j++) dp[i][j] = -INF;
+
+    dp[0][100000] = 0;
+    for (int i = 0; i < N; i++) for (int j = 0; j <= 200000; j++) if (dp[i][j] >= 0)
+    {
+        dp[i + 1][j] = max(dp[i + 1][j], dp[i][j]);
+        int v = j + a[i + 1] - K * b[i + 1];
+        if (v <= 200000) dp[i + 1][v] = max(dp[i + 1][v], dp[i][j] + a[i + 1]);
+    }
+
+    if (dp[N][100000] == 0) cout << -1 << endl;
+    else cout << dp[N][100000] << endl;
+    return 0;
 } 

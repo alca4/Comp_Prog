@@ -64,10 +64,32 @@ ll rand64()
     return (a << 32) | b;
 }
 
+const int MAXN = 100010;
+int N;
+int d[MAXN];
+
 int main()
 {
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> d[i];
+
+    map<int, int> mappy;
+    for (int i = 1; i <= N; i++) mappy[i] = 2 * i - 1;
+    for (int i = 1; i < N; i++) cout << i * 2 - 1 << " " << i * 2 + 1 << endl;
+
+    for (int i = 1; i <= N; i++)
+    {
+        int tar = i + d[i] - 1;
+        cout << i * 2 << " " << mappy[tar] << endl;
+
+        if (tar == mappy.begin()->FF) mappy[tar - 1] = i * 2;
+        if (tar == (--mappy.end())->FF) mappy[tar + 1] = i * 2;
+    }
+
+    return 0;
 } 

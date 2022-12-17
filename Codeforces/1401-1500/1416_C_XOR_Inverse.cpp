@@ -64,10 +64,76 @@ ll rand64()
     return (a << 32) | b;
 }
 
+const int MAXN = 300010;
+int N;
+int arr[MAXN];
+ll choice[31][2];
+
+void solve(vector<int>& vals, int b)
+{
+    int zs = 0;
+    int os = 0;
+    ll si = 0;
+    ll fi = 0;
+    vector<int> zeroes;
+    vector<int> ones;
+
+    for (int i = 0; i < vals.size(); i++)
+    {
+        if (arr[vals[i]] & (1 << b)) 
+        {
+            os++;
+            fi += zs;
+            ones.pb(vals[i]);
+        }
+        else
+        {
+            zs++;
+            si += os;
+            zeroes.pb(vals[i]);
+        }
+    }
+    vals.clear();
+
+    choice[b][0] += si;
+    choice[b][1] += fi;
+
+    if (b > 0)
+    {
+        if (zeroes.size() > 1) solve(zeroes, b - 1);
+        if (ones.size() > 1) solve(ones, b - 1);
+    }
+}
+
 int main()
 {
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    cin >> N;
+    vector<int> vals;
+    for (int i = 1; i <= N; i++) 
+    {
+        cin >> arr[i];
+        vals.pb(i);
+    }
+
+    solve(vals, 30);
+
+    ll invs = 0;
+    int ans = 0;
+    for (int i = 0; i <= 30; i++) 
+    {
+        if (choice[i][0] <= choice[i][1]) invs += choice[i][0];
+        else 
+        {
+            invs += choice[i][1];
+            ans |= (1 << i);
+        }
+    }
+
+    cout << invs << " " << ans << endl;
+    return 0;
 } 
