@@ -8,6 +8,8 @@ Rowlet is orz
 >(.)__ <(.)__ =(.)__
  (___/  (___/  (___/
 I am dum duck
+
+Praise to the Cow God
 */
 #include <bits/stdc++.h>
 using namespace std;

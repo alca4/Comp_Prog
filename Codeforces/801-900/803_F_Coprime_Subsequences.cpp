@@ -18,12 +18,11 @@ vector<int> primes;
 void find_divisors(int n)
 {
     if (n != 1) multiples[n]++;
-    for (int i = 2; i <= sqrt(n); i++)
-        if (n % i == 0) 
-        {
-            multiples[i]++;
-            if (n / i != i) multiples[n / i]++;
-        }   
+    for (int i = 2; i <= sqrt(n); i++) if (n % i == 0) 
+    {
+        multiples[i]++;
+        if (n / i != i) multiples[n / i]++;
+    }   
 }
 
 int main()
@@ -39,11 +38,8 @@ int main()
     two[0] = 1;
     for (int i = 1; i <= 100000; i++) two[i] = (two[i - 1] * 2) % MOD;
 
-    for (int i = 2; i <= 100000; i++)
-    {
-        if (!composite[i])
-            for (int j = i * 2; j <= 100000; j += i) composite[j] = 1;
-    }
+    for (int i = 2; i <= 100000; i++) if (!composite[i])
+        for (int j = i * 2; j <= 100000; j += i) composite[j] = 1;
 
     for (int i = 2; i <= 100000; i++)
         if (!composite[i]) primes.push_back(i);

@@ -144,12 +144,7 @@ int main()
     }
 
     ll ans = N * (N - 1) * (N - 2) / 6;
-    
-    for (int i = 1; i <= N; i++)
-    {
-        ans -= sum[i] * (sum[i] - 1) / 2;
-    }
-
+    for (int i = 1; i <= N; i++) ans -= sum[i] * (sum[i] - 1) / 2;
     cout << ans << endl;
     return 0;
 }
