@@ -1,4 +1,5 @@
 int p[MAXN], sz[MAXN];
+void setup_dsu() {for (int i = 1; i <= N; i++) p[i] = i, sz[i] = 1;}
 int root(int a) {return p[a] = (a == p[a] ? a : root(p[a]));}
 int combine(int a, int b)
 {
