@@ -24,6 +24,16 @@
         "string_view": "cpp",
         "valarray": "cpp",
         "chrono": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "__node_handle": "cpp",
+        "filesystem": "cpp",
+        "forward_list": "cpp",
+        "atomic": "cpp",
+        "ios": "cpp",
+        "system_error": "cpp",
+        "iostream": "cpp",
+        "any": "cpp",
+        "ranges": "cpp",
+        "stacktrace": "cpp"
     }
 }

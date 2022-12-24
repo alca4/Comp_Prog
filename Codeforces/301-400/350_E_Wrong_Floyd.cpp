@@ -38,7 +38,7 @@ int main()
     cout << endl;
     */
 
-    if (M < N - 1 || M > N * (N - 1) / 2 - K + 1 || K == N)
+    if (M > N * (N - 1) / 2 - K + 1 || K == N)
     {
         cout << -1 << endl;
         return 0;
@@ -62,20 +62,20 @@ int main()
             edges.push_back(pii(marked[i], unmarked[j]));
             M--;
         }
-    
-    for (int i = 1; i < marked.size(); i++)
-        for (int j = i + 1; j < marked.size(); j++)
-        {
-            if (M == 0) {break;}
-            edges.push_back(pii(marked[i], marked[j]));
-            M--;
-        }
 
     for (int i = 0; i < unmarked.size(); i++)
         for (int j = i + 1; j < unmarked.size(); j++)
         {
             if (M == 0) {break;}
             edges.push_back(pii(unmarked[i], unmarked[j]));
+            M--;
+        }
+    
+    for (int i = 1; i < marked.size(); i++)
+        for (int j = i + 1; j < marked.size(); j++)
+        {
+            if (M == 0) {break;}
+            edges.push_back(pii(marked[i], marked[j]));
             M--;
         }
 
