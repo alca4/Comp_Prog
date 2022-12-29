@@ -34,6 +34,12 @@
         "iostream": "cpp",
         "any": "cpp",
         "ranges": "cpp",
-        "stacktrace": "cpp"
+        "stacktrace": "cpp",
+        "ostream": "cpp",
+        "complex": "cpp",
+        "__bit_reference": "cpp",
+        "__string": "cpp",
+        "*.tcc": "cpp",
+        "__locale": "cpp"
     }
 }
