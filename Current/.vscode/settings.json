@@ -40,6 +40,8 @@
         "__bit_reference": "cpp",
         "__string": "cpp",
         "*.tcc": "cpp",
-        "__locale": "cpp"
+        "__locale": "cpp",
+        "cmath": "cpp",
+        "numeric": "cpp"
     }
 }

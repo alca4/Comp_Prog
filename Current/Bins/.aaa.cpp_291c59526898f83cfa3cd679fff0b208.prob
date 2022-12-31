@@ -1,1 +1,0 @@
-{"name":"Local: aaa","url":"/Users/rowlet/Documents/Comp_Prog/Current/aaa.cpp","tests":[{"id":1672186869627,"input":"6 5\n1 1 4 5 1 4","output":"2"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/Users/rowlet/Documents/Comp_Prog/Current/aaa.cpp","group":"local","local":true}
