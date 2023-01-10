@@ -89,6 +89,19 @@ int combine(int a, int b)
 int special[MAXN];
 int assign[MAXN];
 
+vector<int> nbs[MAXN];
+int vis[MAXN];
+void DFS(int a, int p)
+{
+    vis[a] = 1;
+    for (int i = 0; i < nbs[a].size(); i++) 
+        if (!special[nbs[a][i]] && !vis[nbs[a][i]] && nbs[a][i] != p)
+    {
+        cout << a << " " << nbs[a][i] << endl;
+        DFS(nbs[a][i], a);
+    }
+}
+
 int main()
 {
     srand(time(NULL));
@@ -103,6 +116,8 @@ int main()
     {
         int a, b;
         cin >> a >> b;
+        nbs[a].pb(b);
+        nbs[b].pb(a);
         if (a > b) swap(a, b);
         if (a == 1) onbs.pb(b);
         else combine(a, b);
@@ -125,7 +140,8 @@ int main()
             {
                 assign[onbs[i]] = root(onbs[i]);
                 roots.erase(root(onbs[i]));
-                ans.pb({1, onbs[i]});
+                cout << 1 << " " << onbs[i] << endl;
+                special[onbs[i]] = 1;
                 x++;
             }
         }
@@ -134,26 +150,17 @@ int main()
             if (x == D) break;
             if (assign[onbs[i]] == 0)
             {
-                ans.pb({1, onbs[i]});
+                cout << 1 << " " << onbs[i] << endl;
                 x++;
                 special[onbs[i]] = 1;
             }
         }
-        for (int i = 1; i <= M; i++) 
+
+        for (int i = 2; i <= N; i++) if (special[i] && !vis[i])
         {
             if (x == N - 1) break;
-            if (!special[edgelist[i].FF] && !special[edgelist[i].SS] &&
-                root(edgelist[i].FF) == root(edgelist[i].SS))
-            {
-                cout << edgelist[i].FF << " " << edgelist[i].SS << endl;
-                ans.pb({edgelist[i].FF, edgelist[i].SS});
-                x++;
-            }
+            DFS(i, 0);
         }
-
-        cout << endl;
-
-        for (int i = 0; i < N - 1; i++) cout << ans[i].FF << " " << ans[i].SS << endl;
     }
     return 0;
 } 

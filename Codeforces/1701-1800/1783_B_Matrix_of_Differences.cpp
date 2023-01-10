@@ -66,34 +66,6 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 200010;
-int N, Q;
-vector<int> arr;
-int last_occ[256];
-set<int> w[256];
-
-void fill(int a)
-{
-    priority_queue<pii> pq;
-    pq.push({last_occ[a], a});
-    while (!pq.empty())
-    {
-        int n = pq.top().SS;
-        pq.pop();
-
-        for (int i = 0; i < 8; i++) 
-        {
-            int nb = (a ^ (1 << i));
-            if (last_occ[nb] != 0 && last_occ[nb] < last_occ[a])
-            {
-                pq.push({last_occ[nb], nb});
-                if (w[n].size()) w[nb].erase(n);
-                else w[nb].insert(n);
-            }
-        }
-    }
-}
-
 int main()
 {
     srand(time(NULL));
@@ -101,43 +73,44 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
-    cin >> N >> Q;
-    arr.pb(256);
-    for (int i = 1; i <= N; i++)
+    int T;
+    cin >> T;
+    while (T--)
     {
-        int a;
-        cin >> a;
-        arr.pb(a);
-        last_occ[a] = i;
-    }
+        int N;
+        cin >> N;
+        int v = 0;
+        int cnt = 1;
 
-    for (int i = N; i >= 1; i--) fill(arr[i]);
-
-    // for (int i = 1; i <= N; i++) cout << (w[arr[i]].size() || (i != last_occ[arr[i]])) << " ";
-    // cout << endl;
-
-    while (Q--)
-    {
-        int t;
-        cin >> t;
-        if (t == 1)
+        int mat[60][60];
+        for (int i = 1; i <= N; i++)
         {
-            int a;
-            cin >> a;
-            arr.pb(a);
-            last_occ[a] = ++N;
-            fill(a);
+            if (i % 2)
+            {
+                for (int j = 1; j <= N; j++) 
+                {
+                    if (cnt % 2) mat[i][j] = ++v;
+                    else mat[i][j] = N * N + 1 - v;
+                    cnt++;
+                }
+            }
+            else
+            {
+                for (int j = N; j >= 1; j--) 
+                {
+                    if (cnt % 2) mat[i][j] = ++v;
+                    else mat[i][j] = N * N + 1 - v;
+                    cnt++;
+                }
+            }
+        }
 
-            for (int i = 1; i <= N; i++) cout << w[arr[i]].size()  << " ";
+        for (int i = 1; i <= N; i++) 
+        {
+            for (int j = 1; j <= N; j++) cout << mat[i][j] << " ";
             cout << endl;
         }
-        if (t == 2)
-        {
-            int a;
-            cin >> a;
-            if (a != last_occ[arr[a]] || w[arr[a]].size()) cout << "Alice" << endl;
-            else cout << "Bob" << endl;
-        }
     }
+
     return 0;
 } 
