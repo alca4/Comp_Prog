@@ -68,10 +68,17 @@ ll rand64()
     return (a << 32) | b;
 }
 
+ll N, M, K, X;
+
 int main()
 {
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    cin >> N >> M >> K >> X;
+    MOD = N;
+    cout << add(X, mult(M, power(10, K))) << endl;
+    return 0;
 } 

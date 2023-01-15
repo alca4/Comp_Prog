@@ -21,9 +21,7 @@ using namespace std;
 #define ld long double
 #define ull unsigned ll
 ll INF = 1000000000;
-ll LINF = 1000000000000000000;
-ll MOD = 1000000007;
-// ll MOD = 998244353;
+ll MOD = 998244353;
 
 ifstream fin(".in");
 ofstream fout(".out");
@@ -68,10 +66,39 @@ ll rand64()
     return (a << 32) | b;
 }
 
+const int MAXN = 310;
+const int D = 90000;
+int arr[MAXN];
+ll dp[MAXN][MAXN * MAXN * 2];
+
 int main()
 {
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    int N;
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+
+    dp[1][arr[2] + D] = 1;
+    for (int i = 1; i <= N - 2; i++) for (int k = 0; k <= 180000; k++)
+        if (dp[i][k]) 
+        {
+            dp[i + 1][arr[i + 2] + k] += dp[i][k];
+            if (k - D != 0) dp[i + 1][arr[i + 2] - k + 2 * D] += dp[i][k];
+            dp[i + 1][arr[i + 2] + k] %= MOD;
+            dp[i + 1][arr[i + 2] - k + 2 * D] %= MOD;
+        }
+    
+    int ans = 0;
+    for (int i = 0; i <= 180000; i++) 
+    {
+        ans += dp[N - 1][i];
+        ans %= MOD;
+    }
+    
+    cout << ans << endl;
+    return 0;
 } 

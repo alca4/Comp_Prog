@@ -68,10 +68,58 @@ ll rand64()
     return (a << 32) | b;
 }
 
+const int MAXN = 100010;
+int N;
+int arr[2 * MAXN];
+int tmp[2 * MAXN];
+
 int main()
 {
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    cin >> N;
+    for (int i = 1; i < 2 * N; i++) cin >> arr[i];
+
+    int lb = 1, ub = 2 * N - 1;
+    int fans;
+    while (lb <= ub)
+    {
+        int mid = (lb + ub) / 2;
+
+        for (int i = 1; i < 2 * N; i++) tmp[i] = arr[i] > mid;
+
+        set<pii> ranges;
+
+        int s = 1;
+        for (int i = 1; i < 2 * N; i++)
+        {
+            while (i < 2 * N && tmp[i] == tmp[s]) i++;
+            if (i - s > 1) ranges.insert({s, i - 1});
+            s = i;
+        }
+
+        int best_dist = 2 * N;
+        int ans;
+        for (auto n : ranges)
+        {
+            if (n.FF <= N && N <= n.SS) 
+                best_dist = 0, ans = tmp[N];
+            if (n.SS < N && N - n.SS < best_dist)
+                best_dist = N - n.SS, ans = tmp[n.SS];
+            if (n.FF > N && n.FF - N < best_dist)
+                best_dist = n.FF - N, ans = tmp[n.FF];
+        }
+        
+        if (ranges.empty()) 
+            ans = tmp[1];
+
+        if (ans) lb = mid + 1;
+        else fans = mid, ub = mid - 1;
+    }
+
+    cout << fans << endl;
+    return 0;
 } 

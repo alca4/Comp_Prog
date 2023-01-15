@@ -68,10 +68,48 @@ ll rand64()
     return (a << 32) | b;
 }
 
+int sieve[100010];
+vector<int> primes;
+
 int main()
 {
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    for (int i = 2; i <= 100000; i++)
+    {
+        if (!sieve[i])
+        {
+            primes.pb(i);
+            for (int j = i; j <= 100000; j += i) sieve[j] = 1;
+        }
+    }
+
+    int T;
+    cin >> T;
+    while (T--)
+    {
+        int a0, a1, b0, b1;
+        cin >> a0 >> a1 >> b0 >> b1;
+
+        set<int> nums;
+        for (int i = 1; i <= 100000; i++) if (b1 % i == 0)
+        {
+            nums.insert(i);
+            nums.insert(b1 / i);
+        }
+
+        int ans = 0;
+        for (auto n : nums)
+        {
+            if (gcd(n, a0) == a1 && n / gcd(n, b0) * b0 == b1)
+                ans++;
+        }
+
+        cout << ans << endl;
+    }
+
+    return 0;
 } 

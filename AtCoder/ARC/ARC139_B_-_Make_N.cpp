@@ -20,10 +20,8 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define ull unsigned ll
-ll INF = 1000000000;
-ll LINF = 1000000000000000000;
+ll INF = 1000000000000000000;
 ll MOD = 1000000007;
-// ll MOD = 998244353;
 
 ifstream fin(".in");
 ofstream fout(".out");
@@ -74,4 +72,39 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    int T;
+    cin >> T;
+    while (T--)
+    {
+        ll N, A, B, X, Y, Z;
+        cin >> N >> A >> B >> X >> Y >> Z;
+
+        ll g = gcd(A, B);
+        ll l = A / g * B;
+
+        ll ans = N * X;
+        if (Z * A > B * Y)
+        {
+            for (int i = 0; i < A / g; i++)
+            {
+                ll n = N - B * i;
+                if (n < 0) break;
+                ans = min(ans, (n / A) * Y + (n % A) * X + Z * i);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < B / g; i++)
+            {
+                ll n = N - A * i;
+                if (n < 0) break;
+                ans = min(ans, (n / B) * Z + (n % B) * X + Y * i);
+            }
+        }
+
+        cout << ans << endl;
+    }
+
+    return 0;
 } 

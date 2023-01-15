@@ -42,6 +42,7 @@
         "*.tcc": "cpp",
         "__locale": "cpp",
         "cmath": "cpp",
-        "numeric": "cpp"
+        "numeric": "cpp",
+        "fstream": "cpp"
     }
 }
