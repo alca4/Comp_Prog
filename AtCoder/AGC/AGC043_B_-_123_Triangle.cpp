@@ -21,7 +21,9 @@ using namespace std;
 #define ld long double
 #define ull unsigned ll
 ll INF = 1000000000;
+ll LINF = 1000000000000000000;
 ll MOD = 1000000007;
+// ll MOD = 998244353;
 
 ifstream fin(".in");
 ofstream fout(".out");
@@ -66,18 +68,9 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 510, MAXM = 10010;
-int N, C;
-struct App
-{
-    int d, s, id;
-} apps[MAXN];
-int dp[MAXN][MAXM];
-pii p[MAXN][MAXM];
-
-bool operator<(const App& p1, const App& p2)
-{
-}
+const int MAXN = 1000010;
+int N;
+int arr[MAXN];
 
 int main()
 {
@@ -86,56 +79,33 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
-    cin >> N >> C;
-    for (int i = 1; i <= N; i++) 
-    {
-        cin >> apps[i].d >> apps[i].s;
-        apps[i].id = i;
-    }
+    int has_one = 0;
+    cin >> N;
 
-    sort(apps + 1, apps + 1 + N);
-
-    dp[0][C] = 1;
     for (int i = 1; i <= N; i++)
     {
-        for (int j = max(0, apps[i].d - apps[i].s); j <= C - apps[i].s; j++)
-        {
-            if (dp[i - 1][j + apps[i].s])
-            {
-                if (dp[i - 1][j + apps[i].s] + 1 > dp[i][j])
-                {
-                    dp[i][j] = dp[i - 1][j + apps[i].s] + 1;
-                    p[i][j] = {i - 1, j + apps[i].s};
-                }
-            }
-        }
-        for (int j = 0; j <= C; j++)
-        {
-            if (dp[i - 1][j] > dp[i][j])
-            {
-                dp[i][j] = dp[i - 1][j];
-                p[i][j] = {i - 1, j};
-            }
-        }
+        char c;
+        cin >> c;
+        if (c == '2') has_one = 1;
+        arr[i] = c - '1';
     }
+
+    if (has_one) for (int i = 1; i <= N; i++) arr[i] %= 2;
+    else for (int i = 1; i <= N; i++) arr[i] /= 2;
 
     int ans = 0;
-    for (int i = 0; i <= C; i++) if (dp[N][i] > dp[N][ans]) ans = i;
-    
-    vector<int> points;
-    int i = N, j = ans;
-    while (i != 0 && j != C)
+    for (int i = 1; i <= N; i++)
     {
-        if (j != p[i][j].SS) points.pb(apps[i].id);
-        pii tmp = p[i][j];
-        i = tmp.FF;
-        j = tmp.SS;
+        int f = 1;
+        for (int j = 0; j < 32; j++)
+            if (!((N - 1) & (1 << j)) && ((i - 1) & (1 << j))) 
+                f = 0;
+        ans += arr[i] * f;
+        ans %= 2;
     }
 
-    reverse(points.begin(), points.end());
+    if (!has_one) ans *= 2;
     
-    cout << points.size() << endl;
-    for (int i = 0; i < points.size(); i++) cout << points[i] << " ";
-    if (points.size() != 0) cout << endl;
+    cout << ans << endl;
     return 0;
 } 

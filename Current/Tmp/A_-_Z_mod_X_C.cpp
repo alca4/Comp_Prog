@@ -68,35 +68,21 @@ ll rand64()
     return (a << 32) | b;
 }
 
-map<int, int> checkpoints;
-int i, j, k;
-
-void solve(int a, int b)
-{
-    cout << a << " " << b << endl;
-    ll v;
-    cin >> v;
-
-    
-}
-
 int main()
 {
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-
-    for (int i = 1; i * i <= 2000000000; i++)
-        checkpoints[i * (i - 1) / 2] = i;
-
+    
     int T;
     cin >> T;
     while (T--)
     {
-        int N;
-        cin >> N;
-
-        solve(1, N);
+        int a, b, c;
+        cin >> a >> b >> c;
+        cout << a + b + c << " " << b + c << " " << c << endl;
     }
+
+    return 0;
 } 
