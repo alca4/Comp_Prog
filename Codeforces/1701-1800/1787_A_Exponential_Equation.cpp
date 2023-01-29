@@ -53,8 +53,6 @@ ll power(ll a, ll b)
     return ans;
 }
 ll divide(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
-void maxeq(ll& a, ll b) {a = max(a, b);}
-void mineq(ll& a, ll b) {a = min(a, b);}
 
 int rand32()
 {
@@ -70,15 +68,13 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 410;
-int N;
-ll arr[MAXN];
-ll dp[MAXN][MAXN][MAXN];
-
-struct Loc
+void solve()
 {
-    int x, y, z;
-};
+    int N;
+    cin >> N;
+    if (N % 2) cout << -1 << endl;
+    else cout << 1 << " " << N / 2 << endl;
+}
 
 int main()
 {
@@ -87,36 +83,7 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
-    cin >> N;
-    for (int i = 1; i <= N; i++) cin >> arr[i];
-
-    dp[0][1][0] = 1;
-    for (int k = 0; k <= (N + 1) / 2 + 1; k++)
-    {
-        for (int i = 0; i <= N; i++)
-        {
-            for (int j = 1; j <= N; j++)
-            {
-                if (!dp[i][j][k]) continue;
-                if (i > 0) 
-                {
-                    if (arr[i] > arr[i + j])
-                        maxeq(dp[i - 1][j + 1][k], dp[i][j][k]);
-                    if ((j + 1) / 2 >= (k + 1)) 
-                        maxeq(dp[i - 1][j + 1][k + 1], dp[i][j][k] + arr[i]);
-                }
-                if (i + j <= N)
-                {
-                    if (arr[i] < arr[i + j])
-                        maxeq(dp[i][j + 1][k], dp[i][j][k]);
-                    if ((j + 1) / 2 >= (k + 1)) 
-                        maxeq(dp[i][j + 1][k + 1], dp[i][j][k] + arr[i + j]);
-                }
-                dp[i][j][k] = 0;
-            }
-        }
-    }
-
-    cout << dp[0][N + 1][(N + 1) / 2] - 1 << endl;
-    return 0;
+    int T;
+    cin >> T;
+    while (T--) solve();
 } 
