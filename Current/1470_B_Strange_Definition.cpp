@@ -68,27 +68,43 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 110, MAXM = 1010;
-int N;
+const int MAXN = 300010;
+ll sieve[1010];
+vector<int> primes;
 int arr[MAXN];
-ll dp[MAXN][MAXM];
 
-ll solve()
+void solve()
 {
-    for (int i = 1; i <= N; i++) for (int j = 0; j <= 1000; j++) dp[i][j] = 0;
-    for (int i = 0; i <= 1000; i++) dp[0][i] = 1;
+    int N, Q;
+    cin >> N;
 
+    for (int i = 1; i <= N; i++) cin >> arr[i];
     for (int i = 1; i <= N; i++) 
     {
-        for (int j = 0; j <= 1000; j++)
-        {
-            if (arr[i] >= j) dp[i][j] += dp[i - 1][arr[i] - j];
-            if (j > 0) dp[i][j] += dp[i][j - 1];
-            if (dp[i][j] >= MOD) dp[i][j] -= MOD;
-        }
+        for (int j = 0; j < primes.size(); j++) 
+            while (arr[i] % primes[j] == 0) arr[i] /= primes[j];
     }
 
-    return dp[N][0];
+    map<int, int> m;
+    for (int i = 1; i <= N; i++) m[arr[i]]++;
+
+    int ans_0 = 1;
+    for (auto n : m) ans_0 = max(ans_0, n.SS);
+
+    int ans_1 = 0;
+    for (auto n : m) if (n.FF == 1 || n.SS % 2 == 0) ans_1 += n.SS;
+    ans_1 = max(ans_0, ans_1);
+
+    cin >> Q;
+    while (Q--)
+    {
+        ll x;
+        cin >> x;
+
+        if (x == 0) cout << ans_0 << endl;
+        else cout << ans_1 << endl;
+    }
+    for (int i = 1; i <= N; i++) arr[i] = 0;
 }
 
 int main()
@@ -98,27 +114,18 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
-    cin >> N;
-    for (int i = 1; i <= N; i++) cin >> arr[i];
-
-    ll ans = 0;
-    if (N % 2)
+    for (int i = 2; i <= 1000; i++)
     {
-        bool cont = 1;
-        for (int i = 0; i <= 1000; i++)
+        if (!sieve[i])
         {
-            if (!cont) break;
-            ans += solve();
-            if (ans >= MOD) ans -= MOD;
-            for (int j = 1; j <= N; j++) 
-            {
-                arr[j]--;
-                if (arr[j] < 0) cont = 0;
-            }
+            primes.pb(i * i);
+            for (int j = i; j <= 1000; j += i) sieve[j] = 1;
         }
     }
-    else ans = solve();
 
-    cout << ans << endl;
+    int T;
+    cin >> T;
+    while (T--) solve();
+
     return 0;
 } 

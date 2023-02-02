@@ -68,28 +68,9 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 110, MAXM = 1010;
-int N;
-int arr[MAXN];
-ll dp[MAXN][MAXM];
-
-ll solve()
-{
-    for (int i = 1; i <= N; i++) for (int j = 0; j <= 1000; j++) dp[i][j] = 0;
-    for (int i = 0; i <= 1000; i++) dp[0][i] = 1;
-
-    for (int i = 1; i <= N; i++) 
-    {
-        for (int j = 0; j <= 1000; j++)
-        {
-            if (arr[i] >= j) dp[i][j] += dp[i - 1][arr[i] - j];
-            if (j > 0) dp[i][j] += dp[i][j - 1];
-            if (dp[i][j] >= MOD) dp[i][j] -= MOD;
-        }
-    }
-
-    return dp[N][0];
-}
+const int MAXN = 200010;
+int N, M;
+vector<int> nbs[MAXN];
 
 int main()
 {
@@ -98,27 +79,14 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
-    cin >> N;
-    for (int i = 1; i <= N; i++) cin >> arr[i];
-
-    ll ans = 0;
-    if (N % 2)
+    cin >> N >> M;
+    for (int i = 1; i <= M; i++) 
     {
-        bool cont = 1;
-        for (int i = 0; i <= 1000; i++)
-        {
-            if (!cont) break;
-            ans += solve();
-            if (ans >= MOD) ans -= MOD;
-            for (int j = 1; j <= N; j++) 
-            {
-                arr[j]--;
-                if (arr[j] < 0) cont = 0;
-            }
-        }
+        int a, b;
+        cin >> a >> b;
+        nbs[a].pb(b);
+        nbs[b].pb(a);
     }
-    else ans = solve();
 
-    cout << ans << endl;
-    return 0;
+    
 } 

@@ -68,27 +68,22 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 110, MAXM = 1010;
+const int MAXN = 200010;
 int N;
 int arr[MAXN];
-ll dp[MAXN][MAXM];
+ll dp[MAXN];
 
-ll solve()
+ll fact[1000010];
+ll factinv[1000010];
+
+ll choose(int a, int b)
 {
-    for (int i = 1; i <= N; i++) for (int j = 0; j <= 1000; j++) dp[i][j] = 0;
-    for (int i = 0; i <= 1000; i++) dp[0][i] = 1;
+    return mult(fact[a], mult(factinv[b], factinv[a - b]));
+}
 
-    for (int i = 1; i <= N; i++) 
-    {
-        for (int j = 0; j <= 1000; j++)
-        {
-            if (arr[i] >= j) dp[i][j] += dp[i - 1][arr[i] - j];
-            if (j > 0) dp[i][j] += dp[i][j - 1];
-            if (dp[i][j] >= MOD) dp[i][j] -= MOD;
-        }
-    }
-
-    return dp[N][0];
+ll sb(int a, int b)
+{
+    return choose(a + b, b);
 }
 
 int main()
@@ -98,27 +93,29 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
+    fact[0] = factinv[0] = 1;
+    for (int i = 1; i <= 500000; i++) fact[i] = mult(fact[i - 1], i);
+    for (int i = 1; i <= 500000; i++) factinv[i] = divide(factinv[i - 1], i);
+
     cin >> N;
-    for (int i = 1; i <= N; i++) cin >> arr[i];
-
-    ll ans = 0;
-    if (N % 2)
+    for (int i = 1; i <= N; i++)
     {
-        bool cont = 1;
-        for (int i = 0; i <= 1000; i++)
-        {
-            if (!cont) break;
-            ans += solve();
-            if (ans >= MOD) ans -= MOD;
-            for (int j = 1; j <= N; j++) 
-            {
-                arr[j]--;
-                if (arr[j] < 0) cont = 0;
-            }
-        }
+        cin >> arr[i];
+        arr[i] /= 2;
     }
-    else ans = solve();
 
-    cout << ans << endl;
+    dp[N] = 1;
+    for (int i = N - 1; i >= 1; i--)
+    {
+        if (arr[i] >= arr[i + 1])
+        {
+            // int x = arr[i] - (arr[i + 1] - 1);
+            // cout << arr[i] - arr[i + 1] + 1 << " " << arr[i + 1] + 1 << endl;
+            dp[i] = (dp[i + 1] * sb(arr[i] - arr[i + 1], arr[i + 1])) % MOD;
+        }
+        else dp[i] = (dp[i + 1] * choose(arr[i + 1] - 1, arr[i] - 1)) % MOD;
+    }
+
+    cout << dp[1] << endl;
     return 0;
 } 

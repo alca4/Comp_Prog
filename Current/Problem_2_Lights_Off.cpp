@@ -20,7 +20,7 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define ull unsigned ll
-ll INF = 1000000000;
+int INF = 1000000000;
 ll LINF = 1000000000000000000;
 ll MOD = 1000000007;
 // ll MOD = 998244353;
@@ -68,27 +68,46 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 110, MAXM = 1010;
+const int MAXN = 19;
 int N;
-int arr[MAXN];
-ll dp[MAXN][MAXM];
+int dp[MAXN][1 << MAXN];
 
-ll solve()
+void solve()
 {
-    for (int i = 1; i <= N; i++) for (int j = 0; j <= 1000; j++) dp[i][j] = 0;
-    for (int i = 0; i <= 1000; i++) dp[0][i] = 1;
-
-    for (int i = 1; i <= N; i++) 
+    // cout << "==========" << endl;
+    int a = 0, b = 0;
+    for (int i = 0; i < N; i++)
     {
-        for (int j = 0; j <= 1000; j++)
-        {
-            if (arr[i] >= j) dp[i][j] += dp[i - 1][arr[i] - j];
-            if (j > 0) dp[i][j] += dp[i][j - 1];
-            if (dp[i][j] >= MOD) dp[i][j] -= MOD;
-        }
+        char c;
+        cin >> c;
+        a |= (c - '0') << (N - i - 1);
+    }
+    for (int i = 0; i < N; i++)
+    {
+        char c;
+        cin >> c;
+        b |= (c - '0') << (N - i - 1);
     }
 
-    return dp[N][0];
+    if (a == 0) 
+    {
+        cout << 0 << endl;
+        return;
+    }
+
+    for (int i = 1; i <= 2 * N; i++)
+    {
+        a ^= b;
+
+        if (b % 2) b += (1 << N);
+        b = (b >> 1);
+
+        if (dp[i][a])
+        {
+            cout << i << endl;
+            return;
+        }
+    }
 }
 
 int main()
@@ -98,27 +117,26 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
-    cin >> N;
-    for (int i = 1; i <= N; i++) cin >> arr[i];
+    int T;
+    cin >> T >> N;
 
-    ll ans = 0;
-    if (N % 2)
+    dp[0][0] = 1;
+    for (int i = 1; i <= N; i++) for (int mask = 0; mask < (1 << N); mask++)
     {
-        bool cont = 1;
-        for (int i = 0; i <= 1000; i++)
+        int change = (1 << i) - 1;
+        int t1 = change, t2 = 0;
+        for (int j = 0; j < N; j++)
         {
-            if (!cont) break;
-            ans += solve();
-            if (ans >= MOD) ans -= MOD;
-            for (int j = 1; j <= N; j++) 
+            if (t1 >= (1 << N))
             {
-                arr[j]--;
-                if (arr[j] < 0) cont = 0;
+                t2 = (t2 << 1) + 1;
+                t1 %= (1 << N);
             }
+            if (dp[i - 1][t1 ^ mask ^ t2]) dp[i][mask] = 1;
+            t1 = (t1 << 1);
         }
     }
-    else ans = solve();
 
-    cout << ans << endl;
+    while (T--) solve();
     return 0;
 } 
