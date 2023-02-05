@@ -69,21 +69,46 @@ ll rand64()
 }
 
 const int MAXN = 200010;
-int N;
-int arr[MAXN];
-ll dp[MAXN];
+int N, L, R, Q;
+string nodes[MAXN];
+int nbs[MAXN][26];
+int sz[MAXN];
+set<pair<pii, int>> ranges[MAXN];
+map<char, vector<pii>> contains;
 
-ll fact[1000010];
-ll factinv[1000010];
-
-ll choose(int a, int b)
+void DFS(int a)
 {
-    return mult(fact[a], mult(factinv[b], factinv[a - b]));
+    if (sz[a] != 0) return;
+    for (int i = 0; i < nodes[a].length(); i++) 
+    {
+        if (nodes[a][i] <= 90) 
+        {
+            DFS(nbs[a][nodes[a][i] - 'A']);
+            sz[a] += sz[nbs[a][nodes[a][i] - 'A']];
+        }
+        else 
+        {
+            // ranges.insert({{sz[a] + 1, sz[a] + 1}, })
+            // sz[a]++;
+        }
+    }
 }
 
-ll sb(int a, int b)
+void findChar(int a, int l, int r, int v)
 {
-    return choose(a + b, b);
+    if (v < l || v > r) return;
+    int s = l;
+    for (int i = 0; i < nodes[a].length(); i++)
+    {
+        if (s > v) 
+        if (nodes[a][i] <= 90) 
+        {
+            int nb = nbs[a][nodes[a][i] - 'A'];
+            findChar(nb, s, s + sz[nb] - 1, v);
+            s += sz[nb];
+        }
+        else s++;
+    }
 }
 
 int main()
@@ -93,29 +118,28 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
-    fact[0] = factinv[0] = 1;
-    for (int i = 1; i <= 500000; i++) fact[i] = mult(fact[i - 1], i);
-    for (int i = 1; i <= 500000; i++) factinv[i] = divide(factinv[i - 1], i);
-
-    cin >> N;
-    for (int i = 1; i <= N; i++)
+    cin >> L >> R >> Q;
+    nodes[++N] = "a";
+    contains['a'].pb({1, 0});
+    while (Q--)
     {
-        cin >> arr[i];
-        arr[i] /= 2;
-    }
-
-    dp[N] = 1;
-    for (int i = N - 1; i >= 1; i--)
-    {
-        if (arr[i] >= arr[i + 1])
+        char s;
+        string e;
+        cin >> s >> e;
+        nodes[++N] = e;
+        for (auto n : contains[s]) 
         {
-            // int x = arr[i] - (arr[i + 1] - 1);
-            // cout << arr[i] - arr[i + 1] + 1 << " " << arr[i + 1] + 1 << endl;
-            dp[i] = (dp[i + 1] * sb(arr[i] - arr[i + 1], arr[i + 1])) % MOD;
+            nbs[n.FF][nodes[n.FF][n.SS] - 'a'] = N;
+            // cout << n.FF << " at " << nodes[n.FF][n.SS] << " goes to " << N << endl;
+            nodes[n.FF][n.SS] = toupper(nodes[n.FF][n.SS]);
         }
-        else dp[i] = (dp[i + 1] * choose(arr[i + 1] - 1, arr[i] - 1)) % MOD;
+        contains[s].clear();
+        for (int i = 0; i < e.length(); i++) contains[e[i]].pb({N, i});
     }
 
-    cout << dp[1] << endl;
+    DFS(1);
+
+    findChar()
+
     return 0;
 } 

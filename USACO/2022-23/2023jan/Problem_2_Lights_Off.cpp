@@ -68,7 +68,7 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 19;
+const int MAXN = 21;
 int N;
 int dp[MAXN][1 << MAXN];
 
@@ -95,7 +95,7 @@ void solve()
         return;
     }
 
-    for (int i = 1; i <= 2 * N; i++)
+    for (int i = 1; i <= N; i++)
     {
         a ^= b;
 
@@ -130,7 +130,7 @@ int main()
             if (t1 >= (1 << N))
             {
                 t2 = (t2 << 1) + 1;
-                t1 %= (1 << N);
+                t1 -= (1 << N);
             }
             if (dp[i - 1][t1 ^ mask ^ t2]) dp[i][mask] = 1;
             t1 = (t1 << 1);
