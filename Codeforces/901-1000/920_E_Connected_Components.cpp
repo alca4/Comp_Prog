@@ -70,7 +70,24 @@ ll rand64()
 
 const int MAXN = 200010;
 int N, M;
-vector<int> nbs[MAXN];
+vector<int> adjlist[MAXN];
+map<int, int> families;
+
+bitset<MAXN> b;
+
+int p[MAXN], sz[MAXN];
+void setup_dsu() {for (int i = 1; i <= N; i++) p[i] = i, sz[i] = 1;}
+int root(int a) {return p[a] = (a == p[a] ? a : root(p[a]));}
+int combine(int a, int b)
+{
+    a = root(a), b = root(b);
+    if (a == b) return 0;
+
+    if (sz[a] < sz[b]) swap(a, b);
+    p[b] = a;
+    sz[a] += sz[b];
+    return 1;
+}
 
 int main()
 {
@@ -80,13 +97,40 @@ int main()
     cout.tie(0);
 
     cin >> N >> M;
-    for (int i = 1; i <= M; i++) 
+    setup_dsu();
+    for (int i = 1; i <= M; i++)
     {
         int a, b;
         cin >> a >> b;
-        nbs[a].pb(b);
-        nbs[b].pb(a);
+        adjlist[a].pb(b);
+        adjlist[b].pb(a);
     }
 
-    
+    vector<int> g2n;
+    for (int i = 1; i <= N; i++)
+    {
+        if (adjlist[i].size() * 2 <= N - 1) g2n.pb(i);
+        else
+        {
+            for (int j = 0; j < adjlist[i].size(); j++) b[adjlist[i][j]] = 1;
+            for (int j = 1; j <= N; j++) if (!b[j])
+                combine(i, j);
+            b = 0;
+        }
+    }
+
+    for (int i = 1; i < g2n.size(); i++) 
+        combine(g2n[i], g2n[i - 1]);
+
+    for (int i = 1; i <= N; i++) families[root(i)]++;
+
+    vector<int> ans;
+    for (auto n : families) ans.pb(n.SS);
+
+    sort(ans.begin(), ans.end());
+
+    cout << ans.size() << endl;
+    for (auto n : ans) cout << n << " ";
+    cout << endl;
+    return 0;
 } 

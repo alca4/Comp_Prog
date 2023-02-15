@@ -69,11 +69,11 @@ ll rand64()
 }
 
 const int MAXN = 200010;
-int N, L, R, Q;
+int N, Q;
+ll L, R;
 string nodes[MAXN];
 int nbs[MAXN][26];
-int sz[MAXN];
-set<pair<pii, int>> ranges[MAXN];
+ll sz[MAXN];
 map<char, vector<pii>> contains;
 
 void DFS(int a)
@@ -83,31 +83,46 @@ void DFS(int a)
     {
         if (nodes[a][i] <= 90) 
         {
-            DFS(nbs[a][nodes[a][i] - 'A']);
-            sz[a] += sz[nbs[a][nodes[a][i] - 'A']];
+            int nb = nbs[a][nodes[a][i] - 'A'];
+            while (nodes[nb].size() == 1 && nodes[nb][0] <= 90)
+                nb = nbs[nb][nodes[nb][0] - 'A'];
+            nbs[a][nodes[a][i] - 'A'] = nb;
+            DFS(nb);
+            sz[a] += sz[nb];
+            sz[a] = min(sz[a], LINF);
         }
         else 
         {
-            // ranges.insert({{sz[a] + 1, sz[a] + 1}, })
-            // sz[a]++;
+            sz[a]++;
+            sz[a] = min(sz[a], LINF);
         }
     }
+    sz[a] = min(sz[a], LINF);
 }
 
-void findChar(int a, int l, int r, int v)
+ll v;
+
+void findChar(int a, ll s)
 {
-    if (v < l || v > r) return;
-    int s = l;
     for (int i = 0; i < nodes[a].length(); i++)
     {
-        if (s > v) 
+        if (s > v || v > R) return;
         if (nodes[a][i] <= 90) 
         {
             int nb = nbs[a][nodes[a][i] - 'A'];
-            findChar(nb, s, s + sz[nb] - 1, v);
+            if (v <= s + sz[nb] - 1) findChar(nb, s);
             s += sz[nb];
         }
-        else s++;
+        else 
+        {
+            if (s == v) 
+            {
+                cout << nodes[a][i];
+                v++;
+                if (v > R) return;
+            }
+            s++;
+        }
     }
 }
 
@@ -130,7 +145,6 @@ int main()
         for (auto n : contains[s]) 
         {
             nbs[n.FF][nodes[n.FF][n.SS] - 'a'] = N;
-            // cout << n.FF << " at " << nodes[n.FF][n.SS] << " goes to " << N << endl;
             nodes[n.FF][n.SS] = toupper(nodes[n.FF][n.SS]);
         }
         contains[s].clear();
@@ -139,7 +153,9 @@ int main()
 
     DFS(1);
 
-    findChar()
+    v = L;
+    findChar(1, 1);
+    cout << endl;
 
     return 0;
 } 

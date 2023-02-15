@@ -68,14 +68,84 @@ ll rand64()
     return (a << 32) | b;
 }
 
+const int MAXN = 100010;
+int N, M;
+ll heads[MAXN];
+ll theads[MAXN];
+ll targets[MAXN];
+
 int main()
 {
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-} 
 
-// dp[i][j] = first i guys, j locations
+    cin >> N >> M;
+    for (int i = 1; i <= N; i++) cin >> heads[i];
+    for (int i = 1; i <= M; i++) cin >> targets[i];
+    heads[0] = LINF;
+    heads[N + 1] = LINF;
 
-// dp[i][j] = max(dp[1 <= k <= i][j - 1])
+    ll ans = 0;
+    ll lb = 0, ub = INF * 1000000;
+    while (lb <= ub)
+    {
+        ll mid = (lb + ub) >> 1;
+        cout << "==========" << endl;
+        cout << mid << endl;
+
+        for (int i = 1; i <= N; i++) theads[i] = heads[i];
+
+        int last_move = 0;
+        bool ok = 1;
+        ll dist = 0;
+        for (int i = 1; i <= M; i++)
+        {
+            cout << i << endl;
+            auto it = lower_bound(theads + 1, theads + 1 + N, targets[i]);
+            ll before = *(it - 1);
+            ll after = *it;
+            
+            // cout << before << " " << after << endl;
+            // cout << "dist is: " << dist << endl;
+            
+            if (dist > mid) ok = 0;
+
+            ll tdist = dist;
+            dist = LINF;
+            if (tdist != 0 && i > 1)
+            {
+                // if (tdist + targets[i] - targets[i - 1]) cout << "use back" << endl;
+                dist = min(dist, tdist + targets[i] - targets[i - 1]);
+            }
+            if (before != LINF && before != targets[i - 1] && i > 1) 
+            {
+                // if (targets[i] - before) cout << "use before" << endl;
+                dist = min(dist, targets[i] - before);
+                last_move = distance(theads + 1, it - 1);
+            }
+            if (after != LINF && i < M) 
+            {
+                // if (after - targets[i]) cout << "use after" << endl;
+                dist = min(dist, after - targets[i]);
+                last_move = distance(theads + 1, it);
+            }
+            ll x = targets[i];
+            if (theads[last_move + 1])
+            i = max(i, (int) distance(targets + 1, upper_bound(targets + 1, targets + 1 + M, theads[last_move + 1])));
+            theads[last_move + 1] = x;
+        }
+        if (dist > mid && dist != LINF) ok = 0;
+
+        if (ok) 
+        {
+            ub = mid - 1;
+            ans = mid;
+        }
+        else lb = mid + 1;
+    }
+
+    cout << ans << endl;
+    return 0;
+}
