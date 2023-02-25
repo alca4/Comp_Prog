@@ -92,6 +92,9 @@ void get_fact()
 }
 */
 
+const int MAXN = 500010;
+int arr[MAXN];
+
 int main()
 {
     // freopen('.in', 'r', cin);
@@ -100,6 +103,32 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    int T;
+    cin >> T;
+    while (T--)
+    {
+        int N;
+        cin >> N;
+        for (int i = 1; i <= N; i++) cin >> arr[i];
+
+        int f = 0, s = 0, o = 0;
+
+        for (int i = 1; i <= N; i++) 
+        {
+            if (arr[i] == i) f++;
+            else if (arr[i] == N - i + 1) s++;
+            else o++;
+        }
+        f = N - f;
+        s = N - s;
+
+        if (f <= s - o) cout << "First" << endl;
+        else if (s < f - o) cout << "Second" << endl;
+        else cout << "Tie" << endl;
+
+        for (int i = 1; i <= N; i++) arr[i] = 0;
+    }
 
     return 0;
 } 

@@ -25,21 +25,14 @@ ll LINF = 1000000000000000000;
 ll MOD = 1000000007;
 // ll MOD = 998244353;
 
+ifstream fin(".in");
+ofstream fout(".out");
+
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-ll add(const ll& a, const ll& b) 
-{
-    ll x = a + b;
-    if (a + b >= MOD) x -= MOD;
-    return x;
-}
-ll sub(const ll& a, const ll& b) 
-{
-    ll x = a - b;
-    if (a - b < 0) x += MOD;
-    return x;
-}
+ll add(const ll& a, const ll& b) {return (a + b) % MOD;}
+ll sub(const ll& a, const ll& b) {return (a + MOD - b) % MOD;}
 ll mult(const ll& a, const ll& b) {return (a * b) % MOD;}
 ll power(ll a, ll b)
 {
@@ -75,31 +68,39 @@ ll rand64()
     return (a << 32) | b;
 }
 
-/*
-ll fact[MAXN], factinv[MAXN];
-
-ll choose(int a, int b)
-{
-    return mult(fact[a], mult(factinv[b], factinv[a - b]));
-}
-
-void get_fact()
-{
-    fact[0] = 1;
-    for (int i = 1; i <= N; i++) fact[i] = mult(fact[i], fact[i - 1]);
-    factinv[N] = divide(1, fact[i]);
-    for (int i = N - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
-}
-*/
-
 int main()
 {
-    // freopen('.in', 'r', cin);
-    // freopen('.out', 'w', cout);
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    int T;
+    cin >> T;
+    while (T--)
+    {
+        vector<ll> things;
+        int N;
+        cin >> N;
+        for (int i = 0; i < N; i++) 
+        {
+            ll a;
+            cin >> a;
+            things.pb(a);
+        }
+
+        ll v = 0;
+        ll tmp = things[0];
+        for (int i = 2; i < N; i += 2) tmp = gcd(tmp, things[i]);
+        for (int i = 1; i < N; i += 2) if (things[i] % tmp == 0) tmp = 1;
+        if (tmp != 1) v = tmp;
+
+        tmp = things[1];
+        for (int i = 3; i < N; i += 2) tmp = gcd(tmp, things[i]);
+        for (int i = 0; i < N; i += 2) if (things[i] % tmp == 0) tmp = 1;
+        if (tmp != 1) v = tmp;
+        cout << v << endl;
+    }
 
     return 0;
 } 

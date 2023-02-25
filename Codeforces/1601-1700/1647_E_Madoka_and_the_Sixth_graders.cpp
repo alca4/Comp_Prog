@@ -67,10 +67,9 @@ ll rand64()
 
 const int MAXN = 100010;
 int N, M, T;
-int ans[MAXN], nextv[MAXN], arr[MAXN];
+int ans[MAXN], arr[MAXN];
 int nbs[MAXN][32];
 set<int> options[MAXN];
-int nnb[MAXN];
 
 int main()
 {
@@ -84,8 +83,8 @@ int main()
     int repvals = 0, maxval = 0;
     for (int i = 1; i <= N; i++) 
     {
-        cin >> nextv[i];
-        vals.insert(nextv[i]);
+        cin >> nbs[i][0];
+        vals.insert(nbs[i][0]);
     }
     for (int i = 1; i <= N; i++) 
     {
@@ -94,46 +93,35 @@ int main()
     }
     repvals = N - vals.size();
     T = (maxval - N) / repvals;
-
-    for (int i = 1; i <= N; i++) nbs[i][0] = nextv[i];
     
-    for (int i = 1; i <= N; i++)
-        for (int j = 1; j < 32; j++) nbs[i][j] = nbs[nbs[i][j - 1]][j - 1];
+    for (int j = 1; j < 32; j++) for (int i = 1; i <= N; i++)
+        nbs[i][j] = nbs[nbs[i][j - 1]][j - 1];
     
     for (int i = 1; i <= N; i++)
     {
         int x = i;
         for (int j = 0; j < 32; j++) if (T & (1 << j)) x = nbs[x][j];
         options[arr[x]].insert(i);
-        nnb[i] = x;
+        // cout << T << "th neighbor of " << i << " is " << x << endl;
     }
 
     vals.clear();
-    for (int i = 1; i <= N; i++) vals.insert(i);
-    for (int i = 1; i <= N; i++) if (arr[i] <= N) vals.erase(arr[i]);
 
     for (int i = 1; i <= N; i++)
     {
-        int v = arr[nnb[i]];
-        cout << i << " ";
-        if (v > N || !options[v].size())
+        if (options[i].size())
         {
-            cout << 1 << endl;
-            ans[i] = *vals.begin();
-            vals.erase(vals.begin());
-        }
-        else if (options[v].size() > 1 && v > *vals.begin())
-        {
-            cout << 2 << endl;
-            ans[i] = *vals.begin();
-            options[v].erase(i);
-            vals.erase(vals.begin());
+            // cout << "min element put at " << *options[i].begin() << endl;
+            ans[*options[i].begin()] = i;
+            for (auto n : options[i]) if (n != *options[i].begin())
+                vals.insert(n);
         }
         else
         {
-            cout << 3 << endl;
-            ans[i] = v;
-            options[v].clear();
+            if (!vals.size()) break;
+            // cout << "best element put at " << *vals.begin() << endl;
+            ans[*vals.begin()] = i;
+            vals.erase(vals.begin());
         }
     }
 

@@ -101,5 +101,25 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
+    int T;
+    cin >> T;
+    while (T--)
+    {
+        int K, N;
+        cin >> K >> N;
+        int x = 1;
+        for (int i = 1; i <= K; i++) 
+        {
+            cout << x << " ";
+            if (N - x < K)
+            {
+                while (++i <= K) cout << ++x << " ";
+                break;
+            }
+            x = min(x + i + 1, N);
+        }
+        cout << endl;
+    }
+
     return 0;
 } 

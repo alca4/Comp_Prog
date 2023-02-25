@@ -70,10 +70,10 @@ ll rand64()
 
 const int MAXN = 510;
 int N;
-int Q, Q2;
-int dp[MAXN][MAXN];
-int fact[MAXN], factinv[MAXN];
-int remsum[MAXN][MAXN];
+ll Q, Q2;
+ll dp[MAXN][MAXN];
+ll fact[MAXN], factinv[MAXN];
+ll remsum[MAXN][MAXN];
 
 int choose(int a, int b)
 {
@@ -89,9 +89,9 @@ int main()
 
     cin >> N >> Q;
     fact[0] = 1;
-    for (int i = 1; i <= N + 1; i++) fact[i] = mult(fact[i - 1], i);
+    for (int i = 1; i <= N + 1; i++) fact[i] = (fact[i - 1] * i) % MOD;
     factinv[N + 1] = divide(1, fact[N + 1]);
-    for (int i = N; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
+    for (int i = N; i >= 0; i--) factinv[i] = (factinv[i + 1] * (i + 1)) % MOD;
 
     Q2 = divide(10000 - Q, 10000);
     Q = divide(Q, 10000);
@@ -102,15 +102,23 @@ int main()
     {
         for (int k = 0; k < i; k++)
         {
-            dp[i][j] = add(dp[i][j], mult(mult(remsum[i - 1 - k][j], dp[k][j + 1]),
-                                          mult(Q, mult(fact[i - 1], factinv[k]))));
-            if (j > 0) dp[i][j] = add(dp[i][j], mult(mult(remsum[i - 1 - k][j], dp[k][j - 1]),
-                                          mult(Q2, mult(fact[i - 1], factinv[k]))));
+            dp[i][j] += (((remsum[i - 1 - k][j] * dp[k][j + 1]) % MOD) * 
+                         ((Q * (fact[i - 1] * factinv[k]) % MOD) % MOD)) % MOD;
+            if (j > 0) 
+            {
+                dp[i][j] += (((remsum[i - 1 - k][j] * dp[k][j - 1]) % MOD) * 
+                             ((Q2 * (fact[i - 1] * factinv[k]) % MOD) % MOD)) % MOD;
+            }
+
+            while (dp[i][j] >= MOD) dp[i][j] -= MOD;
         }
 
         for (int k = 0; k <= i; k++)
-            remsum[i][j] = add(remsum[i][j], mult(mult(dp[k][j], dp[i - k][j]),
-                                                  mult(factinv[k], factinv[i - k])));
+        {
+            remsum[i][j] += (((dp[k][j] * dp[i - k][j]) % MOD) *
+                            ((factinv[k] * factinv[i - k]) % MOD)) % MOD;
+            if (remsum[i][j] >= MOD) remsum[i][j] -= MOD;
+        }
     }
 
     int ans = dp[N][0];

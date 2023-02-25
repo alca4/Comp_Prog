@@ -92,6 +92,8 @@ void get_fact()
 }
 */
 
+int mat[2][2];
+
 int main()
 {
     // freopen('.in', 'r', cin);
@@ -100,6 +102,31 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    int T;
+    cin >> T;
+    while (T--)
+    {
+        cin >> mat[0][0] >> mat[0][1] >> mat[1][0] >> mat[1][1];
+
+        bool ok = 0;
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (mat[0][0] < mat[0][1] && mat[0][0] < mat[1][0] &&
+                mat[1][0] < mat[1][1] && mat[0][1] < mat[1][1])
+                ok = 1;
+            
+            int tmp = mat[0][0];
+            mat[0][0] = mat[1][0];
+            mat[1][0] = mat[1][1];
+            mat[1][1] = mat[0][1];
+            mat[0][1] = tmp;
+        }
+
+        if (ok) cout << "YES" << endl;
+        else cout << "NO" << endl;
+    }
 
     return 0;
 } 

@@ -25,21 +25,14 @@ ll LINF = 1000000000000000000;
 ll MOD = 1000000007;
 // ll MOD = 998244353;
 
+ifstream fin(".in");
+ofstream fout(".out");
+
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-ll add(const ll& a, const ll& b) 
-{
-    ll x = a + b;
-    if (a + b >= MOD) x -= MOD;
-    return x;
-}
-ll sub(const ll& a, const ll& b) 
-{
-    ll x = a - b;
-    if (a - b < 0) x += MOD;
-    return x;
-}
+ll add(const ll& a, const ll& b) {return (a + b) % MOD;}
+ll sub(const ll& a, const ll& b) {return (a + MOD - b) % MOD;}
 ll mult(const ll& a, const ll& b) {return (a * b) % MOD;}
 ll power(ll a, ll b)
 {
@@ -75,31 +68,41 @@ ll rand64()
     return (a << 32) | b;
 }
 
-/*
-ll fact[MAXN], factinv[MAXN];
-
-ll choose(int a, int b)
-{
-    return mult(fact[a], mult(factinv[b], factinv[a - b]));
-}
-
-void get_fact()
-{
-    fact[0] = 1;
-    for (int i = 1; i <= N; i++) fact[i] = mult(fact[i], fact[i - 1]);
-    factinv[N] = divide(1, fact[i]);
-    for (int i = N - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
-}
-*/
-
 int main()
 {
-    // freopen('.in', 'r', cin);
-    // freopen('.out', 'w', cout);
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    int T;
+    cin >> T;
+    while (T--)
+    {
+        vector<int> arr;
+        multiset<int> vals;
+        for (int i = 0; i < 7; i++)
+        {
+            int n;
+            cin >> n;
+            arr.pb(n);
+            vals.insert(n);
+        }
+
+        sort(arr.begin(), arr.end());
+
+        int x = arr[0], y = arr[1], z = arr[2];
+        vals.erase(x);
+        vals.erase(y);
+        vals.erase(z);
+        if (vals.count(x + y)) vals.erase(vals.find(x + y));
+        if (vals.count(z + y)) vals.erase(vals.find(y + z));
+        if (vals.count(x + z)) vals.erase(vals.find(x + z));
+        if (vals.count(x + y + z)) vals.erase(vals.find(x + z + y));
+        
+        if (vals.empty()) cout << x << " " << y << " " << z << endl;
+        else cout << arr[0] << " " << arr[1] << " " << arr[3] << endl;
+    }
 
     return 0;
 } 

@@ -71,7 +71,6 @@ ll rand64()
 const int MAXN = 100010;
 int N, M;
 ll heads[MAXN];
-ll theads[MAXN];
 ll targets[MAXN];
 
 int main()
@@ -84,59 +83,38 @@ int main()
     cin >> N >> M;
     for (int i = 1; i <= N; i++) cin >> heads[i];
     for (int i = 1; i <= M; i++) cin >> targets[i];
-    heads[0] = LINF;
-    heads[N + 1] = LINF;
 
     ll ans = 0;
     ll lb = 0, ub = INF * 1000000;
     while (lb <= ub)
     {
         ll mid = (lb + ub) >> 1;
-        cout << "==========" << endl;
-        cout << mid << endl;
+        // cout << "==========" << endl;
+        // cout << mid << endl;
 
-        for (int i = 1; i <= N; i++) theads[i] = heads[i];
+        bool ok = 0;
 
-        int last_move = 0;
-        bool ok = 1;
-        ll dist = 0;
-        for (int i = 1; i <= M; i++)
+        int t = 1;
+        for (int h = 1; h <= N; h++)
         {
-            cout << i << endl;
-            auto it = lower_bound(theads + 1, theads + 1 + N, targets[i]);
-            ll before = *(it - 1);
-            ll after = *it;
-            
-            // cout << before << " " << after << endl;
-            // cout << "dist is: " << dist << endl;
-            
-            if (dist > mid) ok = 0;
-
-            ll tdist = dist;
-            dist = LINF;
-            if (tdist != 0 && i > 1)
+            if (targets[t] <= heads[h])
             {
-                // if (tdist + targets[i] - targets[i - 1]) cout << "use back" << endl;
-                dist = min(dist, tdist + targets[i] - targets[i - 1]);
+                if (heads[h] - targets[t] > mid) break;
+                t = max({t, (int) distance(targets, upper_bound(targets + 1, targets + 1 + M,
+                                          heads[h] + max(0ll, mid - 2 * (heads[h] - targets[t])))),
+                            (int) distance(targets, upper_bound(targets + 1, targets + 1 + M,
+                                           heads[h] + max(0ll, (mid - (heads[h] - targets[t])) / 2)))});
             }
-            if (before != LINF && before != targets[i - 1] && i > 1) 
+            else 
+                t = max(t, (int) distance(targets, upper_bound(targets + 1, targets + 1 + M,
+                                           heads[h] + mid)));
+            // cout << h << "th head covers up to " << t - 1 << endl;
+            if (t > M) 
             {
-                // if (targets[i] - before) cout << "use before" << endl;
-                dist = min(dist, targets[i] - before);
-                last_move = distance(theads + 1, it - 1);
+                ok = 1;
+                break;
             }
-            if (after != LINF && i < M) 
-            {
-                // if (after - targets[i]) cout << "use after" << endl;
-                dist = min(dist, after - targets[i]);
-                last_move = distance(theads + 1, it);
-            }
-            ll x = targets[i];
-            if (theads[last_move + 1])
-            i = max(i, (int) distance(targets + 1, upper_bound(targets + 1, targets + 1 + M, theads[last_move + 1])));
-            theads[last_move + 1] = x;
         }
-        if (dist > mid && dist != LINF) ok = 0;
 
         if (ok) 
         {
