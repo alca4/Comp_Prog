@@ -20,8 +20,8 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define ull unsigned ll
-ll INF = INT_MAX;
-ll LINF = LONG_MAX;
+ll INF = 1000000000;
+ll LINF = 1000000000000000000;
 ll MOD = 1000000007;
 // ll MOD = 998244353;
 
@@ -62,10 +62,6 @@ ll power(ll a, ll b)
 ll divide(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
 template<class X, class Y> void maxeq(X &x, Y y) {if (x < y) x = y;}
 template<class X, class Y> void mineq(X &x, Y y) {if (x > y) x = y;}
-template<class X, class Y> void addeq(X &x, Y y) {x = add(x, y);}
-template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
-template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
-template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
 int rand32()
 {
@@ -81,8 +77,8 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 0;
-int N;
+const int MAXN = 1203;
+int N, M;
 ll fact[MAXN], factinv[MAXN];
 
 ll choose(int a, int b)
@@ -106,6 +102,21 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    int rs, cs, rc, cc;
+    cin >> N >> M;
+    cin >> rs >> cs >> rc >> cc;
+
+    char c;
+    cin >> c;
+    int cond = (rs + cs) % 2 == (rc + cc) % 2;
+
+    if (!cond) cout << c << endl;
+    else
+    {
+        if (c == 'C') cout << 'S' << endl;
+        else cout << 'C' << endl;
+    }
 
     return 0;
 } 

@@ -20,8 +20,8 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define ull unsigned ll
-ll INF = INT_MAX;
-ll LINF = LONG_MAX;
+ll INF = 1000000000;
+ll LINF = 1000000000000000000;
 ll MOD = 1000000007;
 // ll MOD = 998244353;
 
@@ -62,10 +62,6 @@ ll power(ll a, ll b)
 ll divide(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
 template<class X, class Y> void maxeq(X &x, Y y) {if (x < y) x = y;}
 template<class X, class Y> void mineq(X &x, Y y) {if (x > y) x = y;}
-template<class X, class Y> void addeq(X &x, Y y) {x = add(x, y);}
-template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
-template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
-template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
 int rand32()
 {
@@ -81,8 +77,9 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 0;
-int N;
+const int MAXN = 100010;
+int N, Q;
+int arr[MAXN];
 ll fact[MAXN], factinv[MAXN];
 
 ll choose(int a, int b)
@@ -98,6 +95,53 @@ void get_fact(int x)
     for (int i = x - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
 }
 
+struct ST
+{
+    ll seg[4 * MAXN];
+
+    void update(int a, int v, int cid, int ss, int se)
+    {
+        if (ss == se)
+        {
+            seg[cid] = v;
+            return;
+        }
+
+        int mid = (ss + se) / 2;
+        if (a <= mid) update(a, v, cid * 2, ss, mid);
+        else update(a, v, cid * 2 + 1, mid + 1, se);
+        seg[cid] = seg[cid * 2] + seg[cid * 2 + 1];
+    }
+
+    void modify(int a, int b, int v, int cid, int ss, int se)
+    {
+        if (v == 1 || seg[cid] == 0) return;
+        if (ss == se)
+        {
+            seg[cid] /= v;
+            return;
+        }
+
+        int mid = (ss + se) / 2;
+        if (a <= mid) modify(a, b, v, cid * 2, ss, mid);
+        if (b > mid) modify(a, b, v, cid * 2 + 1, mid + 1, se);
+        seg[cid] = seg[cid * 2] + seg[cid * 2 + 1];
+    }
+
+    ll query(int a, int b, int cid, int ss, int se)
+    {
+        if (a <= ss && se <= b) return seg[cid];
+
+        ll ans = 0;
+        int mid = (ss + se) / 2;
+        if (a <= mid) ans += query(a, b, cid * 2, ss, mid);
+        if (b > mid) ans += query(a, b, cid * 2 + 1, mid + 1, se);
+        return ans;
+    } 
+};
+
+ST st;
+
 int main()
 {
     // freopen('.in', 'r', cin);
@@ -106,6 +150,32 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    cin >> N;
+    for (int i = 1; i <= N; i++) 
+    {
+        cin >> arr[i];
+        st.update(i, arr[i], 1, 1, N);
+    }
+
+    cin >> Q;
+    while (Q--)
+    {
+        int t;
+        cin >> t;
+        if (t == 1)
+        {
+            int l, r, x;
+            cin >> l >> r >> x;
+            st.modify(l, r, x, 1, 1, N);
+        }
+        else 
+        {
+            int l, r;
+            cin >> l >> r;
+            cout << st.query(l, r, 1, 1, N) << endl;
+        }
+    }
 
     return 0;
 } 

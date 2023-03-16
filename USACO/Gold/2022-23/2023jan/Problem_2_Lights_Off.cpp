@@ -25,9 +25,6 @@ ll LINF = 1000000000000000000;
 ll MOD = 1000000007;
 // ll MOD = 998244353;
 
-ifstream fin(".in");
-ofstream fout(".out");
-
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
@@ -89,9 +86,9 @@ void solve()
         b |= (c - '0') << (N - i - 1);
     }
 
-    if (a == 0) 
+    if (!a) 
     {
-        cout << 0 << endl;
+        cout << 0 << "\n";
         return;
     }
 
@@ -99,12 +96,12 @@ void solve()
     {
         a ^= b;
 
-        if (b % 2) b += (1 << N);
+        if (b & 1) b += (1 << N);
         b = (b >> 1);
 
         if (dp[i][a])
         {
-            cout << i << endl;
+            cout << i << "\n";
             return;
         }
     }

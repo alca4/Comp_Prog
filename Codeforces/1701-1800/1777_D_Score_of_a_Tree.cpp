@@ -20,8 +20,8 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define ull unsigned ll
-ll INF = INT_MAX;
-ll LINF = LONG_MAX;
+ll INF = 1000000000;
+ll LINF = 1000000000000000000;
 ll MOD = 1000000007;
 // ll MOD = 998244353;
 
@@ -62,10 +62,6 @@ ll power(ll a, ll b)
 ll divide(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
 template<class X, class Y> void maxeq(X &x, Y y) {if (x < y) x = y;}
 template<class X, class Y> void mineq(X &x, Y y) {if (x > y) x = y;}
-template<class X, class Y> void addeq(X &x, Y y) {x = add(x, y);}
-template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
-template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
-template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
 int rand32()
 {
@@ -81,21 +77,40 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 0;
-int N;
-ll fact[MAXN], factinv[MAXN];
+const int MAXN = 200010;
+int N, H;
+int h[MAXN], hfreq[MAXN];
+vector<int> nbs[MAXN];
+ll pow2[MAXN], fact[MAXN], factinv[MAXN];
 
 ll choose(int a, int b)
 {
     return mult(fact[a], mult(factinv[b], factinv[a - b]));
 }
 
-void get_fact(int x)
+void get_fact()
 {
     fact[0] = 1;
-    for (int i = 1; i <= x; i++) fact[i] = mult(i, fact[i - 1]);
-    factinv[x] = divide(1, fact[x]);
-    for (int i = x - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
+    for (int i = 1; i <= N; i++) fact[i] = mult(fact[i], fact[i - 1]);
+    factinv[N] = divide(1, fact[N]);
+    for (int i = N - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
+}
+
+void get_pow2()
+{
+    pow2[0] = 1;
+    for (int i = 1; i <= N; i++) pow2[i] = mult(pow2[i - 1], 2);
+}
+
+void DFS(int a, int p)
+{
+    for (int i = 0; i < nbs[a].size(); i++) if (nbs[a][i] != p) 
+    {
+        DFS(nbs[a][i], a);
+        h[a] = max(h[a], h[nbs[a][i]] + 1);
+    }
+    hfreq[h[a]]++;
+    H = max(H, h[a]);
 }
 
 int main()
@@ -106,6 +121,36 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    int T;
+    cin >> T;
+    while (T--)
+    {
+        cin >> N;
+        get_pow2();
+        for (int i = 1; i < N; i++) 
+        {
+            int a, b;
+            cin >> a >> b;
+            nbs[a].pb(b);
+            nbs[b].pb(a);
+        }
+
+        DFS(1, 0);
+
+        ll ans = 0;
+        int x = N;
+        for (int i = 0; i <= H; i++) 
+        {
+            ans = add(ans, mult(x, pow2[N - 1]));
+            x -= hfreq[i];
+        }
+
+        cout << ans << endl;
+        for (int i = 0; i <= N; i++) h[i] = hfreq[i] = 0;
+        for (int i = 1; i <= N; i++) nbs[i].clear();
+        H = 0;
+    }
 
     return 0;
 } 

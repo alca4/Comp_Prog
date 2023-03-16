@@ -20,8 +20,8 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define ull unsigned ll
-ll INF = INT_MAX;
-ll LINF = LONG_MAX;
+ll INF = 2000000000;
+ll LINF = 1000000000000000000;
 ll MOD = 1000000007;
 // ll MOD = 998244353;
 
@@ -62,10 +62,6 @@ ll power(ll a, ll b)
 ll divide(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
 template<class X, class Y> void maxeq(X &x, Y y) {if (x < y) x = y;}
 template<class X, class Y> void mineq(X &x, Y y) {if (x > y) x = y;}
-template<class X, class Y> void addeq(X &x, Y y) {x = add(x, y);}
-template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
-template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
-template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
 int rand32()
 {
@@ -81,8 +77,11 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 0;
-int N;
+const int MAXN = 100010, D = 100000;
+int R, C, N;
+ll val[MAXN * 2];
+int vis[MAXN * 2];
+vector<pll> nbs[MAXN * 2];
 ll fact[MAXN], factinv[MAXN];
 
 ll choose(int a, int b)
@@ -98,6 +97,41 @@ void get_fact(int x)
     for (int i = x - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
 }
 
+vector<int> friends;
+int DFS(int a)
+{
+    // cout << "at " << a << endl;
+    vis[a] = 1;
+    friends.pb(a);
+    int x = 1;
+    for (pll nb : nbs[a]) 
+    {
+        if (val[nb.FF] != -LINF && val[nb.FF] + val[a] != nb.SS) return 0;
+        val[nb.FF] = nb.SS - val[a];
+        if (!vis[nb.FF]) x = (x & DFS(nb.FF));
+    }
+    return x;
+}
+
+int check(int i)
+{
+    int ans = 1;
+    val[i] = 0;
+    ans &= DFS(i);
+
+    ll min_r = LINF;
+    ll min_c = LINF;
+    for (int n : friends) if (val[n] != -LINF) 
+    {
+        if (n <= D) min_r = min(min_r, val[n]);
+        else min_c = min(min_c, val[n]);
+    }
+    min_r *= -1;
+    ans &= (min_r <= min_c);
+    friends.clear();
+    return ans;
+}
+
 int main()
 {
     // freopen('.in', 'r', cin);
@@ -107,5 +141,23 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
+    cin >> R >> C >> N;
+    for (int i = 1; i <= N; i++)
+    {
+        ll r, c, x;
+        cin >> r >> c >> x;
+        nbs[r].pb({c + D, x});
+        nbs[c + D].pb({r, x});
+    }
+
+    for (int i = 1; i <= R; i++) val[i] = -LINF;
+    for (int i = 1; i <= C; i++) val[i + D] = -LINF;
+
+    int ans = 1;
+    for (int i = 1; i <= R; i++) if (!vis[i]) ans &= check(i);
+    for (int i = 1; i <= C; i++) if (!vis[i + D]) ans &= check(i + D);
+    
+    if (ans) cout << "Yes" << endl;
+    else cout << "No" << endl;
     return 0;
 } 

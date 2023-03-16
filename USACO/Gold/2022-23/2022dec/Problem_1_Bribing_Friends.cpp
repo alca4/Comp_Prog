@@ -25,9 +25,6 @@ ll LINF = 1000000000000000000;
 ll MOD = 1000000007;
 // ll MOD = 998244353;
 
-ifstream fin(".in");
-ofstream fout(".out");
-
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
@@ -53,22 +50,8 @@ ll power(ll a, ll b)
     return ans;
 }
 ll divide(const ll a, const ll b) {return (a * power(b, MOD - 2)) % MOD;}
-void maxeq(auto& a, const auto b) {a = max(a, b);}
-void mineq(auto& a, const auto b) {a = min(a, b);}
-
-int rand32()
-{
-    int a = rand();
-    int b = rand();
-    return (a << 16) | b;
-}
-
-ll rand64()
-{
-    ll a = rand32();
-    ll b = rand32();
-    return (a << 32) | b;
-}
+template<class X, class Y> void maxeq(X &x, Y y) {if (x < y) x = y;}
+template<class X, class Y> void mineq(X &x, Y y) {if (x > y) x = y;}
 
 const int MAXN = 2010;
 int N, A, B;

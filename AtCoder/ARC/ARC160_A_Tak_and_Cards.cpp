@@ -20,8 +20,8 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define ull unsigned ll
-ll INF = INT_MAX;
-ll LINF = LONG_MAX;
+ll INF = 1000000000;
+ll LINF = 1000000000000000000;
 ll MOD = 1000000007;
 // ll MOD = 998244353;
 
@@ -62,10 +62,6 @@ ll power(ll a, ll b)
 ll divide(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
 template<class X, class Y> void maxeq(X &x, Y y) {if (x < y) x = y;}
 template<class X, class Y> void mineq(X &x, Y y) {if (x > y) x = y;}
-template<class X, class Y> void addeq(X &x, Y y) {x = add(x, y);}
-template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
-template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
-template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
 int rand32()
 {
@@ -81,8 +77,10 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 0;
-int N;
+const int MAXN = 60;
+int N, A;
+int arr[MAXN];
+ll dp[MAXN][MAXN * MAXN][MAXN];
 ll fact[MAXN], factinv[MAXN];
 
 ll choose(int a, int b)
@@ -106,6 +104,21 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    cin >> N >> A;
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+
+    dp[0][0][0] = 1;
+    for (int i = 1; i <= N; i++) for (int k = 0; k <= N; k++)
+        for (int j = 0; j <= 2500; j++) 
+        {
+            if (arr[i] <= j && k) dp[i][j][k] += dp[i - 1][j - arr[i]][k - 1];
+            dp[i][j][k] += dp[i - 1][j][k];
+        }
+    
+    ll ans = 0;
+    for (int i = 0; i <= N; i++) ans += dp[N][i * A][i];
+    cout << ans - 1 << endl;
 
     return 0;
 } 

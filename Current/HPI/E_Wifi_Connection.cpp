@@ -20,8 +20,8 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define ull unsigned ll
-ll INF = INT_MAX;
-ll LINF = LONG_MAX;
+ll INF = 1000000000;
+ll LINF = 1000000000000000000;
 ll MOD = 1000000007;
 // ll MOD = 998244353;
 
@@ -62,10 +62,6 @@ ll power(ll a, ll b)
 ll divide(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
 template<class X, class Y> void maxeq(X &x, Y y) {if (x < y) x = y;}
 template<class X, class Y> void mineq(X &x, Y y) {if (x > y) x = y;}
-template<class X, class Y> void addeq(X &x, Y y) {x = add(x, y);}
-template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
-template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
-template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
 int rand32()
 {
@@ -81,8 +77,9 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 0;
+const int MAXN = 510;
 int N;
+int x[MAXN], y[MAXN];
 ll fact[MAXN], factinv[MAXN];
 
 ll choose(int a, int b)
@@ -98,6 +95,29 @@ void get_fact(int x)
     for (int i = x - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
 }
 
+struct Edge
+{
+    int x, y, d;
+};
+
+bool operator<(const Edge& e1, const Edge& e2)
+{
+    return e1.d < e2.d;
+}
+
+int p[MAXN], sz[MAXN];
+int root(int a) {return p[a] = (a == p[a] ? a : root(p[a]));}
+bool combine(int a, int b)
+{
+    a = root(a), b = root(b);
+    if (a == b) return 0;
+
+    if (sz[a] < sz[b]) swap(a, b);
+    sz[a] += sz[b];
+    p[b] = a;
+    return 1;
+}
+
 int main()
 {
     // freopen('.in', 'r', cin);
@@ -107,5 +127,23 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> x[i] >> y[i];
+
+    vector<Edge> edgelist;
+    for (int i = 1; i <= N; i++) for (int j = 1; j < i; j++)
+        edgelist.pb({i, j, (x[i] - x[j]) * (x[i] - x[j]) + (y[i] - y[j]) * (y[i] - y[j])});
+    
+    sort(edgelist.begin(), edgelist.end());
+
+    for (int i = 1; i <= N; i++) p[i] = i, sz[i] = 1;
+
+    int ans = 0;
+    for (int i = 0; i < edgelist.size(); i++)
+    {
+        if (combine(edgelist[i].x, edgelist[i].y)) ans = edgelist[i].d;
+    }
+
+    cout << ans << endl;
     return 0;
 } 

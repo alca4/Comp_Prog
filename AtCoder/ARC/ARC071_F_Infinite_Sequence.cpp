@@ -81,8 +81,9 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 0;
+const int MAXN = 1000010;
 int N;
+ll dp[MAXN];
 ll fact[MAXN], factinv[MAXN];
 
 ll choose(int a, int b)
@@ -107,5 +108,18 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
+    cin >> N;
+    // dp[0] = 1;
+    dp[1] = N;
+    for (int i = 2; i <= N; i++)
+    {
+        dp[i] = sub(dp[i - 1], dp[i - 2]);
+        addeq(dp[i], dp[i - 3]);
+        addeq(dp[i], mult(N - 1, max(2, i - 1) - 2));
+        addeq(dp[i], mult(N, N - max(2, i - 1) + 1));
+        addeq(dp[i], dp[i - 1]);
+    }
+
+    cout << sub(dp[N], dp[N - 1]) << endl;
     return 0;
 } 

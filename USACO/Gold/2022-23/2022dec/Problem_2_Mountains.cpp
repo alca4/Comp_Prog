@@ -23,9 +23,6 @@ using namespace std;
 ll INF = 1000000000;
 ll MOD = 1000000007;
 
-ifstream fin(".in");
-ofstream fout(".out");
-
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 

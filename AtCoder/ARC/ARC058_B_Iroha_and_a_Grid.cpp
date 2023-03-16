@@ -20,8 +20,8 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define ull unsigned ll
-ll INF = INT_MAX;
-ll LINF = LONG_MAX;
+ll INF = 1000000000;
+ll LINF = 1000000000000000000;
 ll MOD = 1000000007;
 // ll MOD = 998244353;
 
@@ -62,10 +62,6 @@ ll power(ll a, ll b)
 ll divide(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
 template<class X, class Y> void maxeq(X &x, Y y) {if (x < y) x = y;}
 template<class X, class Y> void mineq(X &x, Y y) {if (x > y) x = y;}
-template<class X, class Y> void addeq(X &x, Y y) {x = add(x, y);}
-template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
-template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
-template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
 int rand32()
 {
@@ -81,8 +77,8 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 0;
-int N;
+const int MAXN = 200010;
+int N, M, A, B;
 ll fact[MAXN], factinv[MAXN];
 
 ll choose(int a, int b)
@@ -98,6 +94,11 @@ void get_fact(int x)
     for (int i = x - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
 }
 
+ll solve(int a, int b)
+{
+    return choose(a + b - 2, a - 1);
+}
+
 int main()
 {
     // freopen('.in', 'r', cin);
@@ -107,5 +108,13 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
+    cin >> N >> M >> A >> B;
+    get_fact(200000);
+
+    ll ans = 0;
+    for (int i = 1; i <= N - A; i++) 
+        ans = add(ans, mult(solve(i, B), solve(N - i + 1, M - B)));
+    
+    cout << ans << endl;
     return 0;
 } 

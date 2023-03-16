@@ -20,10 +20,10 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define ull unsigned ll
-ll INF = INT_MAX;
-ll LINF = LONG_MAX;
-ll MOD = 1000000007;
-// ll MOD = 998244353;
+ll INF = 1000000000;
+ll LINF = 1000000000000000000;
+// ll MOD = 1000000007;
+ll MOD = 998244353;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -62,10 +62,6 @@ ll power(ll a, ll b)
 ll divide(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
 template<class X, class Y> void maxeq(X &x, Y y) {if (x < y) x = y;}
 template<class X, class Y> void mineq(X &x, Y y) {if (x > y) x = y;}
-template<class X, class Y> void addeq(X &x, Y y) {x = add(x, y);}
-template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
-template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
-template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
 int rand32()
 {
@@ -81,8 +77,13 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 0;
+const int MAXN = 210;
 int N;
+int arr[MAXN];
+vector<int> team[MAXN];
+int tsum[MAXN];
+int tps[MAXN];
+int dp[MAXN][MAXN];
 ll fact[MAXN], factinv[MAXN];
 
 ll choose(int a, int b)
@@ -90,12 +91,12 @@ ll choose(int a, int b)
     return mult(fact[a], mult(factinv[b], factinv[a - b]));
 }
 
-void get_fact(int x)
+void get_fact()
 {
     fact[0] = 1;
-    for (int i = 1; i <= x; i++) fact[i] = mult(i, fact[i - 1]);
-    factinv[x] = divide(1, fact[x]);
-    for (int i = x - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
+    for (int i = 1; i <= N; i++) fact[i] = mult(fact[i], fact[i - 1]);
+    factinv[N] = divide(1, fact[N]);
+    for (int i = N - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
 }
 
 int main()
@@ -107,5 +108,32 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
+    cin >> N;
+    get_fact();
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+    for (int i = 1; i <= N; i++) 
+    {
+        int x;
+        cin >> x;
+        team[x].pb(i);
+        tsum[x] += arr[i];
+    }
+    for (int i = 1; i <= N; i++) tps[i] = tps[i - 1] + tsum[i];
+
+    dp[0][0] = 1;
+    for (int i = 0; i <= N; i++) for (int j = 0; j <= i; j++)
+    {
+        cout << i << " " << j << " " << dp[i][j] << endl;
+        if (tps[i] - tps[j + 1] >= tsum[j + 1])
+        {
+            int ans = choose(tps[i] - tps[j + 1], tsum[j + 1]);
+            for (int k = 0; k < team[j + 1].size(); k++) 
+                ans = mult(ans, factinv[team[j + 1][k]]);
+            dp[i][j + 1] = add(dp[i][j + 1], mult(dp[i][j], ans));
+        }
+        dp[i + 1][j] = add(dp[i + 1][j], dp[i][j]);
+    }
+
+    cout << dp[N][N] << endl;
     return 0;
 } 
