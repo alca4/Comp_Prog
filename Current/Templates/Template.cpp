@@ -20,6 +20,7 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define ull unsigned ll
+#define endl "\n"
 ll INF = INT_MAX;
 ll LINF = LONG_MAX;
 ll MOD = 1000000007;
