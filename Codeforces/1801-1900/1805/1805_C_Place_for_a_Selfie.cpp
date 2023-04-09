@@ -18,11 +18,10 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define ull unsigned ll
-#define endl "\n"
-ll INF = 1000000000;
+// #define endl "\n"
+ll INF = 2000000000;
 ll LINF = 1000000000000000000;
-ll MOD = LINF;
-// ll MOD = 1000000007;
+ll MOD = 1000000007;
 // ll MOD = 998244353;
 
 typedef pair<int, int> pii;
@@ -52,7 +51,7 @@ ll power(ll a, ll b)
 
     while (n > 0)
     {
-        int id = __builtin_ctz(n & -n);
+        int id = (int) log2(n & -n);
         ans = mult(ans, binexp[id]);
         n -= (n & -n);
     }
@@ -81,8 +80,41 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 0;
-int N;
+const int MAXN = 100010;
+int N, M;
+set<ll> ks;
+
+void solve()
+{
+    cin >> N >> M;
+    for (int i = 1; i <= N; i++) 
+    {
+        ll v;
+        cin >> v;
+        ks.insert(v);
+    }
+    for (int i = 1; i <= M; i++)
+    {
+        ll a, b, c;
+        cin >> a >> b >> c;
+        
+        auto it = ks.upper_bound(b);
+        if (it != ks.end() && (*it - b) * (*it - b) < 4 * a * c)
+        {
+            cout << "YES" << endl;
+            cout << *it << endl;
+        }
+        else if (it != ks.begin() && (b - *(--it)) * (b - *it) < 4 * a * c)
+        {
+            cout << "YES" << endl;
+            cout << *it << endl;
+        }
+        else cout << "NO" << endl;
+    }
+
+    ks.clear();
+    cout << endl;
+}
 
 int main()
 {
@@ -92,6 +124,10 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    int T;
+    cin >> T;
+    while (T--) solve();
 
     return 0;
 } 

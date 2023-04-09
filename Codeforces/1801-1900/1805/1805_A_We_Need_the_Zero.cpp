@@ -19,10 +19,9 @@ using namespace std;
 #define ld long double
 #define ull unsigned ll
 #define endl "\n"
-ll INF = 1000000000;
-ll LINF = 1000000000000000000;
-ll MOD = LINF;
-// ll MOD = 1000000007;
+ll INF = 2000000000;
+ll LINF = 9000000000000000000;
+ll MOD = 1000000007;
 // ll MOD = 998244353;
 
 typedef pair<int, int> pii;
@@ -52,7 +51,7 @@ ll power(ll a, ll b)
 
     while (n > 0)
     {
-        int id = __builtin_ctz(n & -n);
+        int id = (int) log2(n & -n);
         ans = mult(ans, binexp[id]);
         n -= (n & -n);
     }
@@ -81,8 +80,40 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 0;
+const int MAXN = 1010;
 int N;
+int arr[MAXN];
+// ll fact[MAXN], factinv[MAXN];
+
+// ll choose(int a, int b)
+// {
+//     return mult(fact[a], mult(factinv[b], factinv[a - b]));
+// }
+
+// void get_fact(int x)
+// {
+//     fact[0] = 1;
+//     for (int i = 1; i <= x; i++) fact[i] = mult(i, fact[i - 1]);
+//     factinv[x] = divide(1, fact[x]);
+//     for (int i = x - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
+// }
+
+void solve()
+{
+    cin >> N;
+    int xorv = 0;
+    for (int i = 1; i <= N; i++) 
+    {
+        cin >> arr[i];
+        xorv = arr[i] ^ xorv;
+    }
+
+    if (N % 2) cout << xorv << endl;
+    else if (xorv == 0) cout << 0 << endl;
+    else cout << -1 << endl;
+
+    for (int i = 1; i <= N; i++) arr[i] = 0;
+}
 
 int main()
 {
@@ -92,6 +123,10 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    int T;
+    cin >> T;
+    while (T--) solve();
 
     return 0;
 } 

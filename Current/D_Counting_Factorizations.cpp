@@ -21,9 +21,9 @@ using namespace std;
 #define endl "\n"
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
-ll MOD = LINF;
+// ll MOD = LINF;
 // ll MOD = 1000000007;
-// ll MOD = 998244353;
+ll MOD = 998244353;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -81,8 +81,37 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 0;
+const int MAXN = 4050;
 int N;
+set<int> bases;
+map<int, int> exps;
+ll fact[1000010], factinv[1000010];
+ll dp[MAXN][MAXN];
+
+ll choose(int a, int b)
+{
+    return mult(fact[a], mult(factinv[b], factinv[a - b]));
+}
+
+void get_fact()
+{
+    fact[0] = 1;
+    for (int i = 1; i <= 1000000; i++) fact[i] = mult(i, fact[i - 1]);
+    factinv[1000000] = divide(1, fact[1000000]);
+    for (int i = 999999; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
+}
+
+int sieve[1000010];
+vector<int> primes;
+void get_primes()
+{
+    sieve[1] = 1;
+    for (int i = 2; i <= 1000000; i++) if (!sieve[i])
+    {
+        primes.pb(i);
+        for (int j = 2; i * j <= 100000; j++) sieve[i * j] = 1;
+    }
+}
 
 int main()
 {
@@ -93,5 +122,35 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
+    cin >> N;
+    get_fact();
+    get_primes();
+    
+    for (int i = 1; i <= 2 * N; i++) 
+    {
+        int n;
+        cin >> n;
+        if (sieve[n] || bases.count(n)) exps[n]++;
+        else bases.insert(n);
+    }
+
+    ll f = fact[N];
+    for (auto n : exps) diveq(f, fact[n.SS]);
+
+    for (int i = 1; i <= bases.size(); i++)
+    {
+        for (int j = )
+    }
+
+    ll ans = 0;
+    for (int i = (int) bases.size() - N; i >= 0; i--)
+    {
+        ll tans = 0;
+        
+        diveq(tans, i + N);
+        addeq(ans, tans);
+    }
+
+    cout << ans << endl;
     return 0;
 } 

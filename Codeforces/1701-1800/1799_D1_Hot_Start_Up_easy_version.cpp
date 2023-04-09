@@ -19,10 +19,9 @@ using namespace std;
 #define ld long double
 #define ull unsigned ll
 #define endl "\n"
-ll INF = 1000000000;
+ll INF = 2000000000;
 ll LINF = 1000000000000000000;
-ll MOD = LINF;
-// ll MOD = 1000000007;
+ll MOD = 1000000007;
 // ll MOD = 998244353;
 
 typedef pair<int, int> pii;
@@ -52,7 +51,7 @@ ll power(ll a, ll b)
 
     while (n > 0)
     {
-        int id = __builtin_ctz(n & -n);
+        int id = (int) log2(n & -n);
         ans = mult(ans, binexp[id]);
         n -= (n & -n);
     }
@@ -81,8 +80,64 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 0;
-int N;
+const int MAXN = 5010;
+int N, M;
+int arr[MAXN];
+int h[MAXN], c[MAXN];
+ll fact[MAXN], factinv[MAXN];
+ll dp[MAXN], dp2[MAXN];
+
+ll choose(int a, int b)
+{
+    return mult(fact[a], mult(factinv[b], factinv[a - b]));
+}
+
+void get_fact(int x)
+{
+    fact[0] = 1;
+    for (int i = 1; i <= x; i++) fact[i] = mult(i, fact[i - 1]);
+    factinv[x] = divide(1, fact[x]);
+    for (int i = x - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
+}
+
+void solve()
+{
+    cin >> N >> M;
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+    for (int i = 1; i <= M; i++) cin >> c[i];
+    for (int i = 1; i <= M; i++) cin >> h[i];
+    
+    M++;
+    arr[0] = M;
+
+    for (int i = 1; i <= M - 1; i++) dp[i] = LINF;
+    for (int i = 1; i <= M - 1; i++) dp2[i] = LINF;
+
+    for (int i = 1; i <= N; i++)
+    {
+        for (int j = 1; j <= M; j++) 
+        {
+            if (arr[i] != arr[i - 1]) dp2[j] += c[arr[i]];
+            else dp2[j] += h[arr[i]];
+        }
+        
+        ll hmm = 9ll * LINF;
+        for (int j = 1; j <= M; j++) mineq(hmm, dp[j]);
+        mineq(dp2[arr[i - 1]], min(dp[arr[i]] + h[arr[i]], hmm + c[arr[i]]));
+        for (int j = 1; j <= M; j++) dp[j] = dp2[j];
+
+        for (int i = 1; i <= M; i++) cout << dp[i] << " ";
+        cout << endl;
+    }
+
+    ll best = LINF;
+    for (int j = 1; j <= M; j++) mineq(best, dp[j]);
+    cout << best << endl;
+    
+    for (int i = 1; i <= N; i++) arr[i] = 0;
+    for (int i = 1; i <= M; i++) c[i] = h[i] = 0;
+    for (int i = 1; i <= M; i++) dp[i] = dp2[i] = 0;
+}
 
 int main()
 {
@@ -92,6 +147,10 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+    
+    int T;
+    cin >> T;
+    while (T--) solve();
 
     return 0;
 } 

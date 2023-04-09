@@ -5,9 +5,11 @@
 --"-"---
 Rowlet is orz
   _      _      _
->(.)__ >(.)__ >(.)__
+>(.)__ <(.)__ =(.)__
  (___/  (___/  (___/
 I am dum duck
+
+Praise to the Cow God
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -19,10 +21,9 @@ using namespace std;
 #define ld long double
 #define ull unsigned ll
 #define endl "\n"
-ll INF = 1000000000;
-ll LINF = 1000000000000000000;
-ll MOD = LINF;
-// ll MOD = 1000000007;
+ll INF = INT_MAX;
+ll LINF = LONG_MAX;
+ll MOD = 1000000007;
 // ll MOD = 998244353;
 
 typedef pair<int, int> pii;
@@ -52,7 +53,7 @@ ll power(ll a, ll b)
 
     while (n > 0)
     {
-        int id = __builtin_ctz(n & -n);
+        int id = (int) log2(n & -n);
         ans = mult(ans, binexp[id]);
         n -= (n & -n);
     }
@@ -81,8 +82,25 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 0;
+const int MAXN = 200010;
+string str, tar;
 int N;
+int c[MAXN];
+pii dp[MAXN][6];
+ll fact[MAXN], factinv[MAXN];
+
+ll choose(int a, int b)
+{
+    return mult(fact[a], mult(factinv[b], factinv[a - b]));
+}
+
+void get_fact(int x)
+{
+    fact[0] = 1;
+    for (int i = 1; i <= x; i++) fact[i] = mult(i, fact[i - 1]);
+    factinv[x] = divide(1, fact[x]);
+    for (int i = x - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
+}
 
 int main()
 {
@@ -93,5 +111,31 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
+    tar = "bessie";
+
+    cin >> str;
+    N = (int) str.length();
+    str = '#' + str;
+    for (int i = 1; i <= N; i++) cin >> c[i];
+
+    for (int i = 1; i <= N; i++) for (int j = 0; j < 6; j++) dp[i][j] = pii(0, -INF);
+
+    dp[1][0] = pii(0, 0);
+    for (int i = 1; i <= N; i++) for (int j = 0; j < 6; j++)
+    {
+        if (dp[i][j] == pii(0, -INF)) continue;
+        if (str[i] == tar[j])
+        {
+            if (j == 5) maxeq(dp[i + 1][0], pii(dp[i][j].FF + 1, dp[i][j].SS));
+            else maxeq(dp[i + 1][j + 1], dp[i][j]);
+        }
+        maxeq(dp[i + 1][0], dp[i][j]);
+        maxeq(dp[i + 1][j], pii(dp[i][j].FF, dp[i][j].SS - c[i]));
+    }
+
+    pii ans = pii(0, -INF);
+    for (int j = 0; j < 6; j++) maxeq(ans, dp[N + 1][j]);
+    cout << ans.FF << endl;
+    cout << ans.SS * -1 << endl;
     return 0;
 } 

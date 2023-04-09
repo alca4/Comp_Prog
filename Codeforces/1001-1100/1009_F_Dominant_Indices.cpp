@@ -81,8 +81,37 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 0;
+const int MAXN = 1000010;
 int N;
+vector<int> nbs[MAXN];
+map<int, int> depth[MAXN];
+int at[MAXN];
+int d[MAXN];
+pii best[MAXN];
+
+void DFS(int a, int p)
+{
+    depth[a][d[a]]++;
+    at[a] = a;
+    best[a] = pii(-1, d[a]);
+    for (int nb : nbs[a]) if (nb != p)
+    {
+        d[nb] = d[a] + 1;
+        DFS(nb, a);
+        if (depth[at[a]].size() < depth[at[nb]].size())
+        {
+            swap(at[a], at[nb]);
+            best[a] = best[nb];
+        }
+
+        for (pii x : depth[at[nb]]) 
+        {
+            depth[at[a]][x.FF] += x.SS;
+            best[a] = min(best[a], pii(depth[at[a]][x.FF] * -1, x.FF));
+        }
+        depth[at[nb]].clear();
+    }
+}
 
 int main()
 {
@@ -92,6 +121,19 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    cin >> N;
+    for (int i = 1; i < N; i++)
+    {
+        int a, b;
+        cin >> a >> b;
+        nbs[a].pb(b);
+        nbs[b].pb(a);
+    }
+
+    DFS(1, 0);
+
+    for (int i = 1; i <= N; i++) cout << best[i].SS - d[i] << endl;
 
     return 0;
 } 

@@ -81,8 +81,62 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 0;
-int N;
+const int MAXN = 200010;
+int N, K;
+int v[MAXN];
+pll cost[MAXN];
+// ll fact[MAXN], factinv[MAXN];
+
+// ll choose(int a, int b)
+// {
+//     return mult(fact[a], mult(factinv[b], factinv[a - b]));
+// }
+
+// void get_fact(int x)
+// {
+//     fact[0] = 1;
+//     for (int i = 1; i <= x; i++) fact[i] = mult(i, fact[i - 1]);
+//     factinv[x] = divide(1, fact[x]);
+//     for (int i = x - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
+// }
+
+void solve()
+{
+    cin >> N >> K;
+    for (int i = 1; i <= N; i++)
+    {
+        cin >> v[i];
+        cost[i] = pii(v[i] + min(i, N + 1 - i), i);
+    }
+
+    sort(cost + 1, cost + 1 + N);
+
+    for (int i = 1; i <= N; i++) cost[i].FF += cost[i - 1].FF;
+
+    int ans = 0;
+    for (int i = 1; i <= N; i++)
+    {
+        if (K - v[cost[i].SS] - cost[i].SS >= 0)
+        {
+            // cout << "start with " << i << endl;
+            auto it = upper_bound(cost + 1, cost + 1 + N, pll(K - v[cost[i].SS] - cost[i].SS, INF)) - 1;
+            if (distance(cost, it) >= i) 
+            {
+                it = upper_bound(cost + 1, cost + 1 + N, pll(K - cost[i].SS + min(cost[i].SS, N + 1 - cost[i].SS), INF)) - 1;
+                // cout << distance(cost, it) << endl;
+                maxeq(ans, distance(cost, it));
+            }
+            else 
+            {
+                // cout << distance(cost, it + 1) << endl;
+                maxeq(ans, distance(cost, it + 1));
+            }
+        }
+    }
+    cout << ans << endl;
+
+    for (int i = 1; i <= N; i++) v[i] = cost[i].FF = cost[i].SS = 0;
+}
 
 int main()
 {
@@ -92,6 +146,10 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    int T;
+    cin >> T;
+    while (T--) solve();
 
     return 0;
 } 
