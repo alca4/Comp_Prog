@@ -128,15 +128,15 @@ ll answer(int a, int b)
         a = lift[nodes[aloc][chainsz[aloc]]][0];
         aloc = loc[a].FF;
     }
-    if (a) ans += chains[aloc].qsum(loc[a].SS, loc[c].SS, 1, 1, chainsz[aloc]);
+    if (a) ans += chains[aloc].query(loc[a].SS, loc[c].SS, 1, 1, chainsz[aloc]);
 
     while (b && loc[b].FF != loc[c].FF)
     {
-        ans += chains[bloc].qsum(loc[b].SS, chainsz[bloc], 1, 1, chainsz[bloc]);
+        ans += chains[bloc].query(loc[b].SS, chainsz[bloc], 1, 1, chainsz[bloc]);
         b = lift[nodes[bloc][chainsz[bloc]]][0];
         bloc = loc[b].FF;
     }
-    if (b) ans += chains[bloc].qsum(loc[b].SS, loc[c].SS, 1, 1, chainsz[bloc]);
+    if (b) ans += chains[bloc].query(loc[b].SS, loc[c].SS, 1, 1, chainsz[bloc]);
 
     ans -= w[c];
     return ans;

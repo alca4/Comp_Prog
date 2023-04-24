@@ -1,4 +1,4 @@
-ll fact[MAXN], factinv[MAXN];
+ll fact[1000010], factinv[1000010];
 
 ll choose(int a, int b)
 {

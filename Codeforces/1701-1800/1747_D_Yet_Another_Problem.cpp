@@ -21,9 +21,7 @@ using namespace std;
 #define endl "\n"
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
-// ll MOD = LINF;
-// ll MOD = 1000000007;
-ll MOD = 998244353;
+ll MOD = 0;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -81,76 +79,61 @@ ll rand64()
     return (a << 32) | b;
 }
 
-const int MAXN = 4050;
-int N;
-set<int> bases;
-map<int, int> exps;
-ll fact[1000010], factinv[1000010];
-ll dp[MAXN][MAXN];
-
-ll choose(int a, int b)
-{
-    return mult(fact[a], mult(factinv[b], factinv[a - b]));
-}
-
-void get_fact()
-{
-    fact[0] = 1;
-    for (int i = 1; i <= 1000000; i++) fact[i] = mult(i, fact[i - 1]);
-    factinv[1000000] = divide(1, fact[1000000]);
-    for (int i = 999999; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
-}
-
-int sieve[1000010];
-vector<int> primes;
-void get_primes()
-{
-    sieve[1] = 1;
-    for (int i = 2; i <= 1000000; i++) if (!sieve[i])
-    {
-        primes.pb(i);
-        for (int j = 2; i * j <= 100000; j++) sieve[i * j] = 1;
-    }
-}
+const int MAXN = 200010;
+int N, Q;
+int arr[MAXN];
+map<int, set<int>> freq[2];
+set<int> nz, nzb;
 
 int main()
 {
-    // freopen('.in', 'r', cin);
-    // freopen('.out', 'w', cout);
+    // freopen(".in", "r", stdin);
+    // freopen(".out", "w", stdout);
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
 
-    cin >> N;
-    get_fact();
-    get_primes();
-    
-    for (int i = 1; i <= 2 * N; i++) 
+    cin >> N >> Q;
+    for (int i = 1; i <= N; i++)
     {
-        int n;
-        cin >> n;
-        if (sieve[n] || bases.count(n)) exps[n]++;
-        else bases.insert(n);
+        cin >> arr[i];
+        if (arr[i] != 0) 
+        {
+            nz.insert(i);
+            nzb.insert(-i);
+        }
+        arr[i] ^= arr[i - 1];
+        freq[i % 2][arr[i]].insert(i);
     }
 
-    ll f = fact[N];
-    for (auto n : exps) diveq(f, fact[n.SS]);
-
-    for (int i = 1; i <= bases.size(); i++)
+    while (Q--)
     {
-        for (int j = )
+        int l, r;
+        cin >> l >> r;
+
+        if (arr[r] != arr[l - 1]) cout << -1 << endl;
+        else if (nz.lower_bound(l) == nz.end() || nzb.lower_bound(-r) == nzb.end())
+            cout << 0 << endl;
+        else if (*nz.lower_bound(l) > r) cout << 0 << endl;
+        else 
+        {
+            bool change = 0;
+            if (l != *nz.lower_bound(l)) change = 1;
+            l = *nz.lower_bound(l);
+            if (r != -*nzb.lower_bound(-r)) change = 1;
+            r = -*nzb.lower_bound(-r);
+
+            if ((r - l) % 2 == 0) cout << 1 << endl;
+            else if (change) cout << 1 << endl;
+            else 
+            {
+                auto it = freq[l % 2][arr[l - 1]].upper_bound(l);
+                if (it != freq[l % 2][arr[l - 1]].end() && *it < r) cout << 2 << endl;
+                else cout << -1 << endl;
+            }
+        }
     }
 
-    ll ans = 0;
-    for (int i = (int) bases.size() - N; i >= 0; i--)
-    {
-        ll tans = 0;
-        
-        diveq(tans, i + N);
-        addeq(ans, tans);
-    }
-
-    cout << ans << endl;
     return 0;
 } 
