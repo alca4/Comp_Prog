@@ -3,6 +3,7 @@
 #include <vector>
 #include <queue>
 #include <set>
+#define endl "\n"
 using namespace std;
 
 typedef pair<int, int> pii;

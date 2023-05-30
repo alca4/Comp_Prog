@@ -5,11 +5,9 @@
 --"-"---
 Rowlet is orz
   _      _      _
->(.)__ <(.)__ =(.)__
+>(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Praise to the Cow God
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -20,10 +18,10 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define ull unsigned ll
+#define endl "\n"
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
-ll MOD = 1000000007;
-// ll MOD = 998244353;
+ll MOD = 0;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -41,18 +39,18 @@ ll sub(const ll& a, const ll& b)
     return x;
 }
 ll mult(const ll& a, const ll& b) {return (a * b) % MOD;}
+ll binexp[32];
 ll power(ll a, ll b)
 {
     ll n = b;
     ll ans = 1;
 
-    ll binexp[64];
     binexp[0] = a;
-    for (int i = 1; i < 64; i++) binexp[i] = mult(binexp[i - 1], binexp[i - 1]);
+    for (int i = 1; i < 32; i++) binexp[i] = mult(binexp[i - 1], binexp[i - 1]);
 
     while (n > 0)
     {
-        int id = (int) log2(n & -n);
+        int id = __builtin_ctz(n & -n);
         ans = mult(ans, binexp[id]);
         n -= (n & -n);
     }
@@ -62,61 +60,37 @@ ll power(ll a, ll b)
 ll divide(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
 template<class X, class Y> void maxeq(X &x, Y y) {if (x < y) x = y;}
 template<class X, class Y> void mineq(X &x, Y y) {if (x > y) x = y;}
+template<class X, class Y> void addeq(X &x, Y y) {x = add(x, y);}
+template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
+template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
+template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
-int rand32()
-{
-    int a = rand();
-    int b = rand();
-    return (a << 16) | b;
-}
+const int MAXN = 200010;
+int N;
 
-ll rand64()
-{
-    ll a = rand32();
-    ll b = rand32();
-    return (a << 32) | b;
-}
+void solve() {
+    cin >> N;
 
-const int MAXN = 1203;
-int N, M;
-ll fact[MAXN], factinv[MAXN];
-
-ll choose(int a, int b)
-{
-    return mult(fact[a], mult(factinv[b], factinv[a - b]));
-}
-
-void get_fact(int x)
-{
-    fact[0] = 1;
-    for (int i = 1; i <= x; i++) fact[i] = mult(i, fact[i - 1]);
-    factinv[x] = divide(1, fact[x]);
-    for (int i = x - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
+    for (int i = 1; i <= N; i++) {
+        int n;
+        cin >> n;
+        cout << N + 1 - n << " ";
+    }
+    cout << endl;
 }
 
 int main()
 {
-    // freopen('.in', 'r', cin);
-    // freopen('.out', 'w', cout);
+    // freopen(".in", "r", stdin);
+    // freopen(".out", "w", stdout);
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
 
-    int rs, cs, rc, cc;
-    cin >> N >> M;
-    cin >> rs >> cs >> rc >> cc;
-
-    char c;
-    cin >> c;
-    int cond = (rs + cs) % 2 == (rc + cc) % 2;
-
-    if (!cond) cout << c << endl;
-    else
-    {
-        if (c == 'C') cout << 'S' << endl;
-        else cout << 'C' << endl;
-    }
+    int T;
+    cin >> T;
+    while (T--) solve();
 
     return 0;
 } 
