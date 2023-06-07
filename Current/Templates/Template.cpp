@@ -19,6 +19,7 @@ using namespace std;
 #define ld long double
 #define ull unsigned ll
 #define endl "\n"
+#define EPS 1e-9
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
 ll MOD = 0;

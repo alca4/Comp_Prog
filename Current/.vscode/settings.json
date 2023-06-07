@@ -110,5 +110,6 @@
         "spanstream": "cpp",
         "stop_token": "cpp",
         "syncstream": "cpp"
-    }
+    },
+    "cph.general.onceMaintainerMessage": false
 }

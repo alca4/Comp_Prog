@@ -110,5 +110,6 @@
         "expected": "cpp",
         "spanstream": "cpp",
         "stacktrace": "cpp"
-    }
+    },
+    "cph.general.onceMaintainerMessage": false
 }

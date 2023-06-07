@@ -17,7 +17,7 @@ using namespace std;
 #define pb push_back
 #define ll long long
 #define ld long double
-#define INF 1000000000ll
+#define INF 1000000000000000000
 #define MOD 1000000007ll
 
 typedef pair<int, int> pii;
@@ -45,71 +45,43 @@ ll modInverse(ll a)
     return ans;
 }
 
-const int MAXN = 300010;
-int N, M, Q;
-struct Edge
+const int MAXN = 610;
+int N, M;
+ll dist[MAXN];
+vector<pll> nbs[MAXN];
+int vis[MAXN];
+
+void dijkstra(int a)
 {
-    int a, b, w;
-} edgelist[MAXN];
+    for (int i = 0; i <= N; i++) dist[i] = INF, vis[i] = 0;
+    int cur = a;
 
-bool operator<(const Edge& e1, const Edge& e2)
-{
-    return e1.w > e2.w;
-}
+    for (int j = 0; j < nbs[cur].size(); j++) 
+        dist[nbs[cur][j].FF] = nbs[cur][j].SS;
 
-int in[2 * MAXN], out[2 * MAXN];
-int lift[2 * MAXN][32];
-int T = 0;
-
-int p[2 * MAXN];
-vector<int> nbs[2 * MAXN];
-int v[2 * MAXN];
-int root(int a)
-{
-    return p[a] = (a == p[a] ? a : root(p[a]));
-}
-
-int combine(const Edge& e)
-{
-    int a = e.a, b = e.b, w = e.w;
-    a = root(a), b = root(b);
-    if (a == b) return 0;
-
-    int n = ++N;
-    p[a] = p[b] = p[n] = n;
-    lift[a][0] = lift[b][0] = n;
-    v[n] = w;
-    return 1;
-}
-
-void DFS(int a, int p)
-{
-    in[a] = ++T;
-    for (int i = 0; i < nbs[a].size(); i++) if (nbs[a][i] != p)
-        DFS(nbs[a][i], a);
-    out[a] = ++T;
-}
-
-bool is_anc(int a, int b)
-{
-    return in[a] < in[b] && out[b] < out[a];
-}
-
-int lca(int a, int b)
-{
-    if (is_anc(a, b)) return v[a];
-    if (is_anc(b, a)) return v[b];
-
-    while (!is_anc(a, b))
+    while (cur != N)
     {
-        for (int i = 1; i < 32; i++) if (is_anc(lift[a][i], b))
+        int cur = N;
+        for (int j = 0; j < N; j++) if (dist[j] < dist[cur] && !vis[j]) cur = j;
+
+        if (cur == N) break;
+
+        vis[cur] = 1;
+
+        for (int j = 0; j < nbs[cur].size(); j++) 
         {
-            a = lift[a][i - 1];
-            break;
+            int id = (nbs[cur][j].FF + dist[cur]) % N;
+            if (!vis[id]) dist[id] = min(dist[id], dist[cur] + nbs[cur][j].SS);
         }
+
+        if (!vis[(cur + 1) % N])
+            dist[(cur + 1) % N] = min(dist[(cur + 1) % N], dist[cur] + 1);
     }
 
-    return v[a];
+    dist[a] = 0;
+    
+    for (int j = 0; j < N; j++) cout << dist[j] << " ";
+    cout << endl;
 }
 
 int main()
@@ -120,30 +92,13 @@ int main()
 
     cin >> N >> M;
     for (int i = 1; i <= M; i++)
-        cin >> edgelist[i].a >> edgelist[i].b >> edgelist[i].w;
-    
-    sort(edgelist + 1, edgelist + 1 + M);
-
-    for (int i = 1; i <= N; i++) p[i] = i;
-
-    int N0 = N;
-    for (int i = 1, cnt = 0; i <= M, cnt < N0 - 1; i++)
-        cnt += combine(edgelist[i]);
-    
-    for (int i = 1; i <= N; i++) 
-        for (int j = 1; j < 32; j++) lift[i][j] = lift[lift[i][j - 1]][j - 1];
-    
-    for (int i = 1; i <= N; i++) nbs[p[i]].pb(i);
-
-    for (int i = 1; i <= N; i++) if (p[i] == i) DFS(i, 0);
-
-    cin >> Q;
-    while (Q--)
     {
-        int a, b;
-        cin >> a >> b;
-        if (root(a) != root(b)) cout << -1 << endl;
-        else cout << lca(a, b) << endl;
+        int a, b, c;
+        cin >> a >> b >> c;
+        nbs[a].pb({b, c});
     }
+
+    for (int i = 0; i < N; i++) dijkstra(i);
+
     return 0;
-} 
+}
