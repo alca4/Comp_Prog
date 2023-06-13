@@ -304,8 +304,6 @@ int main() {
             tp.revert(tp.rt[tp.op - 1], l, r);
         }
 
-        // cout << "capacity is " << tp.cap << endl;
-
         if (i % 1000 == 0) clear();
         // cout << "#thewanakatree" << endl;
         // tp.print(tp.rt[tp.op - 1]);

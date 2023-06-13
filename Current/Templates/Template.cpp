@@ -20,6 +20,7 @@ using namespace std;
 #define ull unsigned ll
 #define endl "\n"
 #define EPS 1e-9
+// #define cout cerr
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
 ll MOD = 0;
@@ -69,8 +70,7 @@ template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 const int MAXN = 0;
 int N;
 
-int main()
-{
+int main() {
     // freopen(".in", "r", stdin);
     // freopen(".out", "w", stdout);
     srand(time(NULL));

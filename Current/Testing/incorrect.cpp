@@ -67,257 +67,198 @@ template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
 template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
 template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
-const int MAXN = 200010;
-int N, Q;
-
-#define lc ch[0]
-#define rc ch[1]
+const int MAXN = 100010;
+int N;
+int arr[MAXN];
+int v[MAXN];
+vector<int> nbs[MAXN];
 
 struct Node {
-    ll v, sv;
-    int ch[2], sz;
+    int v, lc, rc, lazy;
 };
 
-int rand32() {
-    return (rand() << 16) | rand();
-}
-
-const int TSIZE = 20000010;
-struct PTreap {
-    Node nodes[TSIZE];
+struct Trie {
+    Node trie[100 * MAXN];
     int cap = 0;
-    int op = 0;
-    int rt[MAXN];
-    ll vals[MAXN];
 
-    int copy(int n) {
-        nodes[cap++] = nodes[n];
+    int create() {
+        trie[cap++] = {0, -1, -1, 0};
         return cap - 1;
     }
 
-    int find(int n, int v, int before) {
-        // assert(n >= 0);
-        // assert(n < cap);
-        int d = before + (nodes[n].lc >= 0 ? nodes[nodes[n].lc].sz : 0);
-        int ret;
-        if (nodes[n].lc >= 0 && v < d) ret = find(nodes[n].lc, v, before);
-        else if (nodes[n].rc >= 0 && v > d) ret = find(nodes[n].rc, v, d + 1);
-        else ret = n;
-        return ret;
+    void push(int n, int t) {
+        if (trie[n].lazy == 0) return;
+
+        if (trie[n].lazy & (1 << t)) swap(trie[n].lc, trie[n].rc);
+        if (trie[n].lc != -1) trie[trie[n].lc].lazy ^= trie[n].lazy;
+        if (trie[n].rc != -1) trie[trie[n].rc].lazy ^= trie[n].lazy;
+        trie[n].lazy = 0;
     }
-
-    pii split(int n, int v, int before) {
-        if (n >= 0) {
-            // if (n >= cap) cout << "bad " << n << " " << cap << endl;
-            // assert(n < cap);
-            int d = before + (nodes[n].lc >= 0 ? nodes[nodes[n].lc].sz : 0);
-            int nn = copy(n);
-            // assert(nn >= 0);
-            // assert(nn < cap);
-            if (v < d) {
-                pii x = split(nodes[nn].lc, v, before);
-                nodes[nn].lc = x.SS;
-                // assert(nn < cap);
-                pull(nn);
-                return pii(x.FF, nn);
-            }
-            else {
-                pii x = split(nodes[nn].rc, v, d + 1);
-                nodes[nn].rc = x.FF;
-                // assert(nn < cap);
-                pull(nn);
-                return pii(nn, x.SS);
-            }
-        }
-        return pii(-1, -1);
-    }
-
-    int merge(int m, int n) {
-        if (m == -1) return n;
-        if (n == -1) return m;
-
-        // assert(m < cap);
-        // assert(n < cap);
-        int nn;
-        if (rand32() % (nodes[m].sz + nodes[n].sz) < nodes[m].sz) {
-            nn = copy(m);
-            // assert(nn >= 0);
-            // assert(nn < cap);
-            nodes[nn].rc = merge(nodes[nn].rc, n);
-        } else {
-            nn = copy(n);
-            // assert(nn >= 0);
-            // assert(nn < cap);
-            nodes[nn].lc = merge(m, nodes[nn].lc);
-        }
-        pull(nn);
-        return nn;
-    }
-
-    void insert(int n, int idx, int v) {
-        int nn = cap++;
-        nodes[nn] = {v, v, -1, -1, 1};
-        pii x = split(n, idx - 1, 0);
-        rt[op++] = merge(merge(x.FF, nn), x.SS);
-    }
-
-    void move(int n, int l, int r, int k) {
-        if (k > r - l) {
-            int l2 = l - k;
-            int r2 = r - k;
-
-            pii x = split(n, l - 1, 0);
-            pii y = split(x.SS, r - l, 0);
-
-            pii x2 = split(n, l2 - 1, 0);
-            pii y2 = split(x2.SS, r2 - l2, 0);
-
-            rt[op++] = merge(x.FF, merge(y2.FF, y.SS));
-        } else {
-            int l2 = l - k;
-            int r2 = l - 1;
-
-            pii x2 = split(n, l2 - 1, 0);
-            pii y2 = split(x2.SS, r2 - l2, 0);
-
-            int tree = copy(y2.FF);
-            while (nodes[tree].sz < r - l + 1) {
-                int cp = copy(tree);
-                tree = merge(tree, cp);
-            }
-            
-            tree = split(tree, r - l, 0).FF;
-
-            pii x = split(n, l - 1, 0);
-            pii y = split(x.SS, r - l, 0);
-
-            rt[op++] = merge(x.FF, merge(tree, y.SS));
-        }
-    }
-
-    void revert(int n, int l, int r) {
-        pii x = split(rt[0], l - 1, 0);
-        pii y = split(x.SS, r - l, 0);
-
-        pii x2 = split(n, l - 1, 0);
-        pii y2 = split(x2.SS, r - l, 0);
-
-        rt[op++] = merge(x2.FF, merge(y.FF, y2.SS));
-    }
-
-    void print(int n) {
-        if (n == -1) {
-            cerr << -1 << endl;
-            return;
-        }
-        cerr << n << " " << nodes[n].v << " " << nodes[n].lc << " " << nodes[n].rc << endl;
- 
-        if (nodes[n].lc >= 0) print(nodes[n].lc);
-        if (nodes[n].rc >= 0) print(nodes[n].rc);
-    }
-
-    // updates & queries
 
     void pull(int n) {
-        nodes[n].sv = nodes[n].v +
-                      (nodes[n].lc >= 0 ? nodes[nodes[n].lc].sv : 0) +
-                      (nodes[n].rc >= 0 ? nodes[nodes[n].rc].sv : 0);
-        nodes[n].sz = 1 +
-                      (nodes[n].lc >= 0 ? nodes[nodes[n].lc].sz : 0) +
-                      (nodes[n].rc >= 0 ? nodes[nodes[n].rc].sz : 0);
+        trie[n].v = (trie[n].lc == -1 ? 0 : trie[trie[n].lc].v) + 
+                    (trie[n].rc == -1 ? 0 : trie[trie[n].rc].v);
     }
 
-    ll query(int n, int l, int r) {
-        pii x = split(n, l - 1, 0);
-        pii y = split(x.SS, r - l, 0);
+    void insert(int n, int a, int t) {
+        if (t == -1) {
+            // cout << "inserting node at " << n << endl;
+            trie[n].v = 1;
+            return;
+        }
 
-        ll v = nodes[y.FF].sv;
-        rt[op++] = merge(x.FF, merge(y.FF, y.SS));
-        return v;
+        push(n, t);
+        if (a & (1 << t)) {
+            if (trie[n].rc == -1) {
+                int s = create();
+                trie[n].rc = s;
+            }
+            insert(trie[n].rc, a, t - 1);
+        } else {
+            if (trie[n].lc == -1) {
+                int s = create();
+                trie[n].lc = s;
+            }
+            insert(trie[n].lc, a, t - 1);
+        }
+        pull(n);        
     }
 
-    void wipe() {
-        cap = 0;
-        op = 0;
+    int query(int n, int va, int t) {
+        if (t == -1) return va;
+        
+        push(n, t);
+        if (trie[n].lc != -1 && trie[trie[n].lc].v == (1 << t)) {
+            if (trie[n].rc == -1) {
+                int s = create();
+                trie[n].rc = s;
+            }
+            return query(trie[n].rc, va | (1 << t), t - 1);
+        } else {
+            if (trie[n].lc == -1) {
+                int s = create();
+                trie[n].lc = s;
+            }
+            return query(trie[n].lc, va, t - 1);
+        }
     }
 
-    void getArr(int n, int before) {
-        if (n < 0) return;
-        getArr(nodes[n].lc, before);
-        int d = before + (nodes[n].lc >= 0 ? nodes[nodes[n].lc].sz : 0);
-        vals[d + 1] = nodes[n].v;
-        getArr(nodes[n].rc, d + 1);
-    }
+    void merge(int n, int n2, int t) {
+        if (t == -1) {
+            trie[n].v = 1;
+            return;
+        }
 
-    int build(int l, int r) {
-        if (l > r) return -1;
-        int n = cap++;
-        int mid = (l + r) / 2;
-        nodes[n] = {vals[mid], vals[mid], -1, -1, 1};
-        nodes[n].lc = build(l, mid - 1);
-        nodes[n].rc = build(mid + 1, r);
+        push(n, t);
+        push(n2, t);
+        if (trie[n2].lc != -1 && trie[trie[n2].lc].v > 0) {
+            if (trie[n].lc == -1) {
+                int s = create();
+                trie[n].lc = s;
+            }
+            merge(trie[n].lc, trie[n2].lc, t - 1);
+        } 
+        if (trie[n2].rc != -1 && trie[trie[n2].rc].v > 0) {
+            if (trie[n].rc == -1) {
+                int s = create();
+                trie[n].rc = s;
+            }
+            merge(trie[n].rc, trie[n2].rc, t - 1);
+        }
         pull(n);
-        return n;
+        pull(n2);
+    }
+
+    void print(int n, int v, int t) {
+        if (t == -1) {
+            cout << v << " ";
+            return;
+        }
+
+        push(n, t);
+        if (trie[n].lc != -1 && trie[trie[n].lc].v > 0) 
+            print(trie[n].lc, v, t - 1);
+        if (trie[n].rc != -1 && trie[trie[n].rc].v > 0) 
+            print(trie[n].rc, v | (1 << t), t - 1);
+        pull(n);
     }
 };
 
-PTreap tp;
-int arr[MAXN];
+Trie trie;
+int key[MAXN];
+int xorsum[MAXN];
 
-void clear() {
-    tp.getArr(tp.rt[tp.op - 1], 0);
-    for (int i = 1; i <= N; i++) arr[i] = tp.vals[i];
-    tp.getArr(tp.rt[0], 0);
-    tp.wipe();
-    tp.rt[tp.op++] = tp.build(1, N);
-    for (int i = 1; i <= N; i++) tp.vals[i] = arr[i];
-    tp.rt[tp.op++] = tp.build(1, N);
+void DFS(int a, int p) {
+    if (nbs[a].size() == 1) {
+        if (!arr[a]) trie.insert(key[a], arr[a], 30);
+        v[a] = trie.query(key[a], 0, 30);
+        // cout << "grundy value of " << a << " is " << v[a] << endl;
+        // cout << "trie at " << a << " has size " << tries[key[a]].sz << endl;
+        return;
+    }
+
+    for (int nb : nbs[a]) if (nb != p) {
+        DFS(nb, a);
+        xorsum[a] ^= v[nb];
+    }
+
+    for (int nb : nbs[a]) if (nb != p) {
+        // cout << "applying lazy of " << (xorsum[a] ^ v[nb]) << " to " << nb << endl;
+        trie.trie[key[nb]].lazy ^= xorsum[a] ^ v[nb];
+        
+        if (trie.trie[key[nb]].v > trie.trie[key[a]].v) swap(key[nb], key[a]);
+
+        // cout << "merging " << a << " and " << nb << endl;
+        trie.merge(key[a], key[nb], 30);
+    }
+
+    int va = 0;
+    if (!arr[a]) trie.insert(key[a], xorsum[a], 30);
+    v[a] = trie.query(key[a], 0, 30);
+    // trie.print(key[a], 0, 25);
+    // cout << endl;
+    // cout << "grundy value of " << a << " is " << v[a] << endl;
+    // cout << "trie at " << a << " has size " << tries[key[a]].sz << endl;
+}
+
+vector<int> cand;
+
+void FindAnswer(int a, int p, int va) {
+    va ^= xorsum[a];
+    // cout << "at " << a << " value is " << va << endl;
+    if (va == 0 && !arr[a]) cand.pb(a);
+    for (int nb : nbs[a]) if (nb != p) {
+        FindAnswer(nb, a, va ^ v[nb]);
+    }
 }
 
 int main() {
-    freopen("tc.in", "r", stdin);
-    freopen("tc.out", "w", stdout);
+    // freopen(".in", "r", stdin);
+    // freopen(".out", "w", stdout);
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
 
-    cin >> N >> Q;
-    for (int i = 1; i <= N; i++) cin >> tp.vals[i];
-    tp.rt[tp.op++] = tp.build(1, N);
-  
-    // cout << "#thewanakatree" << endl;
-
-    for (int i = 1; i <= Q; i++) {
-        // cerr << "Query " << i << endl;
-        int t;
-        cin >> t;
-        if (t == 1) {
-            int l, r;
-            cin >> l >> r;
-            l--, r--;
-            cout << tp.query(tp.rt[tp.op - 1], l, r) << endl;
-        }
-        if (t == 2) {
-            int l, r, k;
-            cin >> l >> r >> k;
-            l--, r--;
-            tp.move(tp.rt[tp.op - 1], l, r, k);
-        }
-        if (t == 3) {
-            int l, r;
-            cin >> l >> r;
-            l--, r--;
-            tp.revert(tp.rt[tp.op - 1], l, r);
-        }
-
-        // cout << "capacity is " << tp.cap << endl;
-
-        if (i % 10000 == 0) clear();
-        // cout << "#thewanakatree" << endl;
-        // tp.print(tp.rt[tp.op - 1]);
-        // cout << endl;
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+    for (int i = 1; i < N; i++) {
+        int a, b;
+        cin >> a >> b;
+        nbs[a].pb(b);
+        nbs[b].pb(a);
     }
+
+    for (int i = 1; i <= N; i++) {
+        int s = trie.create();
+        key[i] = s;
+    }
+
+    DFS(1, 0);
+    int va = 0;
+    FindAnswer(1, 0, 0);
+    sort(cand.begin(), cand.end());
+    for (int n : cand) cout << n << endl;
 
     return 0;
 } 
