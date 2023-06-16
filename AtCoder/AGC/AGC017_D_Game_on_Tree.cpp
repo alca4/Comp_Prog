@@ -67,65 +67,19 @@ template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
 template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
 template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
-const int MAXN = 200010;
+const int MAXN = 100010;
 int N;
-ll M;
-vector<int> disrupt[MAXN];
+int g[MAXN];
+vector<int> nbs[MAXN];
 
-void solve() {
-    // cout << "=====" << endl;
-    cin >> N;
-    for (int i = 1; i <= N; i++) {
-        int n;
-        cin >> n;
-        disrupt[n].pb(i);
+void DFS(int a, int p) {
+    int c = 0;
+    for (int nb : nbs[a]) if (nb != p) {
+        DFS(nb, a);
+        c++;
+        g[a] ^= g[nb] + 1;
     }
-    cin >> M;
-
-    set<pii> ranges;
-    ranges.insert({1, N});
-
-    ll ans = 0;
-    int cont = N - 1;
-    int inserted = 0;
-    int remain = N;
-    for (int i = N; i >= 1; i--) {
-        if (inserted >= M) break;
-        for (int d : disrupt[i]) {
-            remain--;
-            pii p = *(--ranges.upper_bound({d, INF}));
-            // cout << p.FF << " " << p.SS << endl;
-            cont -= p.SS - p.FF;
-
-            pii p1 = pii(p.FF, d - 1);
-            pii p2 = pii(d + 1, p.SS);
-
-            if (p1.FF <= p1.SS) {
-                ranges.insert(p1);
-                cont += p1.SS - p1.FF;
-            }
-            if (p2.FF <= p2.SS) {
-                ranges.insert(p2);
-                cont += p2.SS - p2.FF;
-            }
-        }
-        if (inserted + remain > M) {
-            set<ll> vals;
-            for (auto n : ranges) vals.insert(n.SS - n.FF);
-
-            while (inserted < M) {
-                ans += min(*vals.begin(), M - inserted - 1);
-                inserted += *vals.begin() + 1;
-            }
-            break;
-        }
-        ans += cont;
-        inserted += remain;
-    }
-
-    cout << ans << endl;
-
-    for (int i = 1; i <= N; i++) disrupt[i].clear();
+    if (c == 0) g[a] = 0;
 }
 
 int main() {
@@ -136,9 +90,18 @@ int main() {
     cin.tie(0);
     cout.tie(0);
 
-    int T;
-    cin >> T;
-    while (T--) solve();
+    cin >> N;
+    for (int i = 1; i < N; i++) {
+        int a, b;
+        cin >> a >> b;
+        nbs[a].pb(b);
+        nbs[b].pb(a);
+    }
+
+    DFS(1, 0);
+
+    if (g[1]) cout << "Alice" << endl;
+    else cout << "Bob" << endl;
 
     return 0;
 } 

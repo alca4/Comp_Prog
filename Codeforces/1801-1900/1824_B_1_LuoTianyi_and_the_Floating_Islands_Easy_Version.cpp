@@ -23,7 +23,7 @@ using namespace std;
 // #define cout cerr
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
-ll MOD = 0;
+ll MOD = 1000000007;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -67,8 +67,33 @@ template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
 template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
 template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
-const int MAXN = 0;
-int N;
+const int MAXN = 200010;
+int N, K;
+
+ll fact[1000010], factinv[1000010];
+
+ll choose(int a, int b) {
+    if (a < b) return 0;
+    return mult(fact[a], mult(factinv[b], factinv[a - b]));
+}
+
+void get_fact(int x) {
+    fact[0] = 1;
+    for (int i = 1; i <= x; i++) fact[i] = mult(i, fact[i - 1]);
+    factinv[x] = divide(1, fact[x]);
+    for (int i = x - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
+}
+
+vector<int> nbs[MAXN];
+int sz[MAXN];
+
+void DFS(int a, int p) {
+    sz[a] = 1;
+    for (int nb : nbs[a]) if (nb != p) {
+        DFS(nb, a);
+        sz[a] += sz[nb];
+    }
+}
 
 int main() {
     // freopen("tc.in", "r", stdin);
@@ -77,6 +102,28 @@ int main() {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    cin >> N >> K;
+    get_fact(N);
+
+    for (int i = 1; i < N; i++) {
+        int a, b;
+        cin >> a >> b;
+        nbs[a].pb(b);
+        nbs[b].pb(a);
+    }
+
+    if (K % 2) {
+        cout << 1 << endl;
+        return 0;
+    }
+
+    DFS(1, 0);
+    ll ans = choose(N, K);
+    for (int i = 1; i <= N; i++) {
+        addeq(ans, mult(choose(sz[i], K / 2), choose(N - sz[i], K / 2)));
+    }
+    cout << divide(ans, choose(N, K)) << endl;
 
     return 0;
 } 

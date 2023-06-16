@@ -67,27 +67,49 @@ template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
 template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
 template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
-const int MAXN = 5010;
+const int MAXN = 200010;
 int N;
+string str;
 int arr[MAXN];
+ll dp[MAXN][5][2];
+ll pow10[5] = {1, 10, 100, 1000, 10000};
 
 void solve() {
-    cin >> N;
-    for (int i = 1; i <= N; i++) cin >> arr[i];
+    cin >> str;
+    N = str.length();
+    for (int i = 0; i < N; i++) arr[i + 1] = str[i] - 'A';
 
-    ll ans = 0;
-    for (int i = 2; i <= N; i++) ans += (i - 1) * (N + 1 - i);
-
-    for (int i = 1; i <= N; i++) {
-        int l = i - 1;
-        while (l >= 1 && arr[l] < arr[i]) l--;
-        l++;
-        int r = i + 1;
-        while (r <= N && arr[r] > arr[i]) r++;
-        r--;
-        cout << l << " " << r << endl;
+    for (int i = 1; i <= N + 1; i++) for (int j = 0; j < 5; j++) 
+        dp[i][j][0] = dp[i][j][1] = -LINF;
+    dp[N + 1][0][0] = 0;
+    for (int i = N; i >= 1; i--) {
+        for (int j = 0; j < 5; j++) {
+            if (arr[i] < j) {
+                dp[i][j][0] = max(dp[i][j][0], dp[i + 1][j][0] - pow10[arr[i]]);
+                dp[i][j][1] = max(dp[i][j][1], dp[i + 1][j][1] - pow10[arr[i]]);
+            }
+            else if (arr[i] == j) {
+                dp[i][j][0] = max(dp[i][j][0], dp[i + 1][j][0] + pow10[arr[i]]);
+                dp[i][j][1] = max(dp[i][j][1], dp[i + 1][j][1] + pow10[arr[i]]);
+            }
+            else {
+                dp[i][arr[i]][0] = max(dp[i][arr[i]][0], dp[i + 1][j][0] + pow10[arr[i]]);
+                dp[i][arr[i]][1] = max(dp[i][arr[i]][1], dp[i + 1][j][1] + pow10[arr[i]]);
+            }
+            
+            for (int k = 0; k < 5; k++) if (k != arr[i]) {
+                if (k >= j) dp[i][k][1] = max(dp[i][k][1], dp[i + 1][j][0] + pow10[k]);
+                else dp[i][j][1] = max(dp[i][j][1], dp[i + 1][j][0] - pow10[k]);
+            }
+        }
     }
+
+    ll ans = -LINF;
+    for (int i = 0; i < 5; i++) ans = max({ans, dp[1][i][0], dp[1][i][1]});
     cout << ans << endl;
+
+    for (int i = 1; i <= N + 1; i++) for (int j = 0; j < 5; j++)
+        dp[i][j][0] = dp[i][j][1] = 0;
 }
 
 int main() {

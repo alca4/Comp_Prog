@@ -20,6 +20,7 @@ using namespace std;
 #define ull unsigned ll
 #define endl "\n"
 #define EPS 1e-9
+// #define cout cerr
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
 ll MOD = 0;
@@ -66,13 +67,24 @@ template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
 template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
 template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
-const int MAXN = 210;
-int N, M;
+const int MAXN = 300010;
+int N;
+int g[MAXN];
+int par[MAXN];
+vector<int> nbs[MAXN];
+int eaten[MAXN];
 
-int adjmat[MAXN][MAXN]
+void DFS(int a, int p) {
+    int c = 0;
+    for (int nb : nbs[a]) if (nb != p) {
+        par[nb] = a;
+        DFS(nb, a);
+        c++;
+        g[a] ^= g[nb] + 1;
+    }
+}
 
-int main()
-{
+int main() {
     // freopen(".in", "r", stdin);
     // freopen(".out", "w", stdout);
     srand(time(NULL));
@@ -80,7 +92,46 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
-    cin >> N >> M;
+    cin >> N;
+    for (int i = 1; i < N; i++) {
+        int a, b;
+        cin >> a >> b;
+        nbs[a].pb(b);
+        nbs[b].pb(a);
+    }
+
+    DFS(1, 0);
+    if (g[1]) cout << 1;
+    else cout << 2;
+    for (int i = 2; i <= N; i++) {
+        int t = i;
+        int p = par[i];
+        while (t != 1 && !eaten[t]) {
+            eaten[t] = 1;
+            if (p == 1) g[p] ^= g[t] + 1;
+            g[t] = 0;
+            for (int n : nbs[t]) if (n != par[t] && !eaten[n]) g[1] ^= g[n] + 1;
+            g[1] ^= g[t] + 1;
+
+            for (int n : nbs[t]) if (n != par[t] && !eaten[n]) {
+                par[n] = 1;
+                nbs[1].pb(n);
+            }
+            
+            par[t] = 1;
+            nbs[t].clear();
+            nbs[1].pb(t);
+            t = p;
+            p = par[t];
+        }
+
+        // for (int i = 1; i <= N; i++) cerr << g[i] << " ";
+        // cerr << endl;
+
+        if (g[1]) cout << 1;
+        else cout << 2;
+    }
+    cout << endl;
 
     return 0;
 } 

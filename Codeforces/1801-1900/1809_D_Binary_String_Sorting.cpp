@@ -67,55 +67,53 @@ template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
 template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
 template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
-const int MAXN = 2010;
+const int MAXN = 300010;
 int N;
-pii arr[MAXN];
-vector<int> nbs[MAXN];
-int dp[MAXN];
+int arr[MAXN];
+int prefo[MAXN], suffz[MAXN], lastz[MAXN];
+ll c1 = 1000000000000;
+ll c2 = c1 + 1;
 
 void solve() {
-    // cout << "==========" << endl;
-    cin >> N;
-    for (int i = 1; i <= N; i++) cin >> arr[i].FF >> arr[i].SS;
-
-    sort(arr + 1, arr + 1 + N);
-
+    string str;
+    cin >> str;
+    N = str.length();
     for (int i = 1; i <= N; i++) {
-        for (int j = i + 1; j <= N; j++) {
-            if (arr[j].FF <= arr[i].SS) {
-                nbs[i].pb(j);
-            }
-        }
+        arr[i] = str[i - 1] - '0';
     }
 
     for (int i = 1; i <= N; i++) {
-        int bad = 0;
-        vector<int> cand;
-        for (int j = i - 1; j >= 1; j--) {
-            if (nbs[j].size()) {
-                // cout << j << " can go to " << i << endl;
-                if (nbs[j].back() > i) {
-                    bad = 1;
-                    break;
-                }
-                if (nbs[j].back() == i) cand.pb(j);
-            }
-        }
-
-        dp[i] = dp[i - 1];
-        for (int n : cand)
-            dp[i] = max(dp[i], dp[n - 1] + 2);
+        prefo[i] = prefo[i - 1];
+        if (arr[i] == 1) prefo[i]++;
     }
 
-    cout << N - dp[N] << endl;
-    for (int i = 1; i <= N; i++) nbs[i].clear();
-    for (int i = 1; i <= N; i++) arr[i] = {0, 0};
-    for (int i = 1; i <= N; i++) dp[i] = 0;
+    for (int i = N; i >= 1; i--) {
+        suffz[i] = suffz[i + 1];
+        if (arr[i] == 0) suffz[i]++;
+    }
+
+    int lz = 0;
+    for (int i = 1; i <= N; i++) {
+        lastz[i] = lz;
+        if (arr[i] == 0) lz = i;
+    }
+
+    ll ans = LINF;
+    for (int i = 1; i <= N; i++) {
+        ll tans = (i - lastz[i] - 1) * c1 +
+                  prefo[lastz[i]] * c2 +
+                  suffz[i + 1] * c2;
+        ans = min(ans, tans);
+    }
+
+    cout << ans << endl;
+
+    for (int i = 1; i <= N; i++) arr[i] = prefo[i] = lastz[i] = suffz[i] = 0;
 }
 
 int main() {
-    // freopen(".in", "r", stdin);
-    // freopen(".out", "w", stdout);
+    // freopen("tc.in", "r", stdin);
+    // freopen("tc.out", "w", stdout);
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);

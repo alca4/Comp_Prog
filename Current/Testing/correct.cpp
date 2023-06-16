@@ -1,262 +1,800 @@
-/*
-  ___
- (o,o)
-<  .  >
---"-"---
-Rowlet is orz
-  _      _      _
->(.)__ >(.)__ >(.)__
- (___/  (___/  (___/
-I am dum duck
-*/
 #include <bits/stdc++.h>
 using namespace std;
-
-#define FF first
-#define SS second
-#define pb push_back
-#define ll long long
-#define ld long double
-#define ull unsigned ll
-#define endl "\n"
-#define EPS 1e-9
-// #define cout cerr
-ll INF = 1000000000;
-ll LINF = 1000000000000000000;
-ll MOD = 0;
-
-typedef pair<int, int> pii;
-typedef pair<ll, ll> pll;
-
-ll add(const ll& a, const ll& b) 
-{
-    ll x = a + b;
-    if (a + b >= MOD) x -= MOD;
-    return x;
+template<typename T>
+int SIZE(T(&t)) {
+    return t.size();
 }
-ll sub(const ll& a, const ll& b) 
-{
-    ll x = a - b;
-    if (a - b < 0) x += MOD;
-    return x;
+
+template<typename T, size_t N>
+int SIZE(T(&t)[N]) {
+    return N;
 }
-ll mult(const ll& a, const ll& b) {return (a * b) % MOD;}
-ll binexp[32];
-ll power(ll a, ll b)
-{
-    ll n = b;
-    ll ans = 1;
 
-    binexp[0] = a;
-    for (int i = 1; i < 32; i++) binexp[i] = mult(binexp[i - 1], binexp[i - 1]);
-
-    while (n > 0)
-    {
-        int id = __builtin_ctz(n & -n);
-        ans = mult(ans, binexp[id]);
-        n -= (n & -n);
-    }
-
-    return ans;
+string to_string(char t) {
+    return "'" + string({t}) + "'";
 }
-ll divide(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
-template<class X, class Y> void maxeq(X &x, Y y) {if (x < y) x = y;}
-template<class X, class Y> void mineq(X &x, Y y) {if (x > y) x = y;}
-template<class X, class Y> void addeq(X &x, Y y) {x = add(x, y);}
-template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
-template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
-template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
-const int MAXN = 100010;
-int N;
-int arr[MAXN];
-int v[MAXN];
-vector<int> nbs[MAXN];
+string to_string(bool t) {
+    return t ? "true" : "false";
+}
 
-struct Node {
-    int v, lc, rc, lazy;
-};
+string to_string(const string &t, int x1 = 0, int x2 = 1e9) {
+    string ret = "";
 
-struct Trie {
-    vector<Node> trie;
-    int sz;
-
-    Trie() {
-        trie.pb({0, -1, -1, 0});
-        sz = 0;
+    for (int i = min(x1, SIZE(t)), _i = min(x2, SIZE(t) - 1); i <= _i; ++i) {
+        ret += t[i];
     }
 
-    int create() {
-        trie.pb({0, -1, -1});
-        return trie.size() - 1;
+    return '"' + ret + '"';
+}
+
+string to_string(const char *t) {
+    string ret(t);
+    return to_string(ret);
+}
+
+template<size_t N>
+string to_string(const bitset<N> &t, int x1 = 0, int x2 = 1e9) {
+    string ret = "";
+
+    for (int i = min(x1, SIZE(t)); i <= min(x2, SIZE(t) - 1); ++i) {
+        ret += t[i] + '0';
     }
 
-    void insert(int n, int a, int t) {
-        if (t == -1) {
-            // cout << "inserting node at " << n << endl;
-            if (trie[n].v == 0) sz++;
-            trie[n].v = 1;
-            return;
-        }
+    return to_string(ret);
+}
 
-        cout << t << endl;
-        if (a & (1 << t)) {
-            if (trie[n].rc == -1) {
-                int s = create();
-                trie[n].rc = s;
-            }
-            insert(trie[n].rc, a, t - 1);
-        } else {
-            if (trie[n].lc == -1) {
-                int s = create();
-                trie[n].lc = s;
-            }
-            insert(trie[n].lc, a, t - 1);
-        }
+template<typename T, typename... Coords>
+string to_string(const T(&t), int x1 = 0, int x2 = 1e9, Coords... C);
 
-        trie[n].v = (trie[n].lc == -1 ? 0 : trie[trie[n].lc].v) + 
-                    (trie[n].rc == -1 ? 0 : trie[trie[n].rc].v);
+template<typename T, typename S>
+string to_string(const pair<T, S> &t) {
+    return "(" + to_string(t.first) + ", " + to_string(t.second) + ")";
+}
+
+template<typename T, typename... Coords>
+string to_string(const T(&t), int x1, int x2, Coords... C) {
+    string ret = "[";
+    x1 = min(x1, SIZE(t));
+    auto e = begin(t);
+    advance(e, x1);
+
+    for (int i = x1, _i = min(x2, SIZE(t) - 1); i <= _i; ++i) {
+        ret += to_string(*e, C...) + (i != _i ? ", " : "");
+        e = next(e);
     }
 
-    void push(int n, int t) {
-        if (trie[n].lazy == 0) return;
+    return ret + "]";
+}
 
-        swap(trie[n].lc, trie[n].rc);
-        if (trie[n].lc == -1) {
-            trie[n].lc = create();
-            trie[trie[n].lc].lazy ^= trie[n].lazy;
-        }
-        if (trie[n].rc == -1) {
-            trie[n].rc = create();
-            trie[trie[n].rc].lazy ^= trie[n].lazy;
-        }
-    }
-
-    void query(int n, int& v, int t) {
-        if (t == -1) return;
-        
-        push(n, t);
-        if (trie[n].lc != -1 && trie[trie[n].lc].v == (1 << t)) {
-            if (trie[n].rc == -1) {
-                int s = create();
-                trie[n].rc = s;
-            }
-            // n = trie[n].rc;
-            v |= (1 << t);
-            query(trie[n].rc, v, t - 1);
-        } else {
-            if (trie[n].lc == -1) {
-                int s = create();
-                trie[n].lc = s;
-            }
-            // n = trie[n].lc;
-            query(trie[n].lc, v, t - 1);
-        }
-    }
-
-    void merge(Trie trie2, int n, int n2, int t) {
-        if (t == -1) {
-            if (!trie[n].v && trie2.trie[n2].v) {
-                sz++;
-                trie[n].v = 1;
-            }
-            return;
-        }
-
-        push(n, t);
-        trie2.push(n2, t);
-        if (trie2.trie[n2].lc != -1 && trie2.trie[trie2.trie[n2].lc].v > 0) {
-            if (trie[n].lc == -1) {
-                int s = create();
-                trie[n].lc = s;
-            }
-            merge(trie2, trie[n].lc, trie2.trie[n2].lc, t - 1);
-        } 
-        if (trie2.trie[n2].rc != -1 && trie2.trie[trie2.trie[n2].rc].v > 0) {
-            if (trie[n].rc == -1) {
-                int s = create();
-                trie[n].rc = s;
-            }
-            merge(trie2, trie[n].rc, trie2.trie[n2].rc, t - 1);
-        }
-        trie[n].v = (trie[n].lc == -1 ? 0 : trie[trie[n].lc].v) + 
-                    (trie[n].rc == -1 ? 0 : trie[trie[n].rc].v);
+template<int Index, typename... Ts>
+struct print_tuple {
+    string operator()(const tuple<Ts...> &t) {
+        string ret = print_tuple < Index - 1, Ts... > {}(t);
+        ret += (Index ? ", " : "");
+        return ret + to_string(get<Index>(t));
     }
 };
 
-Trie tries[MAXN];
-int key[MAXN];
-int xorsum[MAXN];
-
-void DFS(int a, int p) {
-    if (nbs[a].size() == 1) {
-        if (!arr[a]) tries[key[a]].insert(0, arr[a], 25);
-        tries[key[a]].query(0, v[a], 25);
-        // cout << "grundy value of " << a << " is " << v[a] << endl;
-        // cout << "trie at " << a << " has size " << tries[key[a]].sz << endl;
-        return;
+template<typename... Ts>
+struct print_tuple<0, Ts...> {
+    string operator()(const tuple<Ts...> &t) {
+        return to_string(get<0>(t));
     }
+};
 
-    for (int nb : nbs[a]) if (nb != p) {
-        DFS(nb, a);
-        xorsum[a] ^= v[nb];
-    }
-
-    for (int nb : nbs[a]) if (nb != p) {
-        tries[nb].trie[0].lazy ^= xorsum[a] ^ v[nb];
-        vector<int> vals;
-        
-        if (tries[key[nb]].sz > tries[key[a]].sz) swap(key[nb], key[a]);
-
-        // cout << "merging " << a << " and " << nb << endl;
-        tries[key[a]].merge(tries[key[nb]], 0, 0, 25);
-        tries[key[nb]].trie.clear();
-    }
-
-    int va = 0;
-    tries[key[a]].query(0, v[a], 25);
-    tries[key[a]].insert(0, v[a], 25);
-    // cout << "grundy value of " << a << " is " << v[a] << endl;
-    // cout << "trie at " << a << " has size " << tries[key[a]].sz << endl;
+template<typename... Ts>
+string to_string(const tuple<Ts...> &t) {
+    const auto Size = tuple_size<tuple<Ts...>>::value;
+    return print_tuple < Size - 1, Ts... > {}(t);
 }
 
-vector<int> cand;
-
-void FindAnswer(int a, int p, int& va) {
-    va ^= xorsum[a];
-    // cout << "at " << a << " value is " << va << endl;
-    if (va == 0 && !arr[a]) cand.pb(a);
-    for (int nb : nbs[a]) if (nb != p) {
-        va ^= v[nb];
-        FindAnswer(nb, a, va);
-        va ^= v[nb];
-    }
-    va ^= xorsum[a];
+void dbgr() {;}
+template<typename Heads, typename... Tails>
+void dbgr(Heads H, Tails... T) {
+    cout << to_string(H) << " | ";
+    dbgr(T...);
 }
 
-int main() {
-    // freopen(".in", "r", stdin);
-    // freopen(".out", "w", stdout);
-    srand(time(NULL));
-    ios_base::sync_with_stdio(0);
-    cin.tie(0);
-    cout.tie(0);
+void dbgs() {;}
+template<typename Heads, typename... Tails>
+void dbgs(Heads H, Tails... T) {
+    cout << H << " ";
+    dbgs(T...);
+}
 
-    cin >> N;
-    for (int i = 1; i <= N; i++) cin >> arr[i];
-    for (int i = 1; i < N; i++) {
-        int a, b;
-        cin >> a >> b;
-        nbs[a].pb(b);
-        nbs[b].pb(a);
+/*
+formatted functions:
+*/
+
+/*
+consider __VA_ARGS__ as a whole:
+dbgv() prints values only
+dbg() prints name and values
+*/
+#define dbgv(...) cout << to_string(__VA_ARGS__) << endl;
+
+#define dbg(...) cout << "[" << #__VA_ARGS__ << "]: "; dbgv(__VA_ARGS__);
+//#define dbg(...)
+
+/*
+consider __VA_ARGS__ as a sequence of arguments:
+dbgr() prints values only
+dbgm() prints names and values
+*/
+#define dbgr(...) dbgr(__VA_ARGS__); cout << endl;
+
+#define dbgm(...) cout << "[" << #__VA_ARGS__ << "]: "; dbgr(__VA_ARGS__);
+
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
     }
 
-    for (int i = 1; i <= N; i++) key[i] = i;
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
 
-    DFS(1, 0);
-    int va = 0;
-    FindAnswer(1, 0, va);
-    for (int n : cand) cout << n << endl;
+template <typename T>
+T inverse(T a, T m) {
+    T u = 0, v = 1;
 
+    while (a != 0) {
+        T t = m / a;
+        m -= t * a;
+        swap(a, m);
+        u -= t * v;
+        swap(u, v);
+    }
+
+    assert(m == 1);
+    return u;
+}
+
+template <typename T>
+class Modular {
+public:
+    using Type = typename decay<decltype(T::value)>::type;
+
+    constexpr Modular() : value() {}
+    template <typename U> Modular(const U &x) {
+        value = normalize(x);
+    }
+
+    template <typename U>
+    static Type normalize(const U &x) {
+        Type v;
+
+        if (-mod() <= x && x < mod())
+            v = static_cast<Type>(x);
+        else
+            v = static_cast<Type>(x % mod());
+
+        if (v < 0)
+            v += mod();
+
+        return v;
+    }
+
+    const Type &operator()() const {
+        return value;
+    }
+    template <typename U>
+    explicit operator U() const {
+        return static_cast<U>(value);
+    }
+    constexpr static Type mod() {
+        return T::value;
+    }
+
+    Modular &operator+=(const Modular &other) {
+        if ((value += other.value) >= mod())
+            value -= mod();
+
+        return *this;
+    }
+    Modular &operator-=(const Modular &other) {
+        if ((value -= other.value) < 0)
+            value += mod();
+
+        return *this;
+    }
+    template <typename U> Modular &operator+=(const U &other) {
+        return *this += Modular(other);
+    }
+    template <typename U> Modular &operator-=(const U &other) {
+        return *this -= Modular(other);
+    }
+    Modular &operator++() {
+        return *this += 1;
+    }
+    Modular &operator--() {
+        return *this -= 1;
+    }
+    Modular operator++(int) {
+        Modular result(*this);
+        *this += 1;
+        return result;
+    }
+    Modular operator--(int) {
+        Modular result(*this);
+        *this -= 1;
+        return result;
+    }
+    Modular operator-() const {
+        return Modular(-value);
+    }
+
+    template <typename U = T>
+    typename enable_if<is_same<typename Modular<U>::Type, int>::value, Modular>::type & operator*=
+    (const Modular &rhs) {
+#ifdef _WIN32
+        uint64_t x = static_cast<int64_t>(value) * static_cast<int64_t>(rhs.value);
+        uint32_t xh = static_cast<uint32_t>(x >> 32), xl = static_cast<uint32_t>(x), d, m;
+        asm(
+            "divl %4; \n\t"
+            : "=a"(d), "=d"(m)
+            : "d"(xh), "a"(xl), "r"(mod())
+        );
+        value = m;
+#else
+        value = normalize(static_cast<int64_t>(value) * static_cast<int64_t>(rhs.value));
+#endif
+        return *this;
+    }
+    template <typename U = T>
+    typename enable_if<is_same<typename Modular<U>::Type, long long>::value, Modular>::type & operator*=
+    (const Modular &rhs) {
+        long long q = static_cast<long long>(static_cast<long double>(value) * rhs.value / mod());
+        value = normalize(value * rhs.value - q * mod());
+        return *this;
+    }
+    template <typename U = T>
+    typename enable_if < !is_integral<typename Modular<U>::Type>::value,
+    Modular >::type & operator*=(const Modular &rhs) {
+        value = normalize(value * rhs.value);
+        return *this;
+    }
+
+    Modular &operator/=(const Modular &other) {
+        return *this *= Modular(inverse(other.value, mod()));
+    }
+
+    friend const Type &abs(const Modular &x) {
+        return x.value;
+    }
+
+    template <typename U>
+    friend bool operator==(const Modular<U> &lhs, const Modular<U> &rhs);
+
+    template <typename U>
+    friend bool operator<(const Modular<U> &lhs, const Modular<U> &rhs);
+
+    template <typename V, typename U>
+    friend V &operator>>(V &stream, Modular<U> &number);
+
+private:
+    Type value;
+};
+
+template <typename T> bool operator==(const Modular<T> &lhs, const Modular<T> &rhs) {
+    return lhs.value == rhs.value;
+}
+template <typename T, typename U> bool operator==(const Modular<T> &lhs, U rhs) {
+    return lhs == Modular<T>(rhs);
+}
+template <typename T, typename U> bool operator==(U lhs, const Modular<T> &rhs) {
+    return Modular<T>(lhs) == rhs;
+}
+
+template <typename T> bool operator!=(const Modular<T> &lhs, const Modular<T> &rhs) {
+    return !(lhs == rhs);
+}
+template <typename T, typename U> bool operator!=(const Modular<T> &lhs, U rhs) {
+    return !(lhs == rhs);
+}
+template <typename T, typename U> bool operator!=(U lhs, const Modular<T> &rhs) {
+    return !(lhs == rhs);
+}
+
+template <typename T> bool operator<(const Modular<T> &lhs, const Modular<T> &rhs) {
+    return lhs.value < rhs.value;
+}
+
+template <typename T> Modular<T> operator+(const Modular<T> &lhs, const Modular<T> &rhs) {
+    return Modular<T>(lhs) += rhs;
+}
+template <typename T, typename U> Modular<T> operator+(const Modular<T> &lhs, U rhs) {
+    return Modular<T>(lhs) += rhs;
+}
+template <typename T, typename U> Modular<T> operator+(U lhs, const Modular<T> &rhs) {
+    return Modular<T>(lhs) += rhs;
+}
+
+template <typename T> Modular<T> operator-(const Modular<T> &lhs, const Modular<T> &rhs) {
+    return Modular<T>(lhs) -= rhs;
+}
+template <typename T, typename U> Modular<T> operator-(const Modular<T> &lhs, U rhs) {
+    return Modular<T>(lhs) -= rhs;
+}
+template <typename T, typename U> Modular<T> operator-(U lhs, const Modular<T> &rhs) {
+    return Modular<T>(lhs) -= rhs;
+}
+
+template <typename T> Modular<T> operator*(const Modular<T> &lhs, const Modular<T> &rhs) {
+    return Modular<T>(lhs) *= rhs;
+}
+template <typename T, typename U> Modular<T> operator*(const Modular<T> &lhs, U rhs) {
+    return Modular<T>(lhs) *= rhs;
+}
+template <typename T, typename U> Modular<T> operator*(U lhs, const Modular<T> &rhs) {
+    return Modular<T>(lhs) *= rhs;
+}
+
+template <typename T> Modular<T> operator/(const Modular<T> &lhs, const Modular<T> &rhs) {
+    return Modular<T>(lhs) /= rhs;
+}
+template <typename T, typename U> Modular<T> operator/(const Modular<T> &lhs, U rhs) {
+    return Modular<T>(lhs) /= rhs;
+}
+template <typename T, typename U> Modular<T> operator/(U lhs, const Modular<T> &rhs) {
+    return Modular<T>(lhs) /= rhs;
+}
+
+template<typename T, typename U>
+Modular<T> power(const Modular<T> &a, const U &b) {
+    assert(b >= 0);
+    Modular<T> x = a, res = 1;
+    U p = b;
+
+    while (p > 0) {
+        if (p & 1)
+            res *= x;
+
+        x *= x;
+        p >>= 1;
+    }
+
+    return res;
+}
+
+template <typename T>
+bool IsZero(const Modular<T> &number) {
+    return number() == 0;
+}
+
+template <typename T>
+string to_string(const Modular<T> &number) {
+    return to_string(number());
+}
+
+// U == std::ostream? but done this way because of fastoutput
+template <typename U, typename T>
+U &operator<<(U &stream, const Modular<T> &number) {
+    return stream << number();
+}
+
+// U == std::istream? but done this way because of fastinput
+template <typename U, typename T>
+U &operator>>(U &stream, Modular<T> &number) {
+    typename common_type<typename Modular<T>::Type, long long>::type x;
+    stream >> x;
+    number.value = Modular<T>::normalize(x);
+    return stream;
+}
+
+/*
+using ModType = int;
+
+struct VarMod { static ModType value; };
+ModType VarMod::value;
+ModType& md = VarMod::value;
+using Mint = Modular<VarMod>;
+*/
+
+constexpr int md = (int) 998244353;
+using Mint = Modular<std::integral_constant<decay<decltype(md)>::type, md>>;
+
+/*vector<Mint> fact(1, 1);
+vector<Mint> inv_fact(1, 1);
+
+Mint C(int n, int k) {
+  if (k < 0 || k > n) {
     return 0;
-} 
+  }
+  while ((int) fact.size() < n + 1) {
+    fact.push_back(fact.back() * (int) fact.size());
+    inv_fact.push_back(1 / fact.back());
+  }
+  return fact[n] * inv_fact[k] * inv_fact[n - k];
+}*/
+
+typedef long long ll;
+typedef unsigned int ui;
+typedef unsigned long long ull;
+typedef pair<int, int> pi;
+typedef pair<ll, ll> pll;
+// using u128 = __uint128_t;
+// using i128 = __int128;
+const int mod = 1000000007;
+const int N = 200005;
+const int LOG = 20;
+const int inf = 1e9;
+const double eps = 1e-11;
+const Mint root = 3, invroot = (Mint)1 / 3, divtwo = (Mint)1 / 2;
+int nxtpow(int n) {
+    int x = 1;
+
+    while (x < n)
+        x <<= 1;
+
+    return x;
+}
+
+void FFT(vector<Mint> &a, bool ifft = false) {
+    int n = a.size();
+
+    for (int i = 1, j = 0; i < n; i++) {
+        int b = n >> 1;
+
+        for (; j & b; b >>= 1) {
+            j ^= b;
+        }
+
+        j ^= b;
+
+        if (i < j)
+            swap(a[i], a[j]);
+    }
+
+    for (int len = 1; len <= n / 2; len <<= 1) {
+        Mint mul = power((ifft ? invroot : root), md / len / 2);
+
+        for (int i = 0; i < n; i += len * 2) {
+            Mint cur = 1;
+
+            for (int j = i; j < i + len; j++) {
+                Mint x = a[j], y = a[j + len] * cur;
+                a[j] = x + y, a[j + len] = x - y;
+
+                if (ifft)
+                    a[j] *= divtwo, a[j + len] *= divtwo;
+
+                cur *= mul;
+            }
+        }
+    }
+}
+
+void conv(vector<Mint> &a, vector<Mint> b) {
+    int n = nxtpow(a.size() + b.size() - 1);
+    a.resize(n);
+    b.resize(n);
+    FFT(a);
+    FFT(b);
+
+    for (int i = 0; i < n; i++) {
+        a[i] *= b[i];
+    }
+
+    FFT(a, true);
+}
+
+void mulslow(vector<Mint> &a, vector<Mint> b) {
+    int n = a.size(), m = b.size();
+    vector<Mint> c(n + m - 1);
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            c[i + j] += a[i] * b[j];
+        }
+    }
+
+    a = c;
+}
+
+// magic
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+int rnd(int l = 0, int r = md - 1) {
+    return uniform_int_distribution<int>(l, r)(rng);
+}
+
+bool check(Mint x) {
+    return power(x, (md - 1) / 2) == 1;
+}
+
+pair<Mint, Mint> mul(Mint a, Mint b, Mint c, Mint d, Mint x) {
+    Mint e = a * c + b * d * x, f = b * c + a * d;
+    return {e, f};
+}
+
+pair<Mint, bool> cipolla(Mint x) {
+    if (x == 0)
+        return {0, true};
+
+    if (!check(x))
+        return {0, false};
+
+    while (true) {
+        Mint a = rnd();
+
+        if (!check(a))
+            continue;
+
+        int cur = (md + 1) / 2;
+        Mint b = 1, y = a * a - x, resa = 1, resb = 0;
+
+        if (check(y))
+            continue;
+
+        while (cur > 0) {
+            if (cur & 1) {
+                auto [e, f] = mul(a, b, resa, resb, y);
+                resa = e, resb = f;
+            }
+
+            auto [e, f] = mul(a, b, a, b, y);
+            a = e, b = f;
+            cur >>= 1;
+        }
+
+        return {resa, true};
+    }
+}
+
+struct Poly {
+    vector<Mint> a;
+    Poly() {}
+    Poly(Mint x) : a({x}) {}
+    Poly(vector<Mint> a) : a(a) {}
+    void normalize() {
+        while (!a.empty() && a.back() == 0) {
+            a.pop_back();
+        }
+    }
+
+    void resz(int n) {
+        a.resize(n);
+    }
+
+    void print() {
+        for (Mint x : a) {
+            cout << x << " ";
+        }
+
+        cout << "\n";
+    }
+
+    Poly operator -() {
+        for (int i = 0; i < a.size(); i++) {
+            a[i] = -a[i];
+        }
+
+        return *this;
+    }
+
+    Poly operator += (const Poly &b) {
+        a.resize(max(a.size(), b.a.size()));
+
+        for (int i = 0; i < b.a.size(); i++) {
+            a[i] += b.a[i];
+        }
+
+        normalize();
+        return *this;
+    }
+
+    Poly operator -= (const Poly &b) {
+        a.resize(max(a.size(), b.a.size()));
+
+        for (int i = 0; i < b.a.size(); i++) {
+            a[i] -= b.a[i];
+        }
+
+        normalize();
+        return *this;
+    }
+
+    Poly operator + (const Poly &b) {
+        return Poly(*this) += b;
+    }
+    Poly operator - (const Poly &b) {
+        return Poly(*this) -= b;
+    }
+    Poly operator *= (const Poly &b) {
+        int test = min(a.size(), b.a.size());
+
+        if (test > 100)
+            conv(a, b.a);
+        else
+            mulslow(a, b.a);
+
+        normalize();
+        return *this;
+    }
+
+    Poly operator * (const Poly &b) {
+        return Poly(*this) *= b;
+    }
+    Poly modx(int k) {
+        vector<Mint> b(min(k, (int)a.size()));
+
+        for (int i = 0; i < min(k, (int)a.size()); i++) {
+            b[i] = a[i];
+        }
+
+        return Poly(b);
+    }
+
+    Poly inv(int k) {
+        int n = a.size();
+        assert(a[0] != 0);
+        Poly b = Poly((Mint)1 / a[0]), c = *this;
+
+        for (int i = 2; i <= nxtpow(k); i <<= 1) {
+            b *= (Poly(2) - c.modx(i) * b);
+            b = b.modx(i);
+        }
+
+        return b.modx(k);
+    }
+
+    pair<Poly, bool> sqrt(int k) {
+        int n = a.size();
+        auto [s, ok] = cipolla(a[0]);
+
+        // Mint s = 1;
+        // bool ok = true;
+        if (!ok)
+            return {Poly(), false};
+
+        if ((ll)s > (ll)(-s))
+            s = -s;
+
+        Poly b = Poly(s), c = *this;
+
+        for (int i = 2; i <= nxtpow(k); i <<= 1) {
+            b = (b * b + c.modx(i)) * b.inv(i) * Poly((Mint)1 / 2);
+            b = b.modx(i);
+        }
+
+        return {b.modx(k), true};
+    }
+
+    Poly deriv() {
+        int n = a.size();
+        vector<Mint> b(n - 1);
+
+        for (int i = 1; i < n; i++) {
+            b[i - 1] = a[i] * i;
+        }
+
+        return Poly(b);
+    }
+
+    Poly integral() {
+        int n = a.size();
+        vector<Mint> b(n + 1);
+
+        for (int i = 1; i <= n; i++) {
+            b[i] = a[i - 1] / i;
+        }
+
+        return Poly(b);
+    }
+
+    Poly log(int k) {
+        assert(!a.empty() && a[0] == 1);
+        Poly b = Poly(a);
+        Poly c = b.deriv() * b.inv(k);
+        return c.integral().modx(k);
+    }
+
+    Poly exp(int k) {
+        if (a.empty())
+            return Poly(1);
+
+        int n = a.size();
+        assert(a[0] == 0);
+        Poly b = Poly(1), c = *this;
+
+        for (int i = 2; i <= nxtpow(k); i <<= 1) {
+            b = b * (Poly(1) - b.log(i) + c.modx(i));
+            b = b.modx(i);
+        }
+
+        return b.modx(k);
+    }
+
+    Poly shift(int k, int m) {
+        int n = a.size();
+        vector<Mint> b(k);
+
+        for (int i = 0; i < n; i++) {
+            if (i + m >= 0 && i + m < k)
+                b[i + m] = a[i];
+        }
+
+        return Poly(b);
+    }
+
+    Poly pow(int k, ll p) {
+        if (p == 0)
+            return Poly(1);
+
+        normalize();
+        int n = a.size();
+
+        if (n == 0)
+            return Poly();
+
+        Poly b = Poly(a);
+        int pos = 0;
+        Mint val = 0;
+
+        for (int i = 0; i < n; i++) {
+            if (a[i] != 0) {
+                pos = i, val = a[i];
+                break;
+            }
+        }
+
+        if (pos >= (k + p - 1) / p)
+            return Poly();
+
+        b = b.shift(k, -pos) * Poly((Mint)1 / val);
+        b = (b.log(k) * Poly(p)).exp(k).shift(k, p * pos) * Poly(power(val, p));
+        return b;
+    }
+
+    Mint eval(Mint x) {
+        normalize();
+        Mint cur = 1, res = 0;
+
+        for (int i = 0; i < a.size(); i++) {
+            res += a[i] * cur;
+            cur *= x;
+        }
+
+        return res;
+    }
+};
+
+int n, k, qq;
+void solve() {
+    freopen("tc.in", "r", stdin);
+    freopen("tc2.out", "w", stdout);
+    cin >> n >> k;
+    n++;
+    vector<Mint> aa(n);
+
+    for (int i = 0; i < n; i++) {
+        cin >> aa[i];
+    }
+
+    Poly a = Poly(aa);
+    auto [b, ok] = a.sqrt(n);
+    assert(ok);
+    b = b.inv(n);
+    b = b.integral();
+    // b.print();
+    b -= Poly(b.eval(0));
+    b = Poly(2) + a - Poly(a.eval(0)) - b.exp(n);
+    // b.print();
+    b = b.log(n) + Poly(1);
+    b = b.pow(n, k).deriv();
+    b.resz(n - 1);
+    b.print();
+}
+
+int32_t main() {
+    std::ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    solve();
+}

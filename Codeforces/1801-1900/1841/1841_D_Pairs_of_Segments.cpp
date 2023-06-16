@@ -67,16 +67,54 @@ template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
 template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
 template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
-const int MAXN = 0;
+const int MAXN = 2010;
 int N;
+pii arr[MAXN];
+vector<pii> bigs;
+
+void solve() {
+    // cout << "==========" << endl;
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> arr[i].FF >> arr[i].SS;
+
+    for (int i = 1; i <= N; i++) swap(arr[i].FF, arr[i].SS);
+    sort(arr + 1, arr + 1 + N);
+    for (int i = 1; i <= N; i++) swap(arr[i].FF, arr[i].SS);
+
+    for (int i = 1; i <= N; i++) for (int j = i + 1; j <= N; j++) {
+        if (arr[j].FF <= arr[i].SS) bigs.pb(pii(min(arr[i].FF, arr[j].FF), arr[j].SS));
+    }
+
+    for (int i = 0; i < bigs.size(); i++) swap(bigs[i].FF, bigs[i].SS);
+    sort(bigs.begin(), bigs.end());
+    for (int i = 0; i < bigs.size(); i++) swap(bigs[i].FF, bigs[i].SS);
+
+    int use = 0;
+    int r = -1;
+    for (int i = 0; i < bigs.size(); i++) {
+        if (bigs[i].FF > r) {
+            r = bigs[i].SS;
+            use++;
+        }
+    }
+
+    cout << N - use * 2 << endl;
+    
+    for (int i = 1; i <= N; i++) arr[i] = {0, 0};
+    bigs.clear();
+}
 
 int main() {
-    // freopen("tc.in", "r", stdin);
-    // freopen("tc.out", "w", stdout);
+    // freopen(".in", "r", stdin);
+    // freopen(".out", "w", stdout);
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    int T;
+    cin >> T;
+    while (T--) solve();
 
     return 0;
 } 

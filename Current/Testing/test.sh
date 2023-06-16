@@ -7,7 +7,7 @@ do
     echo "test $i"
     # ./generator > tc.in
     # echo "test generated"
-    ./correct
+    time ./correct
     echo "correct solution run"
     time ./incorrect
     echo "incorrect solution run"

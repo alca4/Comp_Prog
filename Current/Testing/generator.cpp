@@ -9,16 +9,14 @@ int rand32() {
     return abs(rand() << 15 | rand());
 }
 
-int N = 100000;
+int N = 100;
 int M = 100000;
 set<pii> edges;
 
 int main() {
     srand(time(NULL));
-    cout << N << endl;
-    for (int i = 1; i <= N; i++) cout << (rand32() % 2) << endl;
-    for (int i = 2; i <= N; i++) {
-        cout << (rand32() % (i - 1)) + 1 << endl;
-    }
+    cout << N << " " << M << endl;
+    cout << 0 << endl;
+    for (int i = 2; i <= N; i++) cout << (rand32() % 1000000000) << endl;
     return 0;
 }
