@@ -145,12 +145,12 @@ struct NumberTheory {
 int N;
 vector<int> nbs[2 * MAXN];
 ll dist[2 * MAXN];
-int vis[MAXN];
+int vis[2 * MAXN];
 int before[2 * MAXN];
 
 int main() {
-    freopen("tc.in", "r", stdin);
-    freopen("tc.out", "w", stdout);
+    // freopen("tc.in", "r", stdin);
+    // freopen("tc.out", "w", stdout);
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
@@ -170,7 +170,7 @@ int main() {
         }
     }
 
-    for (int i = 1; i <= 2 * N; i++) dist[i] = LINF;
+    for (int i = 1; i <= 600000; i++) dist[i] = LINF;
     cin >> S >> T;
     
     deque<pll> pq;

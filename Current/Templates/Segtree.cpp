@@ -1,9 +1,7 @@
-struct ST
-{
+struct ST {
     ll seg[4 * MAXN];
 
-    void update(int a, int v, int cid, int ss, int se)
-    {
+    void update(int a, int v, int cid, int ss, int se) {
         if (ss == se)
         {
             seg[cid] = v;
@@ -16,8 +14,7 @@ struct ST
         seg[cid] = seg[cid * 2] + seg[cid * 2 + 1];
     }
 
-    ll query(int a, int b, int cid, int ss, int se)
-    {
+    ll query(int a, int b, int cid, int ss, int se) {
         if (a <= ss && se <= b) return seg[cid];
 
         ll ans = 0;
@@ -26,4 +23,13 @@ struct ST
         if (b > mid) ans += query(a, b, cid * 2 + 1, mid + 1, se);
         return ans;
     } 
+
+    void clear(int cid, int ss, int se) {
+        seg[cid] = 0;
+        if (ss == se) return;
+
+        int mid = (ss + se) / 2;
+        clear(cid * 2, ss, mid);
+        clear(cid * 2 + 1, mid + 1, se);
+    }
 };

@@ -23,7 +23,7 @@ using namespace std;
 // #define cout cerr
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
-ll MOD = 998244353;
+ll MOD = 0;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -67,41 +67,40 @@ template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
 template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
 template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
-const int MAXN = 100010;
+const int MAXN = 0;
 int N, M;
-vector<ll> S;
 
-vector<ll> sqrt(vector<ll>& f, vector<ll>& g) {
-    
+void solve() {
+    cin >> N >> M;
+    ll s1 = 0;
+    ll s2 = 0;
+    for (int i = 1; i <= N; i++) {
+        int n;
+        cin >> n;
+        s1 += n;
+    }
+    for (int i = 1; i <= M; i++) {
+        int n;
+        cin >> n;
+        s2 += n;
+    }
+
+    if (s1 > s2) cout << "Tsondu" << endl;
+    else if (s1 == s2) cout << "Draw" << endl;
+    else cout << "Tenzing" << endl;
 }
 
 int main() {
-    // freopen(".in", "r", stdin);
-    // freopen(".out", "w", stdout);
+    // freopen("tc.in", "r", stdin);
+    // freopen("tc.out", "w", stdout);
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
 
-    cin >> N >> M;
-    S.resize(M + 1);
-    for (int i = 1; i <= N; i++) {
-        int n;
-        cin >> n;
-        S[n] = 1;
-    }
-
-    for (int i = 0; i <= M; i++) S[i] = MOD - S[i];
-    S[0]++;
-
-    int cnt = 0;
-    while ((1 << cnt) < M) cnt++;
-
-    vector<ll> g(M);
-    g.pb(1);
-    for (int i = 0; i < cnt; i++) {
-        g = sqrt(S, g);
-    }
+    int T;
+    cin >> T;
+    while (T--) solve();
 
     return 0;
 } 

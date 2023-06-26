@@ -2,27 +2,22 @@ struct ST
 {
     ll seg[4 * MAXN], lazy[4 * MAXN];
 
-    void apply(ll v, int cid)
-    {
+    void apply(ll v, int cid) {
         lazy[cid] += v;
         seg[cid] += v;
     }
 
-    void push(int cid, int ss, int se)
-    {
-        if (ss != se)
-        {
+    void push(int cid, int ss, int se) {
+        if (ss != se) {
             apply(lazy[cid], cid * 2);
             apply(lazy[cid], cid * 2 + 1);
         }
         lazy[cid] = 0;
     }
 
-    void update(int a, int b, ll v, int cid, int ss, int se)
-    {
+    void update(int a, int b, ll v, int cid, int ss, int se) {
         if (a > b) return;
-        if (a <= ss && se <= b)
-        {
+        if (a <= ss && se <= b) {
             apply(v, cid);
             return;
         }
@@ -34,8 +29,7 @@ struct ST
         seg[cid] = min(seg[cid * 2], seg[cid * 2 + 1]);
     }
 
-    ll query(int a, int b, int cid, int ss, int se)
-    {
+    ll query(int a, int b, int cid, int ss, int se) {
         if (a <= ss && se <= b) return seg[cid];
 
         push(cid, ss, se);
@@ -45,5 +39,14 @@ struct ST
         if (b > mid) ans = min(ans, query(a, b, cid * 2 + 1, mid + 1, se));
         seg[cid] = min(seg[cid * 2], seg[cid * 2 + 1]);
         return ans;
+    }
+
+    void clear(int cid, int ss, int se) {
+        seg[cid] = lazy[cid] = 0;
+        if (ss == se) return;
+
+        int mid = (ss + se) / 2;
+        clear(cid * 2, ss, mid);
+        clear(cid * 2 + 1, mid + 1, se);
     }
 };

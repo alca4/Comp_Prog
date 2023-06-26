@@ -22,7 +22,7 @@ using namespace std;
 #define EPS 1e-9
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
-ll MOD = 998244353;
+ll MOD = 924844033;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -66,9 +66,8 @@ template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
 template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
 template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
-const int MAXN = 100010;
+const int MAXN = 200010;
 int N;
-int arr[MAXN];
 
 ll fact[1000010], factinv[1000010];
 
@@ -85,10 +84,10 @@ void get_fact(int x)
     for (int i = x - 1; i >= 0; i--) factinv[i] = mult(factinv[i + 1], i + 1);
 }
 
-ll w[(1 << 17)];
+ll w[(1 << 20)];
 void dft(vector<ll>& a, int tot, bool inv)
 {
-    ll g = 3;
+    ll g = 5;
     if (inv) g = power(g, MOD - 2);
     int sz = (1 << tot);
 
@@ -129,7 +128,6 @@ void dft(vector<ll>& a, int tot, bool inv)
 
 vector<ll> fft(vector<ll>& a, vector<ll>& b)
 {
-    ll g = 3;
     int tot = 32 - __builtin_clz(a.size() + b.size() - 1);
     if (a.size() == 1 && b.size() == 1) tot = 0;
     int sz = (1 << tot);
@@ -141,7 +139,7 @@ vector<ll> fft(vector<ll>& a, vector<ll>& b)
     dft(b, tot, 0);
 
     vector<ll> c(sz);
-    for (int i = 0; i < sz; i++) c[i] = (a[i] * b[i]) % MOD;
+    for (int i = 0; i < sz; i++) c[i] = mult(a[i], b[i]);
 
     dft(c, tot, 1);
 
@@ -150,16 +148,16 @@ vector<ll> fft(vector<ll>& a, vector<ll>& b)
 
 vector<int> nbs[MAXN];
 int sz[MAXN];
-map<int, int> freq;
+int freq[MAXN];
 
 void DFS(int a, int p) {
     sz[a] = 1;
     for (int nb : nbs[a]) if (nb != p) {
         DFS(nb, a);
         sz[a] += sz[nb];
+        freq[sz[nb]]++;
     }
 
-    freq[sz[a]]++;
     freq[N - sz[a]]++;
 }
 
@@ -172,9 +170,9 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
-    get_fact(200000);
     cin >> N;
-    for (int i = 1; i <= N; i++) {
+    get_fact(N);
+    for (int i = 1; i < N; i++) {
         int a, b;
         cin >> a >> b;
         nbs[a].pb(b);
@@ -184,12 +182,12 @@ int main()
     DFS(1, 0);
 
     vector<ll> a, b;
-    // for (int i = 0; i <= N; i++) a.pb(mult(freq[i], fact[i]));
-    // for (int i = 0; i <= N; i++) b.pb(factinv[i]);
+    for (int i = 0; i <= N; i++) a.pb(mult(freq[i], fact[i]));
+    for (int i = 0; i <= N; i++) b.pb(factinv[N - i]);
     vector<ll> c = fft(a, b);
 
     for (int i = 1; i <= N; i++) 
-        cout << sub(mult(choose(N, i), N + 1), mult(c[i + N], factinv[i])) << endl;
+        cout << sub(mult(choose(N, i), N), mult(c[i + N], factinv[i])) << endl;
 
     return 0;
 } 

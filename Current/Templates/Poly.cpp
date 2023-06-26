@@ -3,21 +3,14 @@ struct Poly {
     static void dft(vector<ll> &a, int tot, bool inv) {
         ll g = 3;
 
-        if (inv)
-            g = power(g, MOD - 2);
+        if (inv) g = power(g, MOD - 2);
 
-        int sz =  (1 << tot) ;
-
+        int sz = (1 << tot);
         for (int i = 1, j = 0; i < sz; i++) {
             int bit = sz >> 1;
-
-            for (; j & bit; bit >>= 1)
-                j ^= bit;
-
+            for (; j & bit; bit >>= 1) j ^= bit;
             j ^= bit;
-
-            if (i < j)
-                swap(a[i], a[j]);
+            if (i < j) swap(a[i], a[j]);
         }
 
         for (int i = 0; i < tot; i++) {
@@ -112,17 +105,12 @@ struct Poly {
         ll v = -1;
 
         while (v < 0) {
-            if (t == 0)
-                v = 0;
-
-            if (t == 1)
-                v = r;
+            if (t == 0) v = 0;
+            if (t == 1) v = r;
 
             int i = 1;
-
             for (; i < m; i++)
-                if (power(t, power(2, i)) == 1)
-                    break;
+                if (power(t, power(2, i)) == 1) break;
 
             ll b = power(c, power(2, m - i - 1));
 
