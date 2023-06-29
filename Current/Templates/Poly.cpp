@@ -96,36 +96,34 @@ struct Poly {
         return g;
     }
 
-    static vector<ll> sqrt(vector<ll> &f) {
-        ll m = 23;
-        ll c = power(3, 119);
-        ll t = power(f[0], 119);
-        ll r = power(f[0], 60);
-
-        ll v = -1;
-
-        while (v < 0) {
-            if (t == 0) v = 0;
-            if (t == 1) v = r;
-
-            int i = 1;
-            for (; i < m; i++)
-                if (power(t, power(2, i)) == 1) break;
-
-            ll b = power(c, power(2, m - i - 1));
-
-            m = i;
-            c = power(b, 2);
-            t = mult(t, c);
-            r = mult(r, b);
+    static int modsqrt(int n) {
+        n %= MOD;
+        if (power(n, (MOD - 1) / 2) == MOD - 1) return -1;
+        ll a = 2;
+        for (; a < MOD; a++) {
+            if (power(sub(mult(a, a), n), (MOD - 1) / 2) == MOD - 1) break;
         }
 
-        vector<ll> g;
+        pll m = pll(a, 1);
+        pll ans = pll(1, 0);
 
-        if (MOD - v < v)
-            v = MOD - v;
+        int b = (MOD + 1) / 2;
 
-        g.pb(v);
+        for (int i = 0; i < 32; i++) {
+            if (b & 1) {
+                ans = pll(add(mult(ans.FF, m.FF), mult(mult(ans.SS, m.SS), sub(mult(a, a), n))),
+                        add(mult(ans.FF, m.SS), mult(ans.SS, m.FF)));
+            }
+            m = pll(add(mult(m.FF, m.FF), mult(mult(m.SS, m.SS), sub(mult(a, a), n))),
+                    add(mult(m.FF, m.SS), mult(m.SS, m.FF)));
+            b >>= 1;
+        }
+
+        return (ans.FF + MOD) % MOD;
+    }
+
+    static vector<ll> sqrt(vector<ll> &f) {
+        g.pb(modsqrt(f[0]));
 
         for (int i = 2; i <= buffer(f); i <<= 1) {
             vector<ll> t2;

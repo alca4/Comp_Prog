@@ -23,11 +23,10 @@ using namespace std;
 // #define cout cerr
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
-ll MOD = LINF;
+ll MOD = 0;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
-typedef complex<ld> cd;
 
 ll add(const ll& a, const ll& b) 
 {
@@ -42,14 +41,20 @@ ll sub(const ll& a, const ll& b)
     return x;
 }
 ll mult(const ll& a, const ll& b) {return (a * b) % MOD;}
-ll power(ll a, ll b) {
-    ll n = a;
+ll binexp[32];
+ll power(ll a, ll b)
+{
+    ll n = b;
     ll ans = 1;
 
-    for (int i = 0; i < 16; i++) {
-        if (b & 1) ans = (ans * n) % MOD;
-        n = (n * n) % MOD;
-        b >>= 1;
+    binexp[0] = a;
+    for (int i = 1; i < 32; i++) binexp[i] = mult(binexp[i - 1], binexp[i - 1]);
+
+    while (n > 0)
+    {
+        int id = __builtin_ctz(n & -n);
+        ans = mult(ans, binexp[id]);
+        n -= (n & -n);
     }
 
     return ans;
@@ -62,43 +67,26 @@ template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
 template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
 template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
-const int MAXN = 0;
-int N;
+const int MAXN = 100010;
+int N, M;
 
-int cipolla(int n) {
-    n %= MOD;
-    if (power(n, (MOD - 1) / 2) == MOD - 1) return -1;
-    ll a = 2;
-    for (; a < MOD; a++) {
-        if (power((a * a - n + MOD) % MOD, (MOD - 1) / 2) == MOD - 1) break;
+int vis[MAXN];
+int in_stack[MAXN];
+vector<int> nbs[MAXN];
+
+deque<int> nodes;
+int DFS(int a) {
+    if (vis[a] && !in_stack[a]) return 0;
+    nodes.pb(a);
+    if (in_stack[a]) return 1;
+    in_stack[a] = 1;
+    vis[a] = 1;
+    for (int nb : nbs[a]) {
+        if (DFS(nb)) return 1;
     }
-
-    pll m = pll(a, 1);
-    pll ans = pll(1, 0);
-
-    int b = (MOD + 1) / 2;
-
-    for (int i = 0; i < 32; i++) {
-        if (b & 1) {
-            ans = pll(add(mult(ans.FF, m.FF), mult(mult(ans.SS, m.SS), sub(mult(a, a), n))),
-                      add(mult(ans.FF, m.SS), mult(ans.SS, m.FF)));
-        }
-        m = pll(add(mult(m.FF, m.FF), mult(mult(m.SS, m.SS), sub(mult(a, a), n))),
-                add(mult(m.FF, m.SS), mult(m.SS, m.FF)));
-        b >>= 1;
-    }
-
-    return (ans.FF + MOD) % MOD;
-}
-
-void solve() {
-    int a, b;
-    cin >> a >> b;
-    MOD = b;
-    int r = cipolla(a);
-    if (r == -1) cout << "No root" << endl;
-    else if (r <= (b - r)) cout << r << " " << b - r << endl;
-    else cout << b - r << " " << r << endl;
+    in_stack[a] = 0;
+    nodes.pop_back();
+    return 0;
 }
 
 int main() {
@@ -109,9 +97,26 @@ int main() {
     cin.tie(0);
     cout.tie(0);
 
-    int T;
-    cin >> T;
-    while (T--) solve();
+    cin >> N >> M;
+    for (int i = 1; i <= M; i++) {
+        int a, b;
+        cin >> a >> b;
+        nbs[a].pb(b);
+    }
+
+    int has_ans = 0;
+    for (int i = 1; i <= N; i++) if (!vis[i]) {
+        if (DFS(i) && !has_ans) {
+            // cerr << "answer found!" << endl;
+            while (nodes.front() != nodes.back()) nodes.pop_front();
+            cout << nodes.size() << endl;
+            for (int n : nodes) cout << n << " ";
+            cout << endl;
+            has_ans = 1;
+        }
+    }
+
+    if (!has_ans) cout << "IMPOSSIBLE" << endl;
 
     return 0;
 } 

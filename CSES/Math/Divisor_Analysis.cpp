@@ -23,7 +23,7 @@ using namespace std;
 // #define cout cerr
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
-ll MOD = LINF;
+ll MOD = 1000000007;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -46,7 +46,7 @@ ll power(ll a, ll b) {
     ll n = a;
     ll ans = 1;
 
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 32; i++) {
         if (b & 1) ans = (ans * n) % MOD;
         n = (n * n) % MOD;
         b >>= 1;
@@ -65,64 +65,53 @@ template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 const int MAXN = 0;
 int N;
 
-int cipolla(int n) {
-    n %= MOD;
-    if (power(n, (MOD - 1) / 2) == MOD - 1) return -1;
-    ll a = 2;
-    for (; a < MOD; a++) {
-        if (power((a * a - n + MOD) % MOD, (MOD - 1) / 2) == MOD - 1) break;
-    }
+vector<pii> v;
 
-    pll m = pll(a, 1);
-    pll ans = pll(1, 0);
-
-    int b = (MOD + 1) / 2;
-
-    for (int i = 0; i < 32; i++) {
-        if (b & 1) {
-            ans = pll(add(mult(ans.FF, m.FF), mult(mult(ans.SS, m.SS), sub(mult(a, a), n))),
-                      add(mult(ans.FF, m.SS), mult(ans.SS, m.FF)));
-        }
-        m = pll(add(mult(m.FF, m.FF), mult(mult(m.SS, m.SS), sub(mult(a, a), n))),
-                add(mult(m.FF, m.SS), mult(m.SS, m.FF)));
-        b >>= 1;
-    }
-
-    return (ans.FF + MOD) % MOD;
+ll num_div() {
+    ll x = 1;
+    for (pii p : v) x = mult(x, p.SS + 1);
+    return x;
 }
 
-void solve() {
-    int a;
-    cin >> a;
-    ll m = 23;
-    ll c = power(3, 119);
-    ll t = power(a, 119);
-    ll r = power(a, 60);
+ll sum_div() {
+    ll sum = 1;
+    for (pii p : v) sum = mult(sum, divide(sub(power(p.FF, p.SS + 1), 1), p.FF - 1));
+    return sum;
+}
 
-    ll v = -1;
+ll prod_div() {
+    ll rt = 1;
+    ll ndiv = 1;
 
-    while (v < 0) {
-        if (t == 0) v = 0;
-        if (t == 1) v = r;
+    int square = 1; // is it a square
+    for (pii p : v) if (p.SS % 2) square = 0;
 
-        int i = 1;
-        for (; i < m; i++)
-            if (power(t, power(2, i)) == 1) break;
-
-        ll b = power(c, power(2, m - i - 1));
-
-        m = i;
-        c = power(b, 2);
-        t = mult(t, c);
-        r = mult(r, b);
+    int halved = 0;
+    for (pii p : v) {
+        if (p.SS % 2) {
+            rt = 0;
+            if (!square && !halved) {
+                ndiv = (ndiv * (p.SS + 1) / 2) % (MOD - 1);
+                halved = 1;
+            }
+            else ndiv = (ndiv * (p.SS + 1)) % (MOD - 1);
+        }
+        else {
+            rt = mult(rt, power(p.FF, p.SS / 2));
+            ndiv = (ndiv * (p.SS + 1)) % (MOD - 1);
+        }
     }
 
-    vector<ll> g;
+    if (square) {
+        ndiv = ((ndiv + (MOD - 1) - 1) / 2) % MOD;
+    }
 
-    if (MOD - v < v)
-        v = MOD - v;
-    
-    cout << v << endl;
+    ll ans = 1;
+    for (pii p : v) ans = mult(ans, power(p.FF, p.SS));
+
+    ans = power(ans, ndiv);
+    if (rt) ans = mult(ans, rt);
+    return ans;
 }
 
 int main() {
@@ -133,9 +122,14 @@ int main() {
     cin.tie(0);
     cout.tie(0);
 
-    int T;
-    cin >> T;
-    while (T--) solve();
+    cin >> N;
+    for (int i = 1; i <= N; i++) {
+        pii x;
+        cin >> x.FF >> x.SS;
+        v.pb(x);
+    }
+
+    cout << num_div() << " " << sum_div() << " " << prod_div() << endl;
 
     return 0;
 } 

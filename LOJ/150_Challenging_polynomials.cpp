@@ -47,20 +47,14 @@ ll sub(const ll &a, const ll &b) {
 ll mult(const ll &a, const ll &b) {
     return (a * b) % MOD;
 }
-ll binexp[32];
 ll power(ll a, ll b) {
-    ll n = b;
+    ll n = a;
     ll ans = 1;
 
-    binexp[0] = a;
-
-    for (int i = 1; i < 32; i++)
-        binexp[i] = mult(binexp[i - 1], binexp[i - 1]);
-
-    while (n > 0) {
-        int id = __builtin_ctz(n & -n);
-        ans = mult(ans, binexp[id]);
-        n -= (n & -n);
+    for (int i = 0; i < 32; i++) {
+        if (b & 1) ans = (ans * n) % MOD;
+        n = (n * n) % MOD;
+        b >>= 1;
     }
 
     return ans;
@@ -92,26 +86,18 @@ template<class X, class Y> void diveq(X &x, Y y) {
 const int MAXN = 0;
 int N;
 ll w[(1 << 25)];
-
 struct Poly {
     static void dft(vector<ll> &a, int tot, bool inv) {
         ll g = 3;
 
-        if (inv)
-            g = power(g, MOD - 2);
+        if (inv) g = power(g, MOD - 2);
 
-        int sz =  (1 << tot) ;
-
+        int sz = (1 << tot);
         for (int i = 1, j = 0; i < sz; i++) {
             int bit = sz >> 1;
-
-            for (; j & bit; bit >>= 1)
-                j ^= bit;
-
+            for (; j & bit; bit >>= 1) j ^= bit;
             j ^= bit;
-
-            if (i < j)
-                swap(a[i], a[j]);
+            if (i < j) swap(a[i], a[j]);
         }
 
         for (int i = 0; i < tot; i++) {
@@ -197,41 +183,36 @@ struct Poly {
         return g;
     }
 
-    static vector<ll> sqrt(vector<ll> &f) {
-        ll m = 23;
-        ll c = power(3, 119);
-        ll t = power(f[0], 119);
-        ll r = power(f[0], 60);
-
-        ll v = -1;
-
-        while (v < 0) {
-            if (t == 0)
-                v = 0;
-
-            if (t == 1)
-                v = r;
-
-            int i = 1;
-
-            for (; i < m; i++)
-                if (power(t, power(2, i)) == 1)
-                    break;
-
-            ll b = power(c, power(2, m - i - 1));
-
-            m = i;
-            c = power(b, 2);
-            t = mult(t, c);
-            r = mult(r, b);
+    static int modsqrt(int n) {
+        n %= MOD;
+        if (power(n, (MOD - 1) / 2) == MOD - 1) return -1;
+        ll a = 2;
+        for (; a < MOD; a++) {
+            if (power(sub(mult(a, a), n), (MOD - 1) / 2) == MOD - 1) break;
         }
 
+        pll m = pll(a, 1);
+        pll ans = pll(1, 0);
+
+        int b = (MOD + 1) / 2;
+
+        for (int i = 0; i < 32; i++) {
+            if (b & 1) {
+                ans = pll(add(mult(ans.FF, m.FF), mult(mult(ans.SS, m.SS), sub(mult(a, a), n))),
+                        add(mult(ans.FF, m.SS), mult(ans.SS, m.FF)));
+            }
+            m = pll(add(mult(m.FF, m.FF), mult(mult(m.SS, m.SS), sub(mult(a, a), n))),
+                    add(mult(m.FF, m.SS), mult(m.SS, m.FF)));
+            b >>= 1;
+        }
+
+        ll t = (ans.FF + MOD) % MOD;
+        return min(t, MOD - t);
+    }
+
+    static vector<ll> sqrt(vector<ll> &f) {
         vector<ll> g;
-
-        if (MOD - v < v)
-            v = MOD - v;
-
-        g.pb(v);
+        g.pb(modsqrt(f[0]));
 
         for (int i = 2; i <= buffer(f); i <<= 1) {
             vector<ll> t2;
@@ -350,21 +331,9 @@ int main() {
 
     auto start = clock();
     vector<ll> ans = Poly::sqrt(vec);
-    // cerr << "sqrt" << endl;
-    // cerr << (float) (clock() - start) / CLOCKS_PER_SEC << endl;
-    // start = clock();
     ans = Poly::invert(ans);
-    // cerr << "inv" << endl;
-    // cerr << (float) (clock() - start) / CLOCKS_PER_SEC << endl;
-    // start = clock();
     Poly::integral(ans);
-    // cerr << "int" << endl;
-    // cerr << (float) (clock() - start) / CLOCKS_PER_SEC << endl;
-    // start = clock();
     ans = Poly::exp(ans);
-    // cerr << "exp" << endl;
-    // cerr << (float) (clock() - start) / CLOCKS_PER_SEC << endl;
-    // start = clock();
     int init = ans[0];
 
     for (int i = 0; i < N + 1; i++) {
@@ -374,18 +343,10 @@ int main() {
 
     ans[0] = ans[0] - vec[0] + 2;
     ans = Poly::ln(ans);
-    // cerr << "ln" << endl;
-    // cerr << (float) (clock() - start) / CLOCKS_PER_SEC << endl;
-    // start = clock();
     ans[0]++;
     ans = Poly::ppower(ans, K);
-    // cerr << "power" << endl;
-    // cerr << (float) (clock() - start) / CLOCKS_PER_SEC << endl;
-    // start = clock();
     Poly::derivative(ans);
 
-    // cerr << "der" << endl;
-    // cerr << (float) (clock() - start) / CLOCKS_PER_SEC << endl;
     for (int i = 0; i < N - 1; i++)
         cout << ans[i] << " ";
 

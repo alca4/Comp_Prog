@@ -70,7 +70,7 @@ int cipolla(int n) {
     if (power(n, (MOD - 1) / 2) == MOD - 1) return -1;
     ll a = 2;
     for (; a < MOD; a++) {
-        if (power((a * a - n + MOD) % MOD, (MOD - 1) / 2) == MOD - 1) break;
+        if (power(sub(mult(a, a), n), (MOD - 1) / 2) == MOD - 1) break;
     }
 
     pll m = pll(a, 1);
@@ -92,37 +92,17 @@ int cipolla(int n) {
 }
 
 void solve() {
-    int a;
-    cin >> a;
-    ll m = 23;
-    ll c = power(3, 119);
-    ll t = power(a, 119);
-    ll r = power(a, 60);
-
-    ll v = -1;
-
-    while (v < 0) {
-        if (t == 0) v = 0;
-        if (t == 1) v = r;
-
-        int i = 1;
-        for (; i < m; i++)
-            if (power(t, power(2, i)) == 1) break;
-
-        ll b = power(c, power(2, m - i - 1));
-
-        m = i;
-        c = power(b, 2);
-        t = mult(t, c);
-        r = mult(r, b);
+    int a, b;
+    cin >> a >> b;
+    if (b == 2) {
+        cout << 1 << endl;
+        return;
     }
-
-    vector<ll> g;
-
-    if (MOD - v < v)
-        v = MOD - v;
-    
-    cout << v << endl;
+    MOD = b;
+    int r = cipolla(a);
+    if (r == -1) cout << "No root" << endl;
+    else if (r < (b - r)) cout << r << " " << b - r << endl;
+    else cout << b - r << " " << r << endl;
 }
 
 int main() {
@@ -136,6 +116,13 @@ int main() {
     int T;
     cin >> T;
     while (T--) solve();
+
+    // int p = 17389;
+    // MOD = p;
+    // for (int i = 1; i < p; i++) {
+    //     int r = cipolla(i);
+    //     if (r >= 0) assert(mult(r, r) == i);
+    // }
 
     return 0;
 } 

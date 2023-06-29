@@ -27,6 +27,7 @@ ll MOD = 0;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
+typedef complex<ld> cd;
 
 ll add(const ll& a, const ll& b) 
 {
@@ -41,20 +42,14 @@ ll sub(const ll& a, const ll& b)
     return x;
 }
 ll mult(const ll& a, const ll& b) {return (a * b) % MOD;}
-ll binexp[32];
-ll power(ll a, ll b)
-{
-    ll n = b;
+ll power(ll a, ll b) {
+    ll n = a;
     ll ans = 1;
 
-    binexp[0] = a;
-    for (int i = 1; i < 32; i++) binexp[i] = mult(binexp[i - 1], binexp[i - 1]);
-
-    while (n > 0)
-    {
-        int id = __builtin_ctz(n & -n);
-        ans = mult(ans, binexp[id]);
-        n -= (n & -n);
+    for (int i = 0; i < 32; i++) {
+        if (b & 1) ans = (ans * n) % MOD;
+        n = (n * n) % MOD;
+        b >>= 1;
     }
 
     return ans;
