@@ -23,7 +23,7 @@ using namespace std;
 // #define cout cerr
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
-ll MOD = LINF;
+ll MOD = 0;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -46,7 +46,7 @@ ll power(ll a, ll b) {
     ll n = a;
     ll ans = 1;
 
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 32; i++) {
         if (b & 1) ans = (ans * n) % MOD;
         n = (n * n) % MOD;
         b >>= 1;
@@ -62,56 +62,52 @@ template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
 template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
 template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
-const int MAXN = 0;
+const int MAXN = 1000000;
 int N;
 
-int cipolla(int n) {
-    n %= MOD;
-    if (power(n, (MOD - 1) / 2) == MOD - 1) return -1;
-    ll a = 2;
-    for (; a < MOD; a++) {
-        if (power((a * a - n + MOD) % MOD, (MOD - 1) / 2) == MOD - 1) break;
-    }
-
-    pll m = pll(a, 1);
-    pll ans = pll(1, 0);
-
-    int b = (MOD + 1) / 2;
-
-    for (int i = 0; i < 32; i++) {
-        if (b & 1) {
-            ans = pll(add(mult(ans.FF, m.FF), mult(mult(ans.SS, m.SS), sub(mult(a, a), n))),
-                      add(mult(ans.FF, m.SS), mult(ans.SS, m.FF)));
-        }
-        m = pll(add(mult(m.FF, m.FF), mult(mult(m.SS, m.SS), sub(mult(a, a), n))),
-                add(mult(m.FF, m.SS), mult(m.SS, m.FF)));
-        b >>= 1;
-    }
-
-    return (ans.FF + MOD) % MOD;
-}
-
-void solve() {
-    int a, b;
-    cin >> a >> b;
-    MOD = b;
-    int r = cipolla(a);
-    if (r == -1) cout << "No root" << endl;
-    else if (r <= (b - r)) cout << r << " " << b - r << endl;
-    else cout << b - r << " " << r << endl;
-}
+bitset<MAXN> orig, tmp, ans, tans;
 
 int main() {
-    // freopen("tc.in", "r", stdin);
-    // freopen("tc.out", "w", stdout);
+    freopen("tc.in", "r", stdin);
+    freopen("tc.out", "w", stdout);
     srand(time(NULL));
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+    
+    cin >> N;
+    for (int i = 0; i < N; i++) {
+        char c;
+        cin >> c;
+        if (c == '1') orig.flip(i);
+    }
+    ans = orig;
+    tmp = orig;
 
-    int T;
-    cin >> T;
-    while (T--) solve();
+    for (int i = 0; i < N; i++) if (!tmp[0]) tmp >>= 1;
+
+    int o = 0;
+    for (int i = 0; i < N; i++) {
+        tans = orig | tmp;
+        for (int j = 0; j < N; j++) {
+            if (tans[j] && !ans[j]) {
+                swap(ans, tans);
+                break;
+            }
+            else if (ans[j] && !tans[j]) break;
+        }
+        if (orig[i] == 1) o = 1;
+        if (o && orig[i] == 0) break;
+        tmp <<= 1;
+    }
+
+    o = 0;
+    for (int i = 0; i < N; i++) {
+        if (ans[i] == 1) o = 1;
+        if (o) cout << ans[i];
+    }
+    if (!o) cout << 0;
+    cout << endl;
 
     return 0;
 } 

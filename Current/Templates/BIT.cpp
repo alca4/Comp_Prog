@@ -1,5 +1,7 @@
 struct BIT {
-    ll arr[MAXN];
+    vector<ll> arr;
+
+    BIT(int N) {arr.resize(N + 1);}
 
     void update(int a, ll v) {
         while (a <= N) {

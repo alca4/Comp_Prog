@@ -26,7 +26,7 @@ struct ST
         int mid = (ss + se) / 2;
         if (a <= mid) update(a, b, v, cid * 2, ss, mid);
         if (b > mid) update(a, b, v, cid * 2 + 1, mid + 1, se);
-        seg[cid] = min(seg[cid * 2], seg[cid * 2 + 1]);
+        seg[cid] = seg[cid * 2] + seg[cid * 2 + 1];
     }
 
     ll query(int a, int b, int cid, int ss, int se) {
@@ -34,10 +34,10 @@ struct ST
 
         push(cid, ss, se);
         int mid = (ss + se) / 2;
-        ll ans = INF;
-        if (a <= mid) ans = min(ans, query(a, b, cid * 2, ss, mid));
-        if (b > mid) ans = min(ans, query(a, b, cid * 2 + 1, mid + 1, se));
-        seg[cid] = min(seg[cid * 2], seg[cid * 2 + 1]);
+        ll ans = 0;
+        if (a <= mid) ans += query(a, b, cid * 2, ss, mid);
+        if (b > mid) ans += query(a, b, cid * 2 + 1, mid + 1, se);
+        seg[cid] = seg[cid * 2] + seg[cid * 2 + 1];
         return ans;
     }
 

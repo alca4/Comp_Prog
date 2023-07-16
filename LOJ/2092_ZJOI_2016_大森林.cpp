@@ -68,8 +68,8 @@ template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
 template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
 const int MAXN = 100010;
-int N, M, U;
-int Z, O;
+int N, M, U, Q;
+int Z, O, T;
 
 #define lc ch[0]
 #define rc ch[1]
@@ -196,8 +196,10 @@ struct LCT {
 
     int root(int n) {
         access(n);
+        // cerr << "trying to rut" << endl;
         while (nodes[n].lc >= 0) n = nodes[n].lc;
         splay(n);
+        // cerr << "rutted" << endl;
         return n;
     }
 
@@ -207,10 +209,11 @@ struct LCT {
     }
 
     void link(int m, int n) {
-        // cout << "linking " << m << " " << n << endl;
         assert(root(m) != root(n));
+        // cout << "linking " << m << " " << n << endl;
         reroot(m);
         nodes[m].pp = n;
+        reroot(1);
     }
 
     void cut(int m, int n) {
@@ -224,6 +227,7 @@ struct LCT {
         nodes[m].p = -1;
         nodes[m].pp = -1;
         pull(n);
+        reroot(1);
     }
 
     ll query(int m, int n) {
@@ -231,7 +235,9 @@ struct LCT {
         access(n);
 
         push(n);
-        return nodes[n].sv;
+        int v = nodes[n].sv;
+        reroot(1);
+        return v;
     }
 
     int lca(int m, int n) {
@@ -242,17 +248,20 @@ struct LCT {
 
 struct Event {
     int type, t, id, m, n;
-} updates[4 * MAXN];
+};
 bool operator<(const Event& e1, const Event& e2) {
     return pii(abs(e1.id), e1.t) < pii(abs(e2.id), e2.t);
 }
-
+Event updates[4 * MAXN];
 struct Query {
     int m, n, id;
 };
 vector<Query> queries[MAXN];
 vector<int> zeros, ones;
+int above[2 * MAXN], under[2 * MAXN];
 vector<pii> ans;
+
+int L[2 * MAXN], R[2 * MAXN];
 
 LCT lct;
 
@@ -265,28 +274,33 @@ int main() {
     cout.tie(0);
 
     cin >> N >> M;
+    L[1] = 1, R[1] = N;
     lct.insert(1, 1);
     lct.insert(2, 0);
     lct.link(2, 1);
+    zeros.pb(0);
     zeros.pb(1);
+    Z = 1;
     ones.pb(2);
+    O = 0;
     for (int i = 3; i <= M + 2; i++) {
         int t;
         cin >> t;
         if (t == 0) {
             Z++;
-            int l, r;
-            cin >> l >> r;
-            updates[++U] = {0, i, l, Z, O};
-            updates[++U] = {0, i, -(r + 1), Z, O};
+            cin >> L[Z] >> R[Z];
+            updates[++U] = {0, i, L[Z], Z, O};
+            updates[++U] = {0, i, -(R[Z] + 1), Z, O};
             zeros.pb(i);
             lct.insert(i, 1);
         }
         if (t == 1) {
-            O++;
             int l, r, n;
             cin >> l >> r >> n;
-            n--;
+            l = max(l, L[n]);
+            r = min(r, R[n]);
+            if (l > r) continue;
+            O++;
             updates[++U] = {1, i, l, O, n};
             updates[++U] = {1, i, -(r + 1), O, n};
             lct.insert(i, 0);
@@ -294,9 +308,9 @@ int main() {
             ones.pb(i);
         }
         if (t == 2) {
+            T++;
             int x, m, n;
             cin >> x >> m >> n;
-            m--, n--;
             queries[x].pb({m, n, i});
         }
     }
@@ -310,39 +324,47 @@ int main() {
 
     int j = 1;
     for (int i = 1; i <= N; i++) {
+        while (updates[j].id == 0) j++;
         while (j <= U && abs(updates[j].id) == i) {
+            // cout << updates[j].id << " " << updates[j].type << endl;
             if (updates[j].id > 0) {
                 if (updates[j].type == 0) {
-                    // cout << "growing node " << endl;
+                    // cout << "growing node " << zeros[updates[j].m] << " " << ones[updates[j].n] << endl;
                     lct.link(zeros[updates[j].m], ones[updates[j].n]);
                 }
+
                 if (updates[j].type == 1) {
-                    // cout << "switching growth " << endl;
+                    // cout << "switching growth " << zeros[updates[j].n] << " " << ones[updates[j].m] << endl;
+                    // cout << ones[updates[j].m - 1] << " " << ones[updates[j].m] << endl;
                     lct.cut(ones[updates[j].m - 1], ones[updates[j].m]);
                     lct.link(ones[updates[j].m], zeros[updates[j].n]);
                 }
-            }
+            } 
             else {
                 if (updates[j].type == 0) {
                     // cout << "ungrowing node " << endl;
-                    lct.cut(zeros[updates[j].m], ones[updates[j].n]);
+                    lct.cut(ones[updates[j].n], zeros[updates[j].m]);
                 }
+
                 if (updates[j].type == 1) {
                     // cout << "unswitching growth " << endl;
-                    lct.cut(ones[updates[j].m], zeros[updates[j].n]);
-                    lct.link(ones[updates[j].m - 1], ones[updates[j].m]);
+                    lct.cut(zeros[updates[j].n], ones[updates[j].m]);
+                    lct.link(ones[updates[j].m], ones[updates[j].m - 1]);
                 }
             }
+
             j++;
         }
 
         // cout << "tree " << i << endl;
         for (Query q : queries[i]) {
-            cout << "querying " << zeros[q.m] << " " << zeros[q.n] << endl;
-            ans.pb({q.id, lct.query(zeros[q.m], zeros[q.n])});
+            // cout << "querying " << zeros[q.m] << " " << zeros[q.n] << endl;
+            int v = lct.query(zeros[q.m], zeros[q.n]);
+            if (lct.nodes[lct.lca(zeros[q.m], zeros[q.n])].v == 0) v++;
+            ans.pb({q.id, v});
         }
-        lct.print();
-        cout << endl;
+        // lct.print();
+
     }
 
     sort(ans.begin(), ans.end());

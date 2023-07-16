@@ -123,6 +123,7 @@ struct Poly {
     }
 
     static vector<ll> sqrt(vector<ll> &f) {
+        vector<ll> g;
         g.pb(modsqrt(f[0]));
 
         for (int i = 2; i <= buffer(f); i <<= 1) {
