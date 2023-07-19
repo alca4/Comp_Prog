@@ -2,10 +2,6 @@
 
 Code for Andrew Liang
 
-IDs on OJs
-Codeforces: Rowlet1
-SPOJ: rowlet1
-Vjudge: Rowlet1
-Libre OJ: Rowlet1
+OJ id: probably Rowlet1 (maybe case is different)
 
 (as you can see, not much in the creativity department)
