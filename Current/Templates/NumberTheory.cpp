@@ -1,7 +1,8 @@
-int sieve[1000010];
 vector<int> primes;
+vector<int> sieve;
 struct NT {
     static void get_primes(int x) {
+        sieve.resize(x + 1);
         sieve[1] = 1;
         for (int i = 2; i <= x; i++) if (!sieve[i]) {
             primes.pb(i);
@@ -12,7 +13,7 @@ struct NT {
     static vector<pii> factorize(int n) {
         vector<pii> v;
         for (int p : primes) {
-            if (p > n) return;
+            if (p > n) break;
             v.pb(pii(p, 0));
             while (n % p == 0) {
                 v.back().SS++;
@@ -33,10 +34,8 @@ struct NT {
 
     static vector<int> gen_div(int n) {
         vector<pii> v = factorize(n);
-        int x = 1;
-        for (pii p : v) x *= p.SS;
         vector<int> divs;
-        for (int i = 0; i < x; i++) {
+        for (int i = 0; i < num_div(n); i++) {
             int t = i;
             int d = 1;
             for (pii p : v) {
@@ -45,6 +44,7 @@ struct NT {
             }
             divs.pb(d);
         }
+        sort(divs.begin(), divs.end());
         return divs;
     }
 

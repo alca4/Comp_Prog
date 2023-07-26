@@ -23,7 +23,7 @@ using namespace std;
 // #define cout cerr
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
-ll MOD = 0;
+ll MOD = 998244353;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -62,10 +62,86 @@ template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
 template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
 template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
 
-const int MAXN = 1000000;
-int N;
+const int MAXN = 1000010;
+const int MAXS = 130;
+const int S = 125;
+int N, K;
 
-bitset<MAXN> orig, tmp, ans, tans;
+int arr[MAXN];
+int col[MAXN];
+
+vector<int> chains, cycles;
+
+int p[MAXN], sz[MAXN];
+void setup_dsu() {for (int i = 1; i <= N; i++) p[i] = i, sz[i] = 1;}
+int root(int a) {return p[a] = (a == p[a] ? a : root(p[a]));}
+int combine(int a, int b)
+{
+    a = root(a), b = root(b);
+    if (a == b) return 0;
+
+    if (sz[a] < sz[b]) swap(a, b);
+    p[b] = a;
+    sz[a] += sz[b];
+    return 1;
+}
+
+int cnt[MAXN];
+bitset<MAXN> dp;
+
+int s[MAXS];
+queue<int> modulo[MAXS];
+
+int SolveMin() {
+    for (int n : cycles) cnt[n]++;
+    dp[0] = 1;
+    int ops = 0;
+    for (int i = 2; i <= S; i++) if (cnt[i]) {
+        for (int j = 0; j <= N; j++) {
+            int rem = j % i;
+            modulo[rem].push(dp[j]);
+            s[rem] += dp[j];
+            if (s[rem]) {
+                dp[j] = 1;
+            }
+            if (modulo[rem].size() > cnt[i]) {
+                s[rem] -= modulo[rem].front();
+                modulo[rem].pop();
+            }
+        }
+        for (int j = 0; j < i; j++) {
+            s[j] = 0;
+            while (modulo[j].size()) {
+                modulo[j].pop();
+                ops++;
+            }
+        }
+    }
+
+    // for (int j = 0; j <= K; j++) cout << dp[j];
+    // cout << endl;
+    
+    for (int n : cycles) if (n > S) {
+        for (int j = 0; j < cnt[n]; j++) {
+            dp = dp | (dp << n);
+        }
+    }
+    return K + 1 - dp[K];
+}
+
+int SolveMax() {
+    int tmp = K;
+    int ans = 0;
+    for (int n : cycles) {
+        ans += min(tmp, n / 2) * 2;
+        tmp -= min(tmp, n / 2);
+    }
+    for (int n : cycles) if (n % 2 && tmp) {
+        ans++;
+        tmp--;
+    }
+    return ans;
+}
 
 int main() {
     freopen("tc.in", "r", stdin);
@@ -74,40 +150,19 @@ int main() {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    
-    cin >> N;
-    for (int i = 0; i < N; i++) {
-        char c;
-        cin >> c;
-        if (c == '1') orig.flip(i);
-    }
-    ans = orig;
-    tmp = orig;
 
-    for (int i = 0; i < N; i++) if (!tmp[0]) tmp >>= 1;
+    cin >> N >> K;
+    setup_dsu();
+    for (int i = 1; i <= N; i++) cin >> arr[i];
 
-    int o = 0;
-    for (int i = 0; i < N; i++) {
-        tans = orig | tmp;
-        for (int j = 0; j < N; j++) {
-            if (tans[j] && !ans[j]) {
-                swap(ans, tans);
-                break;
-            }
-            else if (ans[j] && !tans[j]) break;
-        }
-        if (orig[i] == 1) o = 1;
-        if (o && orig[i] == 0) break;
-        tmp <<= 1;
+    int c = 0;
+    for (int i = 1; i <= N; i++) {
+        if (!combine(i, arr[i])) cycles.pb(sz[root(i)]);
     }
 
-    o = 0;
-    for (int i = 0; i < N; i++) {
-        if (ans[i] == 1) o = 1;
-        if (o) cout << ans[i];
-    }
-    if (!o) cout << 0;
-    cout << endl;
+    sort(cycles.begin(), cycles.end());
+
+    cout << SolveMin() << " " << SolveMax() << endl;
 
     return 0;
-} 
+}

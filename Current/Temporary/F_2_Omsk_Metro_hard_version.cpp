@@ -80,7 +80,7 @@ struct Node {
     }
 };
 
-Node combine(Node n1, Node n2) {
+Node combine(const Node& n1, const Node& n2) {
     if (n1.lans == n1.rans && n1.rans == n1.ans && n1.ans == n1.sum && n1.sum == -LINF) 
         return n2;
     if (n2.lans == n2.rans && n2.rans == n2.ans && n2.ans == n2.sum && n2.sum == -LINF) 
@@ -184,10 +184,7 @@ void clear_lca() {
     }
 }
 
-bool Comp(int a, int b)
-{
-    return sz[a] < sz[b];
-}
+bool Comp(int a, int b) {return sz[a] < sz[b];}
 
 int C = 0;
 void DFS(int a, int p)
@@ -265,12 +262,11 @@ ll answer(int a, int b)
 void clear_hld() {
     clear_lca();
     for (int i = 1; i <= N; i++) {
-        /*w[i] = */sz[i] = hchild[i] = 0;
+        w[i] = sz[i] = hchild[i] = 0;
         loc[i] = {0, 0};
-        // nbs[i].clear();
     }
     for (int i = 1; i <= C; i++) {
-        chains[i].clear(1, 1, chainsz[i]);
+        chains[i].seg.clear();
         nodes[i].clear();
         chainsz[i] = 0;
     }
@@ -309,6 +305,7 @@ void solve() {
 
     for (int i = 1; i <= Q; i++) if (queries[i].t == 1 && queries[i].c >= 0) {
         // cout << queries[i].a << " " << queries[i].b << " " << answer(queries[i].a, queries[i].b) << endl;
+        if (lca(queries[i].a, queries[i].b) == queries[i].a) swap(queries[i].a, queries[i].b);
         sols[i] = (answer(queries[i].a, queries[i].b) >= queries[i].c);
     }
 
@@ -320,6 +317,7 @@ void solve() {
 
     for (int i = 1; i <= Q; i++) if (queries[i].t == 1 && queries[i].c < 0) {
         // cout << queries[i].a << " " << queries[i].b << " " << answer(queries[i].a, queries[i].b) << endl;
+        if (lca(queries[i].a, queries[i].b) == queries[i].a) swap(queries[i].a, queries[i].b);
         sols[i] = (answer(queries[i].a, queries[i].b) >= abs(queries[i].c));
     }
     
