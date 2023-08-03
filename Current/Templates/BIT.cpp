@@ -1,10 +1,11 @@
 struct BIT {
     vector<ll> arr;
 
-    BIT(int N) {arr.resize(N + 1);}
+    BIT() {arr.resize(0);}
+    BIT(int n) {arr.resize(n + 1);}
 
     void update(int a, ll v) {
-        while (a <= N) {
+        while (a < arr.size()) {
             arr[a] += v;
             a += (a & -a);
         }
@@ -20,4 +21,8 @@ struct BIT {
     }
 
     ll query(int a, int b) {return query(b) - query(a - 1);}
-}
+
+    void clear() {
+        arr.resize(0);
+    }
+};

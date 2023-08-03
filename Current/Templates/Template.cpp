@@ -29,14 +29,12 @@ typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 typedef complex<ld> cd;
 
-ll add(const ll& a, const ll& b) 
-{
+ll add(const ll& a, const ll& b) {
     ll x = a + b;
     if (a + b >= MOD) x -= MOD;
     return x;
 }
-ll sub(const ll& a, const ll& b) 
-{
+ll sub(const ll& a, const ll& b) {
     ll x = a - b;
     if (a - b < 0) x += MOD;
     return x;
@@ -55,12 +53,12 @@ ll power(ll a, ll b) {
     return ans;
 }
 ll divide(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
-template<class X, class Y> void maxeq(X &x, Y y) {if (x < y) x = y;}
-template<class X, class Y> void mineq(X &x, Y y) {if (x > y) x = y;}
-template<class X, class Y> void addeq(X &x, Y y) {x = add(x, y);}
-template<class X, class Y> void subeq(X &x, Y y) {x = sub(x, y);}
-template<class X, class Y> void multeq(X &x, Y y) {x = mult(x, y);}
-template<class X, class Y> void diveq(X &x, Y y) {x = divide(x, y);}
+template<class X, class Y> void maxeq(X& x, Y y) {if (x < y) x = y;}
+template<class X, class Y> void mineq(X& x, Y y) {if (x > y) x = y;}
+template<class X, class Y> void addeq(X& x, Y y) {x = add(x, y);}
+template<class X, class Y> void subeq(X& x, Y y) {x = sub(x, y);}
+template<class X, class Y> void multeq(X& x, Y y) {x = mult(x, y);}
+template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 
 const int MAXN = 0;
 int N;
@@ -68,7 +66,8 @@ int N;
 int main() {
     // freopen("tc.in", "r", stdin);
     // freopen("tc.out", "w", stdout);
-    srand(time(NULL));
+    mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+    // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
