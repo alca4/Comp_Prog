@@ -67,7 +67,28 @@ const int MAXN = 0;
 int N;
 
 void solve() {
-    
+    string str;
+    cin >> str;
+
+    int flag = 0;
+    for (int i = 1; i < str.length(); i++) {
+        if (str[i - 1] == ')' && str[i] == '(') flag = 1;
+    }
+
+    if (str == "()") {
+        cout << "NO" << endl;
+    }
+    else {
+        cout << "YES" << endl;
+        if (flag) {
+            for (int i = 0; i < str.length(); i++) cout << '(';
+            for (int i = 0; i < str.length(); i++) cout << ')';
+        }
+        else {
+            for (int i = 0; i < str.length(); i++) cout << "()";
+        }
+        cout << endl;
+    }
 }
 
 int main() {
@@ -78,7 +99,7 @@ int main() {
     cout.tie(0);
 
     int T;
-    T = 1;
+    // T = 1;
     cin >> T;
     while (T--) solve();
 

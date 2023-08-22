@@ -67,7 +67,15 @@ const int MAXN = 0;
 int N;
 
 void solve() {
-    
+    int N, K, A, B;
+    cin >> N >> K >> A >> B;
+
+    N -= min(B, N / K) * K;
+    int v = min(A, N % K);
+    N -= v;
+    A -= v;
+    N -= min(A / K, N / K) * K;
+    cout << N / K + N % K << endl;
 }
 
 int main() {
@@ -78,7 +86,7 @@ int main() {
     cout.tie(0);
 
     int T;
-    T = 1;
+    // T = 1;
     cin >> T;
     while (T--) solve();
 

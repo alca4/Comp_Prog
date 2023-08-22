@@ -1,6 +1,15 @@
 vector<ll> fact, factinv;
 vector<vector<int>> stirling;
+/* 
+stirling numbers of the first kind
+s[i][j] = jth coefficient of x fallpow i
+s[i][j] = number of permutations length i with j cycles
+*/
 vector<vector<int>> stirling2;
+/*
+stirling numbers of the second kind
+s2[i][j] = number of ways to partition i elements into j subsets
+*/
 struct Comb {
     static void get_fact(int x) {
         fact.resize(x + 1);

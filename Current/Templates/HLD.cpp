@@ -3,7 +3,6 @@ struct ST
     vector<ll> seg;
 
     ST() {ST(0);}
-
     ST(int n) {seg.resize(1 + 4 * n);}
 
     void update(int a, int v, int cid, int ss, int se)
