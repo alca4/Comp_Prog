@@ -65,9 +65,36 @@ mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 const int MAXN = 0;
 int N;
+ld a1, a2;
+ld b1, b2;
+ld p1, p2;
+
+ld dist(ld a, ld b, ld c, ld d) {
+    return sqrt((c - a) * (c - a) + (d - b) * (d - b));
+}
 
 void solve() {
-    
+    cin >> p1 >> p2 >> a1 >> a2 >> b1 >> b2;
+
+    ld lb = 0, ub = 1e6;
+    ld ans = 0.0;
+    while (ub - lb > EPS) {
+        ld w = (lb + ub) / 2;
+
+        int ok = 0;
+        if (dist(a1, a2, p1, p2) <= w && dist(a1, a2, 0, 0) <= w) ok = 1;
+        if (dist(b1, b2, p1, p2) <= w && dist(b1, b2, 0, 0) <= w) ok = 1;
+        if (dist(b1, b2, p1, p2) <= w && dist(a1, a2, 0, 0) <= w && dist(a1, a2, b1, b2) <= w * 2) ok = 1;
+        if (dist(a1, a2, p1, p2) <= w && dist(b1, b2, 0, 0) <= w && dist(a1, a2, b1, b2) <= w * 2) ok = 1;
+
+        if (ok) {
+            ans = w;
+            ub = w - EPS;
+        }
+        else lb = w + EPS;
+    }
+
+    cout << fixed << setprecision(6) << ans << endl;
 }
 
 int main() {
@@ -79,8 +106,7 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
     while (T--) solve();
 
     return 0;

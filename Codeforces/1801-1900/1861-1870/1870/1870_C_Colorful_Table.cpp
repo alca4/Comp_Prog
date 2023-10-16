@@ -63,11 +63,32 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
-int N;
+const int MAXN = 100010;
+int N, K;
+int arr[MAXN];
+
+vector<int> freq[MAXN];
+set<int> nums;
 
 void solve() {
-    
+    cin >> N >> K;
+    for (int i = 1; i <= N; i++) {
+        cin >> arr[i];
+        freq[arr[i]].pb(i);
+    }
+
+    for (int i = 1; i <= N; i++) nums.insert(i);
+
+    for (int i = 1; i <= K; i++) {
+        if (!freq[i].size()) cout << "0 ";
+        else {
+            cout << (*nums.rbegin() - *nums.begin() + 1) * 2 << " ";
+            for (int n : freq[i]) nums.erase(n);
+        }
+    }
+    cout << endl;
+
+    for (int i = 1; i <= K; i++) freq[i].clear();
 }
 
 int main() {
@@ -78,9 +99,8 @@ int main() {
     cout.tie(0);
 
     int T;
-    // T = 1;
-    // cin >> T;
-    T = "change";
+    T = 1;
+    cin >> T;
     while (T--) solve();
 
     return 0;

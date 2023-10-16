@@ -63,11 +63,55 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+const int MAXN = 1000010;
 int N;
+string str;
+set<int> pos;
+vector<int> die;
+ll X;
+int nx[MAXN];
+int pv[MAXN];
 
 void solve() {
-    
+    // cout << "testcase" << endl;
+    cin >> str;
+    N = str.length();
+    str = ' ' + str;
+    for (int i = 1; i <= N; i++) pos.insert(-i);
+    for (int i = 0; i <= N; i++) nx[i] = i + 1;
+    for (int i = 1; i <= N; i++) pv[i] = i - 1;
+
+    for (int i = 2; i <= N; i++) while (pv[i] != 0 && str[i] < str[pv[i]]) {
+        die.pb(pv[i]);
+        pos.erase(-pv[i]);
+        pv[i] = pv[pv[i]];
+    }
+    for (auto n : pos) die.pb(-n);
+
+    // for (int n : die) cout << n << " ";
+    // cout << endl;
+
+    nx[0] = 1;
+    cin >> X;
+    int tmp = N;
+    int cnt = 0;
+    while (X > tmp) {
+        X -= tmp;
+        int t = die[cnt];
+        nx[pv[t]] = nx[t];
+        pv[nx[t]] = pv[t];
+        cnt++;
+        tmp--;
+    }
+
+    int ans = 0;
+    for (int i = 1; i <= X; i++) ans = nx[ans];
+    // cout << str << " " << X << " " << ans << endl;
+    cout << str[ans];
+
+    for (int i = 0; i <= N; i++) nx[i] = pv[i] = 0;
+    pos.clear();
+    die.clear();
 }
 
 int main() {
@@ -79,9 +123,9 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
     while (T--) solve();
+    cout << endl;
 
     return 0;
 } 

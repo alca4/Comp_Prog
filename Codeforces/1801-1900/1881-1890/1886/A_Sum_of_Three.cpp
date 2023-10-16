@@ -67,7 +67,19 @@ const int MAXN = 0;
 int N;
 
 void solve() {
-    
+    cin >> N;
+    if (N <= 6) cout << "NO" << endl;
+    else {
+        if (N % 3 != 0) {
+            cout << "YES" << endl;
+            cout << 1 << " " << 2 << " " << N - 3 << endl;
+        }
+        else if (N < 12) cout << "NO" << endl;
+        else {
+            cout << "YES" << endl;
+            cout << 1 << " " << 4 << " " << N - 5 << endl;
+        }
+    }
 }
 
 int main() {
@@ -79,8 +91,7 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
     while (T--) solve();
 
     return 0;

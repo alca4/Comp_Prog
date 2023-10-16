@@ -63,11 +63,41 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
-int N;
+const int MAXN = 200010;
+int N, K;
+int arr[MAXN];
+int score[MAXN];
 
 void solve() {
-    
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+    cin >> K;
+
+    vector<pii> better;
+    for (int i = 1; i <= N; i++) {
+        pii tmp = {arr[i], i};
+        while (better.size() && arr[i] <= better.back().FF) better.pop_back();
+        better.pb(tmp);
+    }
+
+    score[better[0].SS] += K / better[0].FF;
+    K %= better[0].FF;
+
+    for (int i = 1; i < better.size(); i++) {
+        assert(better[i].FF > better[i - 1].FF);
+        int t = min(score[better[i - 1].SS], K / (better[i].FF - better[i - 1].FF));
+        score[better[i - 1].SS] -= t;
+        score[better[i].SS] += t;
+        K -= t * (better[i].FF - better[i - 1].FF);
+    }
+
+    for (int i = N; i >= 1; i--) score[i] += score[i + 1];
+
+    for (int i = 1; i <= N; i++) cout << score[i] << " ";
+    cout << endl;
+
+    for (int i = 1; i <= N; i++) arr[i] = score[i] = 0;
+    better.clear();
 }
 
 int main() {
@@ -78,9 +108,8 @@ int main() {
     cout.tie(0);
 
     int T;
-    // T = 1;
-    // cin >> T;
-    T = "change";
+    T = 1;
+    cin >> T;
     while (T--) solve();
 
     return 0;
