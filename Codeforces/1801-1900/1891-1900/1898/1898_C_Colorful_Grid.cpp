@@ -55,11 +55,50 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
-int N;
+const int MAXN = 20;
+int N, M, K;
+int horiz[MAXN][MAXN];
+int vert[MAXN][MAXN];
 
 void solve() {
-    
+    cin >> N >> M >> K;
+    if ((K - (N + M - 2)) % 2 != 0 || K < (N + M - 2)) cout << "NO" << endl;
+    else {
+        cout << "YES" << endl;
+        int cnt = 0;
+        for (int i = 1; i <= M - 1; i++) {
+            horiz[1][i] = cnt;
+            cnt = 1 - cnt;
+        }
+        
+        for (int i = 1; i <= N - 1; i++) {
+            vert[i][M] = cnt;
+            cnt = 1 - cnt;
+        }
+
+        vert[1][M - 1] = vert[1][M];
+        vert[2][M - 1] = vert[1][M];
+        horiz[2][M - 1] = horiz[1][M - 1];
+        horiz[3][M - 1] = horiz[1][M - 1];
+        
+        for (int j = 1; j <= N; j++) {
+            for (int i = 1; i <= M - 1; i++) {
+                if (horiz[j][i]) cout << "R ";
+                else cout << "B ";
+                horiz[j][i] = 0;
+            }
+            cout << endl;
+        }
+
+        for (int j = 1; j <= N - 1; j++) {
+            for (int i = 1; i <= M; i++) {
+                if (vert[j][i]) cout << "R ";
+                else cout << "B ";
+                vert[j][i] = 0;
+            }
+            cout << endl;
+        }
+    }
 }
 
 int main() {
@@ -71,8 +110,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;
