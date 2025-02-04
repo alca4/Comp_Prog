@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -57,15 +55,51 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+const int MAXN = 500010;
 int N;
+vector<int> nbs[MAXN];
+int depth[MAXN];
+int maxdepth[MAXN];
+int ans[MAXN];
 
-void reset_tc() {
+void DFS(int a, int p) {
+    depth[a] = depth[p] + 1;
+    maxdepth[a] = depth[a];
 
+    ans[1]++;
+    ans[depth[a]]--;
+    // cout << "depth of " << a << " is " << depth[a] << endl;
+    for (int nb : nbs[a]) if (nb != p) DFS(nb, a);
+
+    for (int nb : nbs[a]) if (nb != p) maxeq(maxdepth[a], maxdepth[nb]);
+    ans[maxdepth[a] + 1]++;
 }
 
 void solve() {
-    reset_tc();
+    cin >> N;
+    for (int i = 1; i < N; i++) {
+        int a, b;
+        cin >> a >> b;
+        nbs[a].pb(b);
+        nbs[b].pb(a);
+    }
+
+    DFS(1, 0);
+
+    int minval = N;
+    for (int i = 1; i <= N; i++) {
+        // cout << ans[i] << " ";
+        ans[i] += ans[i - 1];
+        minval = min(minval, ans[i]);
+        
+    }
+    // cout << endl;
+    cout << minval << endl;
+
+    for (int i = 1; i <= N + 1; i++) {
+        nbs[i].clear();
+        depth[i] = maxdepth[i] = ans[i] = 0;
+    }
 }
 
 int main() {
@@ -77,8 +111,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

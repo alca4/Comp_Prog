@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -57,15 +55,32 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
-int N;
-
-void reset_tc() {
-
-}
+const int MAXN = 100010;
+int N, M;
+int arr[MAXN];
+int ans[MAXN];
 
 void solve() {
-    reset_tc();
+    cin >> N >> M;
+    for (int i = 1; i <= M; i++) cin >> arr[i];
+
+    sort(arr + 1, arr + 1 + M, greater<int>());
+
+    int has_ans = 1;
+    ans[1] = 1;
+    for (int i = 1; i <= N; i++) {
+        for (int j = 2; i * j <= N; j++) ans[i * j] = ans[i] + 1;
+        if (ans[i] > M) has_ans = 0;
+    }
+
+    if (!has_ans) cout << -1 << endl;
+    else {
+        for (int i = 1; i <= N; i++) cout << arr[ans[i]] << " ";
+        cout << endl;
+    }
+
+    for (int i = 1; i <= N; i++) ans[i] = 0;
+    for (int i = 1; i <= M; i++) arr[i] = 0;
 }
 
 int main() {
@@ -77,8 +92,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

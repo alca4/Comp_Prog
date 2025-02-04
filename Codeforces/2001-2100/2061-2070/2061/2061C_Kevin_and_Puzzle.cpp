@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -25,7 +23,7 @@ using namespace std;
 // #define cout cerr
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
-ll MOD = 0;
+ll MOD = 998244353;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -57,15 +55,25 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+const int MAXN = 200010;
 int N;
-
-void reset_tc() {
-
-}
+int arr[MAXN];
+ll dp[MAXN][2];
 
 void solve() {
-    reset_tc();
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+
+    dp[0][0] = 1;
+    for (int i = 1; i <= N; i++) {
+        if (i > 1 && arr[i] - arr[i - 2] == 1) addeq(dp[i][0], dp[i - 1][1]);
+        addeq(dp[i][1], dp[i - 1][0]);
+        if (arr[i] == arr[i - 1]) addeq(dp[i][0], dp[i - 1][0]);
+    }
+
+    cout << add(dp[N][0], dp[N][1]) << endl;
+
+    for (int i = 1; i <= N; i++) arr[i] = dp[i][0] = dp[i][1] = 0;
 }
 
 int main() {
@@ -77,8 +85,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

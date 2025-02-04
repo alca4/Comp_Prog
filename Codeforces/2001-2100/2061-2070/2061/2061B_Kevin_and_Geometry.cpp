@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -57,15 +55,37 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+const int MAXN = 200010;
 int N;
-
-void reset_tc() {
-
-}
+int arr[MAXN];
+int diff[MAXN];
 
 void solve() {
-    reset_tc();
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+
+    sort(arr + 1, arr + 1 + N);
+
+    for (int i = 2; i <= N; i++) {
+        diff[i] = arr[i] - arr[i - 1];
+    }
+
+    int has_ans = 0;
+    for (int i = N - 1; i >= 1; i--) if (!has_ans && arr[i] == arr[i + 1]) {
+        for (int j = N; j > 1; j--) {
+            if (!has_ans && (j < i || j > i + 2) && arr[j] < arr[j - 1] + 2 * arr[i]) {
+                cout << arr[j] << " " << arr[j - 1] << " " << arr[i] << " " << arr[i] << endl;
+                has_ans = 1;
+            }
+        }
+        if (i + 2 <= N && i - 1 >= 1 && !has_ans && arr[i + 2] < arr[i - 1] + arr[i] + arr[i]) {
+            cout << arr[i + 2] << " " << arr[i - 1] << " " << arr[i] << " " << arr[i] << endl;
+            has_ans = 1;
+        }
+    }
+    if (!has_ans) cout << -1 << endl;
+
+    for (int i = 1; i <= N; i++) arr[i] = diff[i] = 0;
 }
 
 int main() {
@@ -77,8 +97,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

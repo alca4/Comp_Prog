@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -20,7 +18,7 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define ull unsigned ll
-#define endl "\n"
+// #define endl "\n"
 #define EPS 1e-9
 // #define cout cerr
 ll INF = 1000000000;
@@ -57,15 +55,59 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+const int MAXN = 100010;
 int N;
-
-void reset_tc() {
-
-}
+int should_be[MAXN];
 
 void solve() {
-    reset_tc();
+    cin >> N;
+    for (int i = 1; i <= N; i++) should_be[i] = -1;
+
+    should_be[1] = 0;
+    for (int i = 1; i < N; i++) {
+        cout << "? " << i << " " << i + 1 << endl;
+        int res;
+        cin >> res;
+
+        if (res == 1) should_be[i + 1] = should_be[i];
+        else should_be[i + 1] = 1 - should_be[i];
+    }
+
+    int lb = 1, ub = N;
+    while (ub - lb >= 2) {
+        int mid = (lb + ub) / 2;
+        
+        cout << "? " << 1 << " " << mid << endl;
+        int res;
+        cin >> res;
+        
+        if (res != should_be[mid]) lb = mid;
+        else ub = mid;
+    }
+
+    // if lb = ub, then remaining corrupt could be 1, N - 1, or N
+
+    cout << "? " << 1 << " " << lb << endl;
+    int res1;
+    cin >> res1;
+
+    cout << "? " << lb << " " << 1 << endl;
+    int res2;
+    cin >> res2;
+    
+    if (res1 == res2) cout << "! " << ub << endl;
+    else {
+        cout << "? " << 1 << " " << ub << endl;
+        cin >> res1;
+
+        cout << "? " << ub << " " << 1 << endl;
+        cin >> res2;
+
+        if (res1 == res2) cout << "! " << lb << endl;
+        else cout << "! " << 1 << endl;
+    }
+
+    for (int i = 1; i <= N; i++) should_be[i] = 0;
 }
 
 int main() {
@@ -77,9 +119,9 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;
-} 
+}

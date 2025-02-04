@@ -57,14 +57,50 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+const int MAXN = 2010;
 int N;
+int arr[MAXN];
 
 void reset_tc() {
+    for (int i = 1; i <= N; i++) arr[i] = 0;
+}
 
+int test(int a) {
+    int ans = 0;
+    int running = 1;
+    for (int i = 1; i <= N; i++) {
+        if (a % arr[i] == 0) {
+            running = (running / gcd(running, arr[i]) * arr[i]);
+            ans++;
+        }
+        if (a == arr[i]) ans = -INF;
+    }
+    return (a == running ? ans : 0);
 }
 
 void solve() {
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+    sort(arr + 1, arr + 1 + N);
+
+    ll running = 1;
+    for (int i = 1; i <= N; i++) {
+        running = (running / gcd(running, arr[i])) * arr[i];
+        if (running > arr[N]) {
+            cout << N << endl;
+            reset_tc();
+            return;
+        }
+    }
+
+    int ans = 0;
+    for (int i = 1; i * i <= arr[N]; i++) if (arr[N] % i == 0) {
+        ans = max(ans, test(i));
+        ans = max(ans, test(arr[N] / i));
+    }
+
+    cout << ans << endl;
+
     reset_tc();
 }
 
@@ -77,8 +113,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

@@ -57,14 +57,64 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+struct DSU {
+    vector<int> p, sz;
+
+    DSU() {DSU(0);}
+    DSU(int n) {
+        p.resize(n + 1);
+        sz.resize(n + 1);
+        for (int i = 1; i <= n; i++) p[i] = i, sz[i] = 1;
+    }
+
+    int root(int a) {return p[a] = (a == p[a] ? a : root(p[a]));}
+    int combine(int a, int b) {
+        a = root(a), b = root(b);
+        if (a == b) return 0;
+
+        if (sz[a] < sz[b]) swap(a, b);
+        p[b] = a;
+        sz[a] += sz[b];
+        return 1;
+    }
+};
+
+const int MAXN = 2010;
 int N;
+DSU dsu;
+int arr[MAXN];
+int ok[MAXN][MAXN];
 
 void reset_tc() {
-
+    dsu = DSU(0);
+    for (int i = 1; i <= N; i++) arr[i] = 0;
+    for (int i = 1; i <= N; i++) for (int j = 1; j < N; j++) ok[i][j] = 0;
 }
 
 void solve() {
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+
+    for (int i = 1; i <= N; i++) for (int j = 1; j < N; j++) {
+        ok[i][j] = arr[i] % j;
+    }
+
+    cout << "YES" << endl;
+    vector<pii> ops;
+    dsu = DSU(N);
+    for (int j = N - 1; j >= 1; j--) {
+        vector<int> bucket(j);
+        for (int i = 1; i <= N; i++) {
+            if (bucket[ok[i][j]] && dsu.combine(i, bucket[ok[i][j]])) {
+                ops.pb(pii(i, bucket[ok[i][j]]));
+                break;
+            }
+            else bucket[ok[i][j]] = i;
+        }
+    }
+    reverse(ops.begin(), ops.end());
+    for (pii p : ops) cout << p.FF << " " << p.SS << endl;
+    
     reset_tc();
 }
 
@@ -77,9 +127,9 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;
-} 
+}

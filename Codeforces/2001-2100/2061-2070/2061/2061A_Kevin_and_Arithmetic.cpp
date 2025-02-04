@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -57,15 +55,24 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+const int MAXN = 110;
 int N;
-
-void reset_tc() {
-
-}
+int arr[MAXN];
 
 void solve() {
-    reset_tc();
+    cin >> N;
+    int ans = 0;
+    int has_even = 0;
+    for (int i = 1; i <= N; i++) {
+        cin >> arr[i];
+        if (arr[i] % 2) ans++;
+        if (arr[i] % 2 == 0) has_even = 1;
+    }
+
+    if (has_even) cout << ans + 1 << endl;
+    else cout << ans - 1 << endl;
+
+    for (int i = 1; i <= N; i++) arr[i] = 0;
 }
 
 int main() {
@@ -77,8 +84,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

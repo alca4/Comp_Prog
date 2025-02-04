@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -57,15 +55,54 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
-int N;
-
-void reset_tc() {
-
-}
+const int MAXN = 1010;
+int N, M;
+string duck[MAXN];
+int dp[5][2];
+string narek = "narek";
 
 void solve() {
-    reset_tc();
+    cin >> N >> M;
+    for (int i = 1; i <= N; i++) {
+        duck[i] = '#';
+        string tmp;
+        cin >> tmp;
+        duck[i] += tmp;
+    }
+
+    for (int i = 0; i < 5; i++) dp[i][0] = -INF;
+    dp[0][0] = 0;
+
+    for (int i = 1; i <= N; i++) {
+        for (int k = 0; k < 5; k++) dp[k][1] = dp[k][0];
+
+        for (int k = 0; k < 5; k++) if (dp[k][1] != -INF) {
+            int s = 0;
+            int c = k;
+
+            for (int j = 1; j <= M; j++) {
+                int in_narek = narek.find(duck[i][j]);
+
+                if (in_narek == c) {
+                    c = (c + 1) % 5;
+                    s++;
+                }
+                else if (in_narek >= 0) s--;
+            }
+
+            dp[c][1] = max(dp[c][1], dp[k][0] + s);
+        }
+
+        for (int k = 0; k < 5; k++) dp[k][0] = dp[k][1];
+    }
+
+    int ans = 0;
+    for (int k = 0; k < 5; k++) ans = max(ans, dp[k][0] - 2 * k);
+
+    cout << ans << endl;
+
+    for (int k = 0; k < 5; k++) dp[k][0] = dp[k][1] = 0;
+    for (int i = 1; i <= N; i++) duck[i].clear();
 }
 
 int main() {
@@ -77,8 +114,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

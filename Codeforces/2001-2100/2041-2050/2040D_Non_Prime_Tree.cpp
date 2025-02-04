@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -57,15 +55,62 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+const int MAXN = 200010;
 int N;
+vector<int> nbs[MAXN];
+int vis[MAXN];
+int arr[MAXN];
+int col[MAXN];
 
-void reset_tc() {
-
-}
+int cnt = 0;
 
 void solve() {
-    reset_tc();
+    cin >> N;
+    for (int i = 1; i < N; i++) {
+        int a, b;
+        cin >> a >> b;
+        nbs[a].pb(b);
+        nbs[b].pb(a);
+    }
+
+    int cnt_l = 1;
+    int cnt_r = 2 * N - 1;
+
+    queue<int> search;
+    search.push(1);
+    while (!search.empty()) {
+        int n = search.front();
+        search.pop();
+
+        if (vis[n]) continue;
+        vis[n] = 1;
+
+        if (col[n] == 0) {
+            arr[n] = cnt_l;
+            cnt_l += 2;
+        }
+        else {
+            arr[n] = cnt_r;
+            cnt_r -= 2;
+        }
+
+        for (int nb : nbs[n]) {
+            if (!vis[nb]) col[nb] = 1 - col[n];
+            search.push(nb);
+        }
+    }
+
+    for (int i = 1; i <= N; i++) {
+        if (nbs[i].size() == 1 && abs(arr[i] - arr[nbs[i][0]]) == 2) arr[i] = arr[nbs[i][0]] + 1;
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+
+    for (int i = 1; i <= N; i++) {
+        arr[i] = col[i] = vis[i] = 0;
+        nbs[i].clear();
+    }
+    cnt = 0;
 }
 
 int main() {
@@ -77,8 +122,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -57,15 +55,48 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+const int MAXN = 100010;
 int N;
-
-void reset_tc() {
-
-}
+string arr;
+int deg[MAXN];
 
 void solve() {
-    reset_tc();
+    cin >> N;
+    for (int i = 1; i < N; i++) {
+        int a, b;
+        cin >> a >> b;
+        deg[a]++;
+        deg[b]++;
+    }
+    arr += '#';
+
+    int ans = 0;
+    int score0 = 0;
+    int score1 = 0;
+    int choice = 0;
+    int pause = 0;
+    for (int i = 1; i <= N; i++) {
+        char c;
+        cin >> c;
+        arr += c;
+
+        if (deg[i] == 1 && i != 1) {
+            if (arr[i] == '1') score0++;
+            else if (arr[i] == '0') score1++;
+            else choice++;
+        }
+        if (deg[i] != 1 && i != 1 && arr[i] == '?') pause++;
+    }
+
+    if (arr[1] == '0') cout << score0 + (choice + 1) / 2 << endl;
+    else if (arr[1] == '1') cout << score1 + (choice + 1) / 2 << endl;
+    else {
+        if (score0 != score1) cout << max(score0, score1) + choice / 2 << endl;
+        else cout << score0 + (choice + pause % 2) / 2 << endl;
+    }
+
+    arr.clear();
+    for (int i = 1; i <= N; i++) deg[i] = 0;
 }
 
 int main() {
@@ -77,8 +108,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

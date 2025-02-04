@@ -57,15 +57,68 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+const int MAXN = 300010;
 int N;
-
-void reset_tc() {
-
-}
+int arr[MAXN];
+deque<int> loc[MAXN];
+vector<int> vals;
 
 void solve() {
-    reset_tc();
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+    for (int i = 1; i <= N; i++) loc[arr[i]].pb(i);
+    for (int i = 1; i <= N; i++) if (loc[i].size()) vals.pb(i);
+
+    set<int> endpoints;
+    for (int n : vals) endpoints.insert(loc[n].back());
+
+    cout << vals.size() << endl;
+
+    multiset<int> guy;
+    int clean_guy = 1;
+    int idx = 1;
+    for (int i = 1; i <= vals.size(); i++) {
+        int max_guy = *endpoints.begin();
+
+        while (idx <= max_guy) {
+            if (arr[idx]) {
+                // cout << "adding " << idx << " " << arr[idx] << endl;
+                guy.insert(arr[idx]);
+            }
+            idx++;
+        }
+
+        int deleted_guy;
+        if (i % 2) deleted_guy = *guy.rbegin();
+        else deleted_guy = *guy.begin();
+        cout << deleted_guy << " ";
+
+        int first_guy = loc[deleted_guy].front();
+        int end = loc[deleted_guy].back();
+
+        while (clean_guy <= first_guy) {
+            
+            if (arr[clean_guy]) {
+                // cout << "erasing " << clean_guy << " " << arr[clean_guy] << endl;
+                guy.erase(guy.find(arr[clean_guy]));
+                loc[arr[clean_guy]].pop_front();
+            }
+            clean_guy++;
+        }
+
+        guy.erase(deleted_guy);
+
+        endpoints.erase(end);
+
+        for (int n : loc[deleted_guy]) arr[n] = 0;
+    }
+    cout << endl;
+
+    for (int i = 1; i <= N; i++) {
+        arr[i] = 0;
+        loc[i].clear();
+    }
+    vals.clear();
 }
 
 int main() {
@@ -77,8 +130,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

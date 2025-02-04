@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -57,15 +55,84 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+const int MAXN = 200010;
 int N;
+vector<int> nbs[MAXN];
+int dist[MAXN];
+int sz[MAXN];
+ll z[MAXN];
+ll o[MAXN];
+ll tp[MAXN];
 
-void reset_tc() {
+void DFS(int a, int p) {
+    for (int nb : nbs[a]) if (nb != p) {
+        dist[nb] = min(dist[nb], dist[a] + 1);
 
+        DFS(nb, a);
+
+        dist[a] = min(dist[a], dist[nb] + 1);
+
+        z[a] += z[nb];
+        o[a] += o[nb];
+        tp[a] += tp[nb];
+        sz[a] += sz[nb];
+    }
+
+    if (dist[a] == 0) z[a]++;
+    else if (dist[a] == 1) o[a]++;
+    else tp[a]++;
+    sz[a]++;
+
+    // cout << a << ": " << z[a] << " " << o[a] << " " << tp[a] << endl;
+}
+
+ll DFS2(int a, int p) {
+    ll ans = 0;
+
+    if (dist[a] == 0) {
+        ans += o[1] + tp[1];
+        // cout << a << " is leaf, so " << o[1] + tp[1] << endl;
+    }
+
+    if (dist[a] > 0 && dist[p] == 1) {
+        ans += tp[1] - tp[a];
+        // cout << a << " can go up to " << p << " with " << tp[1] - tp[a] << endl;
+    }
+
+    for (int nb : nbs[a]) if (nb != p) {
+        if (dist[a] > 0 && dist[nb] == 1) {
+            // cout << a << " can go down to " << nb << " with " << tp[nb] << endl;
+            ans += tp[nb];
+        }
+        
+        ans += DFS2(nb, a);
+    }
+
+    return ans;
 }
 
 void solve() {
-    reset_tc();
+    cin >> N;
+    for (int i = 1; i < N; i++) {
+        int a, b;
+        cin >> a >> b;
+        nbs[a].pb(b);
+        nbs[b].pb(a);
+    }
+
+    for (int i = 1; i <= N; i++) {
+        if (nbs[i].size() > 1) dist[i] = INF;
+    }
+
+    DFS(1, 0);
+
+    cout << DFS2(1, 0) << endl;
+
+    for (int i = 1; i <= N; i++) {
+        dist[i] = 0;
+        z[i] = o[i] = tp[i] = 0;
+        nbs[i].clear();
+    }
 }
 
 int main() {
@@ -77,8 +144,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

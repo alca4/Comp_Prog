@@ -57,14 +57,44 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
-int N;
+const int MAXN = 1000010;
+int N, M;
+pii arr[MAXN];
 
 void reset_tc() {
-
+    for (int i = 1; i <= N; i++) arr[i] = pii(0, 0);
 }
 
 void solve() {
+    cin >> N >> M;
+    for (int i = 1; i <= N; i++) cin >> arr[i].FF;
+    for (int i = 1; i <= N; i++) cin >> arr[i].SS;
+
+    for (int i = 1; i <= N; i++) arr[i] = pii(arr[i].FF - arr[i].SS, -arr[i].FF);
+
+    sort(arr + 1, arr + 1 + N);
+
+    map<int, int> metals;
+    for (int i = 1; i <= M; i++) {
+        int n;
+        cin >> n;
+        metals[n]++;
+    }
+
+    ll score = 0;
+    for (int i = 1; i <= N; i++) {
+        while (metals.rbegin()->FF >= -arr[i].SS) {
+            int down = (metals.rbegin()->FF + arr[i].SS + arr[i].FF) / arr[i].FF;
+            // cout << metals.rbegin()->FF << " " << arr[i].FF << " " << -arr[i].SS << " " << down << endl;
+            // cout << metals.rbegin()->SS << endl;
+            score += 2ll * down * metals.rbegin()->SS;
+            metals[metals.rbegin()->FF - down * arr[i].FF] += metals.rbegin()->SS;
+            metals.erase(metals.rbegin()->FF);
+        }
+    }
+
+    cout << score << endl;
+
     reset_tc();
 }
 
@@ -76,9 +106,9 @@ int main() {
     cout.tie(0);
 
     int T;
-    // T = 1;
+    T = 1;
     // cin >> T;
-    T = "change";
+    // T = "change";
     while (T--) solve();
 
     return 0;

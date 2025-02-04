@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -60,12 +58,29 @@ mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 const int MAXN = 0;
 int N;
 
-void reset_tc() {
-
-}
-
 void solve() {
-    reset_tc();
+    ll a, b, g;
+    cin >> a >> b >> g;
+
+    a = (a + g - 1) / g;
+    b = b / g;
+
+    ll fa = -1;
+    ll fb = -1;
+
+    int have_ans = 0;
+    for (ll diff = b - a; diff >= b - a - 30; diff--) 
+        for (ll i = a; i <= a + 30; i++) {
+            if (!have_ans && (a <= i && i <= b) && 
+                (a <= i + diff && i + diff <= b) && gcd(i, i + diff) == 1) {
+                have_ans = 1;
+
+                fa = i * g;
+                fb = (i + diff) * g;
+            }
+        }
+
+    cout << fa << " " << fb << endl;
 }
 
 int main() {
@@ -77,8 +92,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

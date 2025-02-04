@@ -27,6 +27,8 @@
     "unordered_set": "cpp",
     "valarray": "cpp",
     "ranges": "cpp",
-    "stacktrace": "cpp"
+    "stacktrace": "cpp",
+    "forward_list": "cpp",
+    "*.tcc": "cpp"
 }
 }

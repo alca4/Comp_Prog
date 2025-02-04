@@ -57,14 +57,54 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+const int MAXN = 100010;
 int N;
+int arr[MAXN];
+int psum[MAXN];
+int lcount[32][2];
+int rcount[32][2];
 
 void reset_tc() {
-
+    for (int i = 1; i <= N; i++) arr[i] = psum[i] = 0;
+    for (int j = 0; j < 32; j++) lcount[j][0] = rcount[j][0] = lcount[j][1] = rcount[j][1] = 0;
 }
 
 void solve() {
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+    for (int i = 1; i <= N; i++) psum[i] = psum[i - 1] ^ arr[i];
+
+    
+    for (int i = 1; i <= N; i++) {
+        for (int j = 0; j < 32; j++) {
+            if (psum[i] & (1 << j)) rcount[j][1]++;
+            else rcount[j][0]++;
+        }
+    }
+    for (int j = 0; j < 32; j++) lcount[j][0]++;
+
+    ll ans = 0;
+    for (int i = 1; i <= N; i++) {
+        int hbit = 32 - __builtin_clz(arr[i]) - 1;
+        if (arr[i] == 0) continue;
+
+        ans += 1ll * lcount[hbit][0] * rcount[hbit][0];
+        ans += 1ll * lcount[hbit][1] * rcount[hbit][1];
+
+        for (int j = 0; j < 32; j++) {
+            if (psum[i] & (1 << j)) {
+                rcount[j][1]--;
+                lcount[j][1]++;
+            }
+            else {
+                rcount[j][0]--;
+                lcount[j][0]++;
+            }
+        }
+    }
+
+    cout << ans << endl;
+
     reset_tc();
 }
 
@@ -77,8 +117,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

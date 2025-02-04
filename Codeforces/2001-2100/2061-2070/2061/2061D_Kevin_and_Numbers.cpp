@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -57,15 +55,68 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
-int N;
-
-void reset_tc() {
-
-}
+const int MAXN = 200010;
+int N, M;
+map<int, int> a, b;
 
 void solve() {
-    reset_tc();
+    cin >> N >> M;
+    for (int i = 1; i <= N; i++) {
+        int n;
+        cin >> n;
+        a[n]++;
+    }
+    for (int i = 1; i <= M; i++) {
+        int n;
+        cin >> n;
+        b[n]++;
+    }
+
+    // for (pii p : a) cout << p.FF << " " << p.SS << endl;
+    // cout << "a done" << endl;
+    // for (pii p : b) cout << p.FF << " " << p.SS << endl;
+    // cout << "b done" << endl;
+
+    int has_ans = 0;
+    while (!b.empty()) {
+        if (a.empty()) break;
+
+        pii bp = *b.rbegin();
+        pii ap = *a.rbegin();
+        // cout << bp.FF << endl;
+        if (bp.FF < ap.FF) break;
+
+        
+        // cerr << "a guy is: " << ap.FF << endl;
+        if (bp.FF == ap.FF) {
+            // cout << "prepare to be annihilated " << endl;
+            if (bp.SS < ap.SS) break;
+            else {
+                a.erase(--a.end());
+                b.erase(--b.end());
+
+                // cout << "annihilated " << bp.FF << endl;
+                // cout << bp.SS << " " << ap.SS << endl;
+
+                bp = pii(bp.FF, bp.SS - ap.SS);
+                if (bp.SS) b.insert(bp);
+            }
+        } 
+        else {
+            // cout << "prepare to be split " << endl;
+            b.erase(--b.end());
+            b[bp.FF / 2] += bp.SS;
+            b[bp.FF - bp.FF / 2] += bp.SS;
+        }
+    }
+
+    if (a.empty() && b.empty()) has_ans = 1;
+
+    if (has_ans) cout << "Yes" << endl;
+    else cout << "No" << endl;
+
+    a.clear();
+    b.clear();
 }
 
 int main() {
@@ -77,8 +128,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

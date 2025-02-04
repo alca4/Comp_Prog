@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -25,7 +23,7 @@ using namespace std;
 // #define cout cerr
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
-ll MOD = 0;
+ll MOD = 1000000007;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -57,15 +55,51 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+const int MAXN = 200010;
 int N;
-
-void reset_tc() {
-
-}
+int arr[MAXN];
+int if_odd[MAXN];
+int twos[MAXN];
 
 void solve() {
-    reset_tc();
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+    for (int i = 1; i <= N; i++) {
+        if_odd[i] = arr[i];
+        while (if_odd[i] % 2 == 0) {
+            if_odd[i] /= 2;
+            twos[i]++;
+        }
+    }
+
+    ll sum = 0;
+    int spare_twos = 0;
+    stack<int> evens;
+    for (int i = 1; i <= N; i++) {
+        while (!evens.empty()) {
+
+            bool condition = false;
+            if (twos[i] >= 32) condition = true;
+            else if (1ll * if_odd[i] * power(2, twos[i]) > if_odd[evens.top()]) condition = true;
+            
+            if (!condition) break;
+
+            subeq(sum, mult(if_odd[evens.top()], sub(power(2, twos[evens.top()]), 1)));
+
+            twos[i] += twos[evens.top()];
+            twos[evens.top()] = 0;
+            evens.pop();
+        }
+
+        evens.push(i);
+
+        addeq(sum, mult(if_odd[i], power(2, twos[i])));
+
+        cout << sum << " ";
+    }
+    cout << endl;
+
+    for (int i = 1; i <= N; i++) arr[i] = if_odd[i] = twos[i] = 0;
 }
 
 int main() {
@@ -77,8 +111,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

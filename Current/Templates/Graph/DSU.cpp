@@ -9,8 +9,7 @@ struct DSU {
     }
 
     int root(int a) {return p[a] = (a == p[a] ? a : root(p[a]));}
-    int combine(int a, int b)
-    {
+    int combine(int a, int b) {
         a = root(a), b = root(b);
         if (a == b) return 0;
 

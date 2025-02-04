@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -57,15 +55,67 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
-int N;
-
-void reset_tc() {
-
-}
+const int MAXN = 200010;
+int N, M, Q;
+int arr[MAXN];
+int order[MAXN];
+set<int> occ[MAXN];
 
 void solve() {
-    reset_tc();
+    cin >> N >> M >> Q;
+    for (int i = 1; i <= N; i++) {
+        int n;
+        cin >> n;
+        arr[n] = i;
+    }
+
+    for (int i = 1; i <= M; i++) {
+        int n;
+        cin >> n;
+        order[i] = arr[n];
+        occ[order[i]].insert(i);
+    }
+
+    for (int i = 1; i <= N; i++) occ[i].insert(M + 1);
+
+    int pairs = 0;
+    for (int i = 1; i < N; i++) {
+        if (*occ[i].begin() <= *occ[i + 1].begin()) pairs++;
+    }
+
+    if (pairs == N - 1) cout << "YA" << endl;
+    else cout << "TIDAK" << endl;
+
+    while (Q--) {
+        int n, v;
+        cin >> n >> v;
+
+        int pv = order[n];
+        int nv = arr[v];
+
+        order[n] = nv;
+        
+        if (pv > 1) pairs -= (*occ[pv - 1].begin() <= *occ[pv].begin());
+        if (pv < N) pairs -= (*occ[pv].begin() <= *occ[pv + 1].begin());
+        occ[pv].erase(n);
+        if (pv > 1) pairs += (*occ[pv - 1].begin() <= *occ[pv].begin());
+        if (pv < N) pairs += (*occ[pv].begin() <= *occ[pv + 1].begin());
+
+        if (nv > 1) pairs -= (*occ[nv - 1].begin() <= *occ[nv].begin());
+        if (nv < N) pairs -= (*occ[nv].begin() <= *occ[nv + 1].begin());
+        occ[nv].insert(n);
+        if (nv > 1) pairs += (*occ[nv - 1].begin() <= *occ[nv].begin());
+        if (nv < N) pairs += (*occ[nv].begin() <= *occ[nv + 1].begin());
+
+        if (pairs == N - 1) cout << "YA" << endl;
+        else cout << "TIDAK" << endl;
+    }
+
+    for (int i = 1; i <= N; i++) {
+        arr[i] = 0;
+        occ[i].clear();
+    }
+    for (int i = 1; i <= M; i++) order[i] = 0;
 }
 
 int main() {
@@ -77,8 +127,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

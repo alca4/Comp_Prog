@@ -57,14 +57,53 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
-int N;
+const int MAXN = 200010;
+int N, K;
+pii arr[MAXN];
 
 void reset_tc() {
-
+    for (int i = 1; i <= N; i++) arr[i] = pii(0, 0);
 }
 
 void solve() {
+    cin >> N >> K;
+    for (int i = 1; i <= N; i++) cin >> arr[i].FF;
+    for (int i = 1; i <= N; i++) cin >> arr[i].SS;
+    
+    for (int i = 1; i <= N; i++) if (arr[i].FF > arr[i].SS) arr[i] = pii(0, 0);
+
+    multiset<pii, greater<pii>> bob_want_take;
+    for (int i = 1; i <= N; i++) bob_want_take.insert(pii(arr[i].SS, -arr[i].FF));
+
+    multiset<pii, greater<pii>> alice_want_take;
+    for (int i = 1; i <= K; i++) {
+        alice_want_take.insert(pii(-bob_want_take.begin()->SS, -bob_want_take.begin()->FF));
+        bob_want_take.erase(bob_want_take.begin());
+    }
+
+    ll cost = 0;
+    for (int i = 1; i <= N; i++) cost += arr[i].SS - arr[i].FF;
+    for (pii p : alice_want_take) cost += p.SS;
+    // cout << "cost could be " << cost << endl;
+
+    ll ans = max(cost, 0ll);
+    while (!bob_want_take.empty() && !alice_want_take.empty()) {
+        cost += alice_want_take.begin()->FF;
+        // cout << "alice no longer buys " << alice_want_take.begin()->FF << " " << -alice_want_take.begin()->SS << endl;
+        alice_want_take.erase(alice_want_take.begin());
+
+        cost -= bob_want_take.begin()->FF;
+        // cout << "bob no longer has to pay " << bob_want_take.begin()->FF << endl;
+        alice_want_take.insert(pii(-bob_want_take.begin()->SS, -bob_want_take.begin()->FF));
+        bob_want_take.erase(bob_want_take.begin());
+
+        // cout << "cost could be " << cost << endl;
+
+        ans = max(ans, cost);
+    }
+
+    cout << ans << endl;
+
     reset_tc();
 }
 
@@ -77,8 +116,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

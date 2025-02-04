@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -25,7 +23,7 @@ using namespace std;
 // #define cout cerr
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
-ll MOD = 0;
+ll MOD = 998244353;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -57,15 +55,32 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+const int MAXN = 200010;
 int N;
-
-void reset_tc() {
-
-}
+int arr[MAXN];
+ll psum[MAXN];
+int pos[MAXN];
 
 void solve() {
-    reset_tc();
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+
+    ll minval = LINF;
+    for (int i = 1; i <= N; i++) {
+        psum[i] = psum[i - 1] + arr[i];
+        minval = min(minval, psum[i]);
+        if (psum[i] >= 0) pos[i]++;
+        pos[i] += pos[i - 1];
+    }
+
+    // ll ans = 0;
+    // for (int i = 1; i <= N; i++) if (psum[i] == minval) addeq(ans, power(2, pos[i] + N - i));
+
+    // cout << (minval < 0 ? ans : power(2, N)) << endl;
+
+    cout << psum[N] + max(0ll, minval * -2) << endl;
+
+    for (int i = 1; i <= N; i++) arr[i] = psum[i] = pos[i] = 0;
 }
 
 int main() {
@@ -77,8 +92,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

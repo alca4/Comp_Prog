@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -57,15 +55,54 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+const int MAXN = 200010;
 int N;
+ll arr[MAXN];
+vector<pll> guys;
 
-void reset_tc() {
+void insert(ll a, ll b) {
+    ll sum = guys.back().FF;
+    ll cnt = guys.back().SS;
+    guys.pop_back();
 
+    if (a / b <= sum / cnt) {
+        sum = sum + a;
+        cnt += b;
+
+        ll extra = sum % cnt;
+        if (extra) {
+            if (guys.size()) insert(sum / cnt * (cnt - extra), cnt - extra);
+            else guys.pb(pll(sum / cnt * (cnt - extra), cnt - extra));
+
+
+            if (guys.size()) insert((sum / cnt + 1) * extra, extra);
+            else guys.pb(pll((sum / cnt + 1) * extra, extra));
+        }
+        else {
+            if (guys.size()) insert(sum, cnt);
+            else guys.pb(pll(sum, cnt));
+        }
+    }
+    else {
+        guys.pb(pll(sum, cnt));
+        guys.pb(pll(a, b));
+    }
 }
 
 void solve() {
-    reset_tc();
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+    
+    guys.pb(pll(arr[1], 1));
+
+    for (int i = 2; i <= N; i++) {
+        if (guys.size()) insert(arr[i], 1);
+    }
+
+    cout << guys.back().FF / guys.back().SS - guys[0].FF / guys[0].SS << endl;
+
+    for (int i = 1; i <= N; i++) arr[i] = 0;
+    guys.clear();
 }
 
 int main() {
@@ -77,8 +114,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

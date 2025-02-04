@@ -8,8 +8,6 @@ Rowlet is orz
 >(.)__ >(.)__ >(.)__
  (___/  (___/  (___/
 I am dum duck
-
-Tooting Bec
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -57,15 +55,53 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
-int N;
-
-void reset_tc() {
-
-}
+const int MAXN = 300010;
+int N, M;
+int a[MAXN];
+ll asum[MAXN];
+int b[MAXN];
+vector<ll> dp[MAXN];
+vector<int> jumperwho[MAXN];
 
 void solve() {
-    reset_tc();
+    cin >> N >> M;
+    for (int i = 1; i <= N; i++) cin >> a[i];
+    for (int i = 1; i <= N; i++) asum[i] = asum[i - 1] + a[i];
+    for (int i = 1; i <= M; i++) cin >> b[i];
+
+    for (int i = 1; i <= N + 1; i++) {
+        dp[i].resize(M + 1);
+        jumperwho[i].resize(M + 1);
+
+        for (int j = 1; j <= M; j++) dp[i][j] = LINF;
+    }
+
+    for (int j = 1; j <= M; j++) {
+        int tmp = 0;
+        for (int i = 1; i <= N; i++) {
+            while (tmp <= N && asum[tmp] - asum[i - 1] <= b[j]) tmp++;
+            jumperwho[i][j] = tmp - i;
+        }
+    }
+
+    dp[1][1] = 1;
+    for (int i = 1; i <= N; i++) {
+        for (int j = 1; j <= M; j++) {
+            if (jumperwho[i][j] > 0) mineq(dp[i + jumperwho[i][j]][j], dp[i][j] + M - j);
+            if (j < M) mineq(dp[i][j + 1], dp[i][j]);
+            cout << dp[i][j] << endl;
+        }
+    }
+
+    ll ans = LINF;
+    for (int i = 1; i <= M; i++) mineq(ans, dp[N + 1][i]);
+
+    if (ans == LINF) cout << -1 << endl;
+    else cout << ans - 1 << endl;
+
+    for (int i = 1; i <= N + 1; i++) dp[i].clear();
+    for (int i = 1; i <= N + 1; i++) jumperwho[i].clear();
+    for (int i = 1; i <= N; i++) a[i] = b[i] = asum[i] = 0;
 }
 
 int main() {
@@ -77,8 +113,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;
