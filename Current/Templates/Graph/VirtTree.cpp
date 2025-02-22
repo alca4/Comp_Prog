@@ -1,7 +1,7 @@
-// virtual tree
+extern vector<int> nbs[MAXN];
 
 struct LCA {
-    vector<int> in, out, euler;
+    vector<int> in, out, depth;
     vector<int> lift[32];
     int T = 0;
 
@@ -9,111 +9,106 @@ struct LCA {
     LCA(int n) {
         in.resize(n + 1);
         out.resize(n + 1);
-        euler.resize(n + 1);
+        depth.resize(n + 1);
         for (int i = 0; i < 32; i++) lift[i].resize(n + 1);
+
+        out[0] = 2 * n + 1;
+        if (n) tour(1, 0);
     }
 
-    void tour(int a, int p)
-    {
-        lift[a][0] = p;
+    void tour(int a, int p) {
+        depth[a] = depth[p] + 1;
+
+        lift[0][a] = p;
         for (int j = 1; j < 32; j++) 
-            lift[a][j] = lift[lift[a][j - 1]][j - 1];
+            lift[j][a] = lift[j - 1][lift[j - 1][a]];
+        
         in[a] = ++T;
-        euler[T] = a;
-        for (int i = 0; i < nbs[a].size(); i++) if (nbs[a][i] != p) tour(nbs[a][i], a);
+        for (int nb : nbs[a]) if (nb != p) tour(nb, a);
         out[a] = ++T;
-        euler[T] = -a;
     }
     bool is_anc(int a, int b) {return in[a] <= in[b] && out[b] <= out[a];}
-    void setup_lca() {tour(/*root, itself*/);}
-    int lca(int a, int b)
-    {
+    int lca(int a, int b) {
         if (is_anc(a, b)) return a;
         if (is_anc(b, a)) return b;
 
-        for (int i = 31; i >= 0; i--)
-            if (!is_anc(lift[a][i], b)) a = lift[a][i];
-        
-        return lift[a][0];
+        for (int i = 31; i >= 0; i--) 
+            if (!is_anc(lift[i][a], b)) a = lift[i][a];
+                
+        return lift[0][a];
     }
 };
 
-struct VirtTree{
-    vector<int> key_nodes;
+struct VT{
     vector<int> key;
-    vector<vector<int>> nbs2;
-    stack<int> peoples;
+    vector<int> key_nodes;
+    vector<vector<int>> vnbs;
+    vector<int> chain;
     vector<int> extras;
     LCA lca;
 
-    VirtTree() {VirtTree(0);}
-    VirtTree(int n) {
+    VT() {VT(0);}
+    VT(int n) {
         key.resize(n + 1);
-        nbs2.resize(n + 1);
-        LCA(n);
+        vnbs.resize(n + 1);
+        lca = LCA(n);
     }
 
-    bool Comp(int a, int b) {
-        return lca.in[a] < lca.in[b];
-    }
-
-    void setup_virtual_tree() {
-        sort(key_nodes.begin(), key_nodes.end(), Comp);
+    void setup_virtual_tree(const vector<int>& kn) {
+        key_nodes = kn;
+        sort(key_nodes.begin(), key_nodes.end(), [this](const int& a, const int& b) -> bool {
+            return lca.in[a] < lca.in[b];
+        });
+    
         for (int n : key_nodes) key[n] = 1;
 
-        peoples.push(key_nodes[0]);
+        vector<int> chain;
+        chain.pb(key_nodes[0]);
 
         for (int j = 1; j < key_nodes.size(); j++) {
-            int c = lca.lca(peoples.top(), key_nodes[j]);
+            int c = lca.lca(chain.back(), key_nodes[j]);
 
-            if (c == peoples.top()) {
-                peoples.push(key_nodes[j]);
-                continue;
-            }
-
-            vector<int> tmp;
-
-            while (peoples.size() && depth[c] < depth[peoples.top()]) {
-                tmp.pb(peoples.top());
-                peoples.pop();
-            }
-
-            tmp.pb(c);
-
-            for (int j = 1; j < tmp.size(); j++) {
-                nbs2[tmp[j]].pb(tmp[j - 1]);
+            while (chain.size() > 1 && lca.depth[c] <= lca.depth[chain[chain.size() - 2]]) {
+                vnbs[chain[chain.size() - 2]].pb(chain[chain.size() - 1]);
+                chain.pop_back();
             }
 
             if (!key[c]) {
-                peoples.push(c);
+                vnbs[c].pb(chain.back());
+                chain.pop_back();
+                chain.pb(c);
                 extras.pb(c);
-                key[c] = 1;
+                key[c] = 2;
             }
 
-            peoples.push(key_nodes[j]);
+            chain.pb(key_nodes[j]);
         }
 
-        while (peoples.size() > 1) {
-            int x = peoples.top();
-            peoples.pop();
-            nbs2[peoples.top()].pb(x);
+        while (chain.size() > 1) {
+            int x = chain.back();
+            chain.pop_back();
+            vnbs[chain.back()].pb(x);
         }
+        
+        for (int n : key_nodes) if (!root || lca.is_anc(n, root)) root = n;
+        for (int n : extras) if (!root || lca.is_anc(n, root)) root = n;
+
+        chain.pop_back();
     }
 
     void clear_virtual_tree() {
         for (int i : key_nodes) {
-            nbs2[i].clear();
+            vnbs[i].clear();
             key[i] = 0;
         }
 
         for (int i : extras) {
-            nbs2[i].clear();
+            vnbs[i].clear();
             key[i] = 0;
         }
 
         extras.clear();
         key_nodes.clear();
-        while (!peoples.empty())
-            peoples.pop();
+        while (!chain.empty()) chain.pop_back();
     }
 };
