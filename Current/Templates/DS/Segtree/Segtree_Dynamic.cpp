@@ -1,7 +1,7 @@
 struct ST {
     vector<ll> seg, lc, rc;
 
-    PST() {
+    ST() {
         create();
     }
 

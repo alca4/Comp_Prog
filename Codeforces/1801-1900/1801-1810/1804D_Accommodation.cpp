@@ -57,68 +57,64 @@ template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
-int N;
+const int MAXN = 500010;
+int N, M;
+int arr[MAXN];
 
 void reset_tc() {
-
+    for (int i = 1; i <= M; i++) arr[i] = 0;
 }
 
 void solve() {
-    string str;
-    cin >> str;
-    N = str.length();
+    cin >> N >> M;
+    int minv = 0;
+    int maxv = 0;
+    while (N--) {
+        int count = 0;
+        for (int i = 1; i <= M; i++) {
+            char c;
+            cin >> c;
+            arr[i] = c - '0';
+            if (arr[i]) count++;
+        }
 
-    bool palindrome = 1;
-    for (int i = 0; i < N; i++) if (str[i] != str[N - 1 - i]) palindrome = 0;
+        minv += count;
+        maxv += count;
 
-    if (!palindrome) {
-        cout << "YES" << endl;
-        cout << 1 << endl;
-        cout << str << endl;
-    }
-    else {
-        int split = 0;
-        for (int i = 1; i < N / 2; i++) {
-            if (str[i] != str[i - 1]) {
-                split = i;
-                break;
+        int t = M / 4;
+        for (int i = 2; i <= M; i++) {
+            if (t && arr[i] && arr[i - 1]) {
+                t--;
+                minv--;
+                i++;
             }
         }
 
-        bool after_palindrome = 1;
-        for (int i = split + 1; i < N; i++) 
-            if (str[i] != str[N + split - i]) {
-                after_palindrome = 0;
+        t = M / 4;
+        for (int i = 2; i <= M; i++) {
+            if (!(arr[i] & arr[i - 1])) {
+                t--;
+                i++;
             }
+        }
 
-        if (split && !after_palindrome) {
-            cout << "YES" << endl;
-            cout << 2 << endl;
-            for (int i = 0; i <= split; i++) cout << str[i];
-            cout << " ";
-            for (int i = split + 1; i < N; i++) cout << str[i];
-            cout << endl;
-        }
-        else {
-            cout << "NO" << endl;
-        }
+        maxv -= max(t, 0);
     }
 
+    cout << minv << " " << maxv << endl;
     reset_tc();
 }
 
 int main() {
-    freopen("tc.in", "r", stdin);
-    freopen("incorrect.out", "w", stdout);
+    // freopen("tc.in", "r", stdin);
+    // freopen("tc.out", "w", stdout);
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
 
     int T;
-    // T = 1;
-    cin >> T;
-    cout << T << endl;
+    T = 1;
+    // cin >> T;
     // T = "change";
     while (T--) solve();
 

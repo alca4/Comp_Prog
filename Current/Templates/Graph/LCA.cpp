@@ -1,7 +1,7 @@
 extern vector<int> nbs[MAXN];
 
 struct LCA {
-    vector<int> in, out, depth;
+    vector<int> in, out;
     vector<int> lift[32];
     int T = 0;
 

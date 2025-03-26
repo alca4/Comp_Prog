@@ -20,7 +20,7 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define ull unsigned ll
-#define endl "\n"
+// #define endl "\n"
 #define EPS 1e-9
 // #define cout cerr
 ll INF = 1000000000;
@@ -58,45 +58,42 @@ mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 const int MAXN = 0;
-int N;
+int N, K;
 
 void reset_tc() {
 
 }
 
 void solve() {
-    string str;
-    cin >> str;
+    cin >> N >> K;
 
-    if (str.length() == 3) {
-        cout << "YES" << endl;
+    int ans = 0;
+    for (int i = 1; i + K - 1 <= N; i += K) {
+        cout << "? " << i << endl;
         int n;
         cin >> n;
-        cout << n << endl;
-        while (n--) {
-            string s;
-            cin >> s;
-            cout << s;
-
-            bool palin = 1;
-            for (int i = 0; i < str.length(); i++) 
-                if (str[i] != str[str.length() - 1 - i]) palin = 0;
-            
-            if (!palin) {
-                if (n == 1) cout << " ";
-                if (n == 0) cout << endl;
-            }
-            else cout << "aweh9g8qhw" << endl;
-        }
+        ans ^= n;
     }
-    else cout << "NO" << endl;
 
+    int boys = N % K;
+    if (boys) {
+        cout << "? " << N - K - boys / 2 + 1 << endl;
+        int n;
+        cin >> n;
+        ans ^= n;
+
+        cout << "? " << N - K + 1 << endl;
+        cin >> n;
+        ans ^= n;
+    }
+
+    cout << "! " << ans << endl;
     reset_tc();
 }
 
 int main() {
-    freopen("incorrect.out", "r", stdin);
-    freopen("correct.out", "w", stdout);
+    // freopen("tc.in", "r", stdin);
+    // freopen("tc.out", "w", stdout);
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
@@ -104,7 +101,6 @@ int main() {
     int T;
     // T = 1;
     cin >> T;
-    cout << T << endl;
     // T = "change";
     while (T--) solve();
 

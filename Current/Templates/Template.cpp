@@ -16,13 +16,21 @@ using namespace std;
 
 #define FF first
 #define SS second
-#define pb push_back
+
 #define ll long long
 #define ld long double
 #define ull unsigned ll
+
 #define endl "\n"
 #define EPS 1e-9
+
+#define sz(v) (int) v.size()
+#define pb push_back
+#define pf push_front
+#define ppb pop_back
+#define ppf pop_front
 // #define cout cerr
+
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
 ll MOD = 0;
@@ -30,11 +38,13 @@ ll MOD = 0;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 typedef complex<ld> cd;
+typedef vector<int> vi;
+typedef vector<vi> vii;
 
-ll add(const ll& a, const ll& b) {return (a + b) % MOD;}
-ll sub(const ll& a, const ll& b) {return (a - b + MOD) % MOD;}
-ll mult(const ll& a, const ll& b) {return (a * b) % MOD;}
-ll power(ll a, ll b) {
+#define add(a, b) ((a + b) > MOD ? a + b - MOD : a + b)
+#define sub(a, b) ((a - b) > 0 ? a - b : a + MOD - b)
+#define mult(a, b) ((a * b) % MOD)
+inline ll power(ll a, ll b) {
     ll n = a;
     ll ans = 1;
 
@@ -46,13 +56,14 @@ ll power(ll a, ll b) {
 
     return ans;
 }
-ll divide(const ll& a, const ll& b) {return (a * power(b, MOD - 2)) % MOD;}
-template<class X, class Y> void maxeq(X& x, Y y) {if (x < y) x = y;}
-template<class X, class Y> void mineq(X& x, Y y) {if (x > y) x = y;}
-template<class X, class Y> void addeq(X& x, Y y) {x = add(x, y);}
-template<class X, class Y> void subeq(X& x, Y y) {x = sub(x, y);}
-template<class X, class Y> void multeq(X& x, Y y) {x = mult(x, y);}
-template<class X, class Y> void diveq(X& x, Y y) {x = divide(x, y);}
+#define divide(a, b) ((a * power(b, MOD - 2)) % MOD)
+
+#define maxeq(x, y) if (x < y) x = y
+#define mineq(x, y) if (x > y) x = y
+#define addeq(x, y) x = add(x, y)
+#define subeq(x, y) x = sub(x, y)
+#define multeq(x, y) x = mult(x, y)
+#define diveq(x, y) x = divide(x, y)
 
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
