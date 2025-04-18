@@ -77,6 +77,42 @@ void reset_tc() {
 }
 
 void solve() {
+    string s1, s2;
+    cin >> s1 >> s2;
+
+    int a = 0;
+    int b = 0;
+    if (s1[a] != s2[b]) {
+        cout << "NO" << endl;
+        return;
+    }
+
+    while (a < s1.length() && b < s2.length()) {
+        char cur = s1[a];
+        int aguy = 0;
+        while (a < s1.length() && s1[a] == cur) {
+            aguy++;
+            // cout << "aguy plus" << endl;
+            a++;
+        }
+        int bguy = 0;
+        while (b < s2.length() && s2[b] == cur) {
+            bguy++;
+            // cout << "bguy plus" << endl;
+            b++;
+        }
+
+        if (aguy > bguy || aguy * 2 < bguy) {
+            cout << "NO" << endl;
+            return;
+        }
+    }
+    if (a != s1.length() || b != s2.length()) {
+        cout << "NO" << endl;
+        return;
+    }
+
+    cout << "YES" << endl;
     reset_tc();
 }
 
@@ -89,8 +125,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

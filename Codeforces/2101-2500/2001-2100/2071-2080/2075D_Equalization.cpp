@@ -71,12 +71,26 @@ mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 const int MAXN = 0;
 int N;
+ll dp[70][70][70];
 
 void reset_tc() {
 
 }
 
+// 1101
+// 100101
+
 void solve() {
+    ll x, y;
+    cin >> x >> y;
+
+    ll ans = LINF;
+    for (int i = 0; i <= 60; i++) for (int j = 0; j <= 60; j++) {
+        if ((x >> i) == (y >> j)) mineq(ans, dp[60][i][j]);
+    }
+
+    cout << ans << endl;
+
     reset_tc();
 }
 
@@ -87,10 +101,22 @@ int main() {
     cin.tie(0);
     cout.tie(0);
 
+    for (int a = 0; a <= 60; a++) for (int b = 0; b <= 60; b++) dp[0][a][b] = LINF;
+    dp[0][0][0] = 0;
+
+    for (int i = 1; i <= 60; i++) {
+        for (int a = 0; a <= 60; a++) for (int b = 0; b <= 60; b++) {
+            dp[i][a][b] = LINF;
+            if (a - i >= 0) mineq(dp[i][a][b], dp[i - 1][a - i][b] + (1ll << i));
+            if (b - i >= 0) mineq(dp[i][a][b], dp[i - 1][a][b - i] + (1ll << i));
+            mineq(dp[i][a][b], dp[i - 1][a][b]);
+        }
+    }
+
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;
