@@ -77,6 +77,61 @@ void reset_tc() {
 }
 
 void solve() {
+    ll x, y;
+    cin >> x >> y;
+
+    ll x0 = x;
+    vector<ll> ops;
+    
+    int fail = 0;
+    // int just_have_room = 0;
+    int haver = 0;
+    int safe = 0;
+    while (x != y) {
+        int xlb = (x ? 63 - __builtin_clzll(x) : -1);
+        int ylb = (y ? 63 - __builtin_clzll(y) : -1);
+        // cout << x << " " << y << " " << xlb << " " << ylb << endl;
+
+        if (xlb < ylb) {
+            if (!safe || ops.empty()) {
+                fail = 1;
+                break;
+            }
+            else {
+                // cout << safe << " " << size(ops) << endl;
+                ops[0] |= (1ll << ylb);
+                y &= ~(1ll << ylb);
+            }
+        }
+        else if (xlb == ylb) {
+            x &= ~(1ll << xlb);
+            y &= ~(1ll << xlb);
+            safe = 1;
+        }
+        else {
+            // cout << (1ll << xlb) << endl;
+            // cout << x << " " << ~(1ll << xlb) << endl;
+            x &= ~(1ll << xlb);
+            ops.pb(1ll << xlb);
+            if (haver) safe = 1;
+            haver = 1;
+            // just_have_room = 1;
+            // cout << x << " " << !(1ll << xlb) << endl;
+        }
+    }
+
+    if (fail) cout << -1 << endl;
+    else {
+        cout << size(ops) << endl;
+        cout << x0 << " ";
+        for (ll n : ops) {
+            x0 ^= n;
+            cout << x0 << " ";
+            // cout << n << " ";
+        }
+        cout << endl;
+    }
+
     reset_tc();
 }
 
@@ -89,8 +144,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

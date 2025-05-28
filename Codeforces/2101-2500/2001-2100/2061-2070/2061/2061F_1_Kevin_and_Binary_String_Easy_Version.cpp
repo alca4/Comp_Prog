@@ -71,12 +71,60 @@ mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 const int MAXN = 0;
 int N;
+string s, t;
 
 void reset_tc() {
 
 }
 
 void solve() {
+    cin >> s >> t;
+    N = s.length();
+    
+    int si = 0;
+    int ti = 0;
+
+    int yay = 1;
+    int ops = 0;
+    while (si < N) {
+        if (si != 0 && s[si] != t[ti]) {
+            // cout << "trigger1 duck at " << si << endl;
+            yay = 0;
+        }
+
+        char cur = t[ti];
+        while (ti < N && t[ti] == cur) ti++;
+
+        int si0 = si;
+        int need = ti - si;
+        int have = 0;
+        int tops = 0;
+        while (si < N && have < need) {
+            if (s[si] == cur) have++;
+            if (si != si0 && s[si] != s[si - 1]) tops++;
+            si++;
+        }
+        ops += (tops + 1) / 2;
+
+        if (have < need) {
+            yay = 0;
+            // cout << "trigger2 duck" << endl;
+        }
+        if (si < N && s[si] == s[si - 1]) {
+            // cout << "trigger3 duck" << endl;
+            yay = 0;
+        }
+
+        while (ti < si) {
+            if (t[ti] == cur) yay = 0;
+            ti++;
+        }
+        // cout << "at " << si << endl;
+    }
+
+    if (yay) cout << ops << endl;
+    else cout << -1 << endl;
+
     reset_tc();
 }
 
@@ -89,8 +137,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

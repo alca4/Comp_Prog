@@ -69,14 +69,46 @@ inline ll power(ll a, ll b) {
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
-int N;
+const int MAXN = 200010;
+int N, S;
+ll L, R;
+int arr[MAXN];
 
 void reset_tc() {
+    for (int i = 1; i <= N; i++) arr[i] = 0;
+    S = 0;
+}
 
+int solve(ll a) {
+    // cerr << a << endl;
+    int ans = 0;
+    if (a <= N) return arr[a];
+    if (a <= 2 * N) {
+        for (int i = 1; i <= a / 2; i++) ans ^= arr[i];
+        return ans;
+    }
+
+    if (a % 2) a--;
+    ans = S;
+    if ((a / 2) % 2 == 0) ans ^= solve(a / 2);
+    return ans;
 }
 
 void solve() {
+    // cerr << "tc" << endl;
+    cin >> N >> L >> R;
+    for (int i = 1; i <= N; i++) {
+        cin >> arr[i];
+        S ^= arr[i];
+    }
+    if (N % 2 == 0) {
+        N++;
+        for (int i = 1; i <= N / 2; i++) arr[N] ^= arr[i];
+        S ^= arr[N];
+    }
+    // cout << S << endl;
+
+    cout << solve(R) << endl;
     reset_tc();
 }
 
@@ -89,8 +121,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

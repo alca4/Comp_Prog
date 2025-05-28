@@ -69,14 +69,65 @@ inline ll power(ll a, ll b) {
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
-int N;
+const int MAXN = 1010;
+int N, K;
+int arr[MAXN];
+int cost[MAXN][MAXN];
+vector<int> dp[MAXN];
+int counter[MAXN];
 
 void reset_tc() {
-
+    for (int i = 1; i <= N; i++) for (int j = 1; j <= N - i + 1; j++) cost[i][i + j - 1] = 0;
+    for (int i = 0; i <= N; i++) {
+        arr[i] = 0;
+        dp[i].clear();
+    }
 }
 
 void solve() {
+    cin >> N >> K;
+    for (int i = 1; i <= N; i++) {
+        for (int j = 1; j <= N - i + 1; j++) {
+            cin >> cost[i][i + j - 1];
+        }
+    }
+
+    dp[0].pb(0);
+    for (int i = 1; i <= N; i++) {
+        dp[i].pb(cost[1][i]);
+        if (i > 1) dp[i].pb(cost[2][i]);
+
+        priority_queue<pii> duck;
+        for (int j = 1; j <= i - 2; j++) {
+            duck.push(pii(dp[j][counter[j]] + cost[j + 2][i], j));
+            counter[j]++;
+        }
+        
+        while (size(dp[i]) < 3 * K) {
+            if (duck.empty()) break;
+            pii n = duck.top();
+            duck.pop();
+
+            dp[i].pb(n.FF);
+            if (counter[n.SS] < size(dp[n.SS])) 
+                duck.push(pii(dp[n.SS][counter[n.SS]] + cost[n.SS + 2][i], n.SS));
+            counter[n.SS]++;
+        }
+
+        for (int n2 : dp[i - 1]) dp[i].pb(n2);
+        sort(dp[i].rbegin(), dp[i].rend());
+        if (size(dp[i]) > K) dp[i].resize(K);
+
+        // cout << "dee pee on " << i << endl;
+        // for (int n : dp[i]) cout << n << " ";
+        // cout << endl;
+
+        for (int j = 1; j <= i - 2; j++) counter[j] = 0;
+    }
+
+    for (int i = 0; i < K; i++) cout << dp[N][i] << " ";
+    cout << endl;
+
     reset_tc();
 }
 
@@ -89,8 +140,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

@@ -27,14 +27,42 @@ struct NT {
             }
         }
 
-        for (int i = 2; i <= x; i++) {
-            if (!sieve[i]) factorization[i].pb(pii(i, 1));
-            else {
-                factorization[i] = factorization[i / sieve[i]];
-                for (int j = 0; j < factorization[i / sieve[i]].size(); j++) {
-                    if (factorization[i / sieve[i]][j].FF == sieve[i]) 
-                        factorization[i / sieve[i]][j].SS++;
-                }
+        // for (int i = 2; i <= x; i++) {
+        //     if (!sieve[i]) factorization[i].pb(pii(i, 1));
+        //     else {
+        //         factorization[i] = factorization[i / sieve[i]];
+        //         for (int j = 0; j < size(factorization[i / sieve[i]]); j++) {
+        //             if (factorization[i / sieve[i]][j].FF == sieve[i]) 
+        //                 factorization[i / sieve[i]][j].SS++;
+        //         }
+        //     }
+        // }
+    }
+
+    // should only call once
+    void factor(vector<pii>& ans, ll n) {
+        for (int p : primes) {
+            if (n < p) break;
+            if (n % p == 0) ans.pb(pii(p, 0));
+            while (n % p == 0) {
+                n /= p;
+                ans.back().SS++;
+            }
+        }
+        if (n > 1) ans.pb(pii(n, 1));
+    }
+
+    // should only call once
+    void gen_div(vector<int>& ans, ll n) {
+        vector<pii> factors;
+        factor(factors, n);
+        ans.pb(1);
+        for (pii p : factors) {
+            int asz = size(ans);
+            int multy = 1;
+            for (int j = 0; j < p.SS; j++) {
+                multy *= p.FF;
+                for (int i = 0; i < asz; i++) ans.pb(ans[i] * multy);
             }
         }
     }

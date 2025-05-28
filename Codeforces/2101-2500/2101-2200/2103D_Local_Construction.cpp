@@ -69,14 +69,60 @@ inline ll power(ll a, ll b) {
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
+const int MAXN = 200010;
 int N;
+deque<int> loc[40];
+int ans[MAXN];
 
 void reset_tc() {
-
+    for (int i = 1; i <= N; i++) ans[i] = 0;
 }
 
 void solve() {
+    cin >> N;
+    int last_guy;
+    for (int i = 1; i <= N; i++) {
+        int n;
+        cin >> n;
+        if (n > 0) loc[n].pb(i);
+        else last_guy = i;
+    }
+
+    deque<int> vals;
+    for (int i = 1; i <= N; i++) vals.pb(i);
+
+    for (int i = 1; i <= 30; i++) {
+        if (i & 1) {
+            while (size(loc[i]) && loc[i].front() < last_guy) {
+                ans[loc[i].front()] = vals.back();
+                loc[i].ppf();
+                vals.ppb();
+            }
+            while (size(loc[i]) && loc[i].back() > last_guy) {
+                ans[loc[i].back()] = vals.back();
+                loc[i].ppb();
+                vals.ppb();
+            }
+        }
+        else {
+            while (size(loc[i]) && loc[i].front() < last_guy) {
+                ans[loc[i].front()] = vals.front();
+                loc[i].ppf();
+                vals.ppf();
+            }
+            while (size(loc[i]) && loc[i].back() > last_guy) {
+                ans[loc[i].back()] = vals.front();
+                loc[i].ppb();
+                vals.ppf();
+            }
+        }
+    }
+
+    ans[last_guy] = vals.front();
+
+    for (int i = 1; i <= N; i++) cout << ans[i] << " ";
+    cout << endl;
+
     reset_tc();
 }
 
@@ -89,8 +135,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;

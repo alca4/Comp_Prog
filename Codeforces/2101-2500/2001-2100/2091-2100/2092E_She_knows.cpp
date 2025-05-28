@@ -33,7 +33,7 @@ using namespace std;
 
 ll INF = 1000000000;
 ll LINF = 1000000000000000000;
-ll MOD = 0;
+ll MOD = 1000000007;
 
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
@@ -66,17 +66,42 @@ inline ll power(ll a, ll b) {
 #define multeq(x, y) x = mult(x, y)
 #define diveq(x, y) x = divide(x, y)
 
+const int dx4[4] = {0, 1, 0, -1};
+const int dy4[4] = {1, 0, -1, 0};
+
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-const int MAXN = 0;
-int N;
+const int MAXN = 200010;
+int N, M, K;
+int a[MAXN], b[MAXN], c[MAXN];
+int u[MAXN], l[MAXN], d[MAXN], r[MAXN];
 
 void reset_tc() {
-
+    for (int i = 1; i <= K; i++) a[i] = b[i] = c[i] = 0;
 }
 
 void solve() {
+    cin >> N >> M >> K;
+    int border_town = 0;
+    int border_sum = 0;
+    for (int i = 1; i <= K; i++) {
+        cin >> a[i] >> b[i] >> c[i];
+
+        int bt0 = border_town;
+        if (a[i] == 1 && 1 < b[i] && b[i] < M) border_town++;
+        if (a[i] == N && 1 < b[i] && b[i] < M) border_town++;
+        if (b[i] == 1 && 1 < a[i] && a[i] < N) border_town++;
+        if (b[i] == M && 1 < a[i] && a[i] < N) border_town++;
+        if (bt0 != border_town) border_sum += c[i];
+    }
+
+    if (border_town == (N - 2 + M - 2) * 2) {
+        if (border_sum % 2) cout << 0 << endl;
+        else cout << power(2, 1ll * N * M - K) << endl;
+    }
+    else cout << power(2, 1ll * N * M - K - 1) << endl;
+
     reset_tc();
 }
 
@@ -89,8 +114,8 @@ int main() {
 
     int T;
     // T = 1;
-    // cin >> T;
-    T = "change";
+    cin >> T;
+    // T = "change";
     while (T--) solve();
 
     return 0;
